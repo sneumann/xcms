@@ -72,6 +72,7 @@
   [`dropChromPeaks(`*`<XCMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)
   [`dropFeatureDefinitions(`*`<XCMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)
   [`dropAdjustedRtime(`*`<XCMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)
+  [`coerce(`*`<XCMSnExp>`*`,`*`<xcmsSet>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)
   [`profMat(`*`<XCMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)
   [`findChromPeaks(`*`<XCMSnExp>`*`,`*`<Param>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)
   [`dropFilledChromPeaks(`*`<XCMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)
@@ -184,12 +185,16 @@
   [`chromatogram(`*`<XcmsExperiment>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
   [`processHistory(`*`<XcmsExperiment>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
   [`filterFile(`*`<XcmsExperiment>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
+  [`coerce(`*`<XcmsExperiment>`*`,`*`<xcmsSet>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
+  [`coerce(`*`<XcmsExperiment>`*`,`*`<XCMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
+  [`coerce(`*`<XCMSnExp>`*`,`*`<XcmsExperiment>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
   :
 
   Next Generation `xcms` Result Object
 
 - [`toXcmsExperimentHdf5()`](https://sneumann.github.io/xcms/reference/XcmsExperimentHdf5.md)
   [`toXcmsExperiment()`](https://sneumann.github.io/xcms/reference/XcmsExperimentHdf5.md)
+  [`XcmsExperimentHdf5()`](https://sneumann.github.io/xcms/reference/XcmsExperimentHdf5.md)
   [`chromPeakData(`*`<XcmsExperimentHdf5>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperimentHdf5.md)
   [`filterChromPeaks(`*`<XcmsExperimentHdf5>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperimentHdf5.md)
   [`adjustRtimePeakGroups(`*`<XcmsExperimentHdf5>`*`,`*`<PeakGroupsParam>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperimentHdf5.md)
@@ -319,6 +324,10 @@
 - [`featureGroups(`*`<XcmsResult>`*`)`](https://sneumann.github.io/xcms/reference/feature-grouping.md)
   [`` `featureGroups<-`( ``*`<XcmsResult>`*`)`](https://sneumann.github.io/xcms/reference/feature-grouping.md)
   : Compounding of LC-MS features
+
+- [`featureChromPeaks()`](https://sneumann.github.io/xcms/reference/featureChromPeaks.md)
+  [`featurePeakidx()`](https://sneumann.github.io/xcms/reference/featureChromPeaks.md)
+  : Feature to chromatographic peak mapping
 
 - [`featureChromatograms()`](https://sneumann.github.io/xcms/reference/featureChromatograms.md)
   : Extract ion chromatograms for each feature

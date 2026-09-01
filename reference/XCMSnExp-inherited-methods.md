@@ -12,7 +12,7 @@ object to ensure its data integrity.
 
 [`bin()`](https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html):
 allows to *bin* spectra. See
-[`MSnbase::bin()`](https://lgatto.github.io/MSnbase/reference/bin-methods.html)
+[`MSnbase::bin()`](https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html)
 documentation in the *MSnbase* package for more details and examples.
 
 [`clean()`](https://lgatto.github.io/MSnbase/reference/clean-methods.html):
@@ -24,12 +24,12 @@ documentation in the *MSnbase* package for details and examples.
 filters the
 [`XCMSnExp()`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)
 object keeping only spectra with the provided acquisition numbers. See
-[`MSnbase::filterAcquisitionNum()`](https://lgatto.github.io/MSnbase/reference/MSnExp-class.html)
+[`MSnbase::filterAcquisitionNum()`](https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html)
 for details and examples.
 
 The [`normalize()`](https://rdrr.io/pkg/BiocGenerics/man/normalize.html)
 method performs basic normalization of spectra intensities. See
-[`MSnbase::normalize()`](https://lgatto.github.io/MSnbase/reference/normalise-methods.html)
+[`MSnbase::normalize()`](https://rdrr.io/pkg/BiocGenerics/man/normalize.html)
 documentation in the *MSnbase* package for details and examples.
 
 The
@@ -48,7 +48,7 @@ documentation for details and examples.
 
 The [`smooth()`](https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html)
 method smooths spectra. See
-[`MSnbase::smooth()`](https://lgatto.github.io/MSnbase/reference/smooth-methods.html)
+[`MSnbase::smooth()`](https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html)
 documentation in *MSnbase* for details and examples.
 
 ## Usage
@@ -143,7 +143,7 @@ smooth(
   For
   [`normalize()`](https://rdrr.io/pkg/BiocGenerics/man/normalize.html):
   `character(1)` specifying the normalization method. See
-  [`MSnbase::normalize()`](https://lgatto.github.io/MSnbase/reference/normalise-methods.html)
+  [`MSnbase::normalize()`](https://rdrr.io/pkg/BiocGenerics/man/normalize.html)
   in the *MSnbase* package for details. For
   [`pickPeaks()`](https://lgatto.github.io/MSnbase/reference/pickPeaks-method.html):
   `character(1)` defining the method. See help for
@@ -151,7 +151,7 @@ smooth(
   in the *MSnbase* package for options. For
   [`smooth()`](https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html):
   `character(1)` defining the method. See
-  [`MSnbase::smooth()`](https://lgatto.github.io/MSnbase/reference/smooth-methods.html)
+  [`MSnbase::smooth()`](https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html)
   in the *MSnbase* package for options and details.
 
 - ...:

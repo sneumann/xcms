@@ -337,7 +337,7 @@ ph <- processHistory(res, type = "Missing peak filling")[[1]]
 ph
 #> Object of class "XProcessHistory"
 #>  type: Missing peak filling 
-#>  date: Sun Jul  5 13:00:52 2026 
+#>  date: Tue Sep  1 08:28:48 2026 
 #>  info:  
 #>  fileIndex: 1,2,3 
 #>  Parameter class: ChromPeakAreaParam 
@@ -349,16 +349,16 @@ ph@param
 #>  Parameters:
 #>  - rtmin: function (z, na.rm = TRUE) 
 #> quantile(z, probs = 0.25, names = FALSE, na.rm = na.rm)
-#> <environment: 0x5644698d7418>
+#> <environment: 0x55d087d321b0>
 #>  - rtmax: function (z, na.rm = TRUE) 
 #> quantile(z, probs = 0.75, names = FALSE, na.rm = na.rm)
-#> <environment: 0x5644698d7418>
+#> <environment: 0x55d087d321b0>
 #>  - mzmin: function (z, na.rm = TRUE) 
 #> quantile(z, probs = 0.25, names = FALSE, na.rm = na.rm)
-#> <environment: 0x5644698d7418>
+#> <environment: 0x55d087d321b0>
 #>  - mzmax: function (z, na.rm = TRUE) 
 #> quantile(z, probs = 0.75, names = FALSE, na.rm = na.rm)
-#> <environment: 0x5644698d7418>
+#> <environment: 0x55d087d321b0>
 #>  - minMzWidthPpm: [1] 0
 
 ## It is also possible to remove filled-in peaks:

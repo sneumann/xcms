@@ -46,8 +46,7 @@ exportMetaboAnalyst(
 
   `integer(1)` defining the number of significant digits to be used for
   numeric. The default `NULL` uses `getOption("digits")`. See
-  [`format()`](https://rdrr.io/pkg/BiocGenerics/man/format.html) for
-  more information.
+  [`format()`](https://rdrr.io/r/base/format.html) for more information.
 
 - groupnames:
 

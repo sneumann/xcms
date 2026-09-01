@@ -193,8 +193,7 @@ identified chromatographic peaks and the objects' pheno data but
 discards alignment results or feature definitions.
 
 [`plot()`](https://rdrr.io/r/graphics/plot.default.html) plots the
-spectrum data (see
-[`MSnbase::plot()`](https://lgatto.github.io/MSnbase/reference/plot-methods.html)
+spectrum data (see [`MSnbase::plot()`](https://rdrr.io/r/base/plot.html)
 for `MSnExp` objects in the *MSnbase* package for more details. For
 `type = "XIC"`, identified chromatographic peaks will be indicated as
 rectangles with border color `peakCol`.
@@ -293,6 +292,9 @@ dropFeatureDefinitions(object, keepAdjustedRtime = FALSE, dropLastN = -1)
 
 # S4 method for class 'XCMSnExp'
 dropAdjustedRtime(object)
+
+# S4 method for class 'XCMSnExp,xcmsSet'
+coerce(from, to = "xcmsSet", strict = TRUE)
 
 # S4 method for class 'XCMSnExp'
 profMat(
@@ -472,6 +474,18 @@ plot(x, y, type = c("spectra", "XIC"), peakCol = "#ff000060", ...)
   all process history steps related to peak grouping. Setting e.g.
   `dropLastN = 1` will only remove the most recent peak grouping related
   process history step.
+
+- from:
+
+  Original object.
+
+- to:
+
+  `character(1)` defining the object to cast to.
+
+- strict:
+
+  Ignored.
 
 - param:
 
@@ -753,6 +767,9 @@ Johannes Rainer
 
 ## Load a test data set with detected peaks
 library(MSnbase)
+#> Loading required package: mzR
+#> Loading required package: Rcpp
+#> Loading required package: Biobase
 #> Loading required package: BiocGenerics
 #> Loading required package: generics
 #> 
@@ -766,22 +783,22 @@ library(MSnbase)
 #> The following objects are masked from ‘package:stats’:
 #> 
 #>     IQR, mad, sd, var, xtabs
+#> The following object is masked from ‘package:utils’:
+#> 
+#>     data
 #> The following objects are masked from ‘package:base’:
 #> 
 #>     Filter, Find, Map, Position, Reduce, anyDuplicated, aperm, append,
 #>     as.data.frame, basename, cbind, colnames, dirname, do.call,
 #>     duplicated, eval, evalq, get, grep, grepl, is.unsorted, lapply,
 #>     mapply, match, mget, order, paste, pmax, pmax.int, pmin, pmin.int,
-#>     rank, rbind, rownames, sapply, saveRDS, table, tapply, unique,
-#>     unsplit, which.max, which.min
-#> Loading required package: Biobase
+#>     rank, rbind, rownames, sapply, saveRDS, scale, sequence, table,
+#>     tapply, transform, unique, unsplit, which.max, which.min
 #> Welcome to Bioconductor
 #> 
 #>     Vignettes contain introductory material; view with
 #>     'browseVignettes()'. To cite Bioconductor, see
 #>     'citation("Biobase")', and for packages 'citation("pkgname")'.
-#> Loading required package: mzR
-#> Loading required package: Rcpp
 #> Loading required package: S4Vectors
 #> Loading required package: stats4
 #> 
@@ -793,7 +810,7 @@ library(MSnbase)
 #> 
 #>     I, expand.grid, unname
 #> 
-#> This is MSnbase version 2.37.0 
+#> This is MSnbase version 2.39.5 
 #>   Visit https://lgatto.github.io/MSnbase/ to get started.
 #>  Consider switching to the 'R for Mass Spectrometry'
 #>  packages - see https://RforMassSpectrometry.org for details.
@@ -937,7 +954,7 @@ xod_2
 #>  MSn retention times: 41:41 - 74:60 minutes
 #> - - - Processing information - - -
 #> Data loaded [Wed Mar 12 08:36:21 2025] 
-#> Filter: select file(s) 2. [Sun Jul  5 13:00:11 2026] 
+#> Filter: select file(s) 2. [Tue Sep  1 08:27:59 2026] 
 #>  MSnbase version: 2.33.3 
 #> - - - Meta data  - - -
 #> phenoData

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.11.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.11.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -208,7 +208,7 @@
 <span>  msLevel <span class="op">=</span> <span class="fl">1L</span>,</span>
 <span>  chunkSize <span class="op">=</span> <span class="fl">2L</span>,</span>
 <span>  isolationWindowTargetMz <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  return.type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"XChromatograms"</span>, <span class="st">"MChromatograms"</span><span class="op">)</span>,</span>
+<span>  return.type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"XChromatograms"</span>, <span class="st">"MChromatograms"</span>, <span class="st">"Chromatograms"</span><span class="op">)</span>,</span>
 <span>  include <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  chromPeaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"apex_within"</span>, <span class="st">"any"</span>, <span class="st">"none"</span><span class="op">)</span>,</span>
 <span>  BPPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -252,12 +252,13 @@
 <span>  expandMz <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  aggregationFun <span class="op">=</span> <span class="st">"max"</span>,</span>
 <span>  features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  return.type <span class="op">=</span> <span class="st">"XChromatograms"</span>,</span>
+<span>  return.type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"XChromatograms"</span>, <span class="st">"MChromatograms"</span>, <span class="st">"Chromatograms"</span><span class="op">)</span>,</span>
 <span>  chunkSize <span class="op">=</span> <span class="fl">2L</span>,</span>
 <span>  mzmin <span class="op">=</span> <span class="va">min</span>,</span>
 <span>  mzmax <span class="op">=</span> <span class="va">max</span>,</span>
 <span>  rtmin <span class="op">=</span> <span class="va">min</span>,</span>
 <span>  rtmax <span class="op">=</span> <span class="va">max</span>,</span>
+<span>  featureArea <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">...</span>,</span>
 <span>  progressbar <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  BPPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -781,10 +782,10 @@
 <span><span class="fu">peakGroupsMatrix</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'PeakGroupsParam'</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'PeakGroupsParam'</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'PeakGroupsParam'</span></span>
 <span><span class="fu">subsetAdjust</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
@@ -850,10 +851,10 @@
 <span><span class="fu">initPenalty</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'ObiwarpParam'</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'ObiwarpParam'</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'ObiwarpParam'</span></span>
 <span><span class="fu">subsetAdjust</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
@@ -927,7 +928,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.9000.</p>
 </div>
 
     </footer></div>

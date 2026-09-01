@@ -28,6 +28,8 @@ toXcmsExperimentHdf5(object, hdf5File = tempfile())
 
 toXcmsExperiment(object, ...)
 
+XcmsExperimentHdf5()
+
 # S4 method for class 'XcmsExperimentHdf5'
 chromPeakData(
   object,
@@ -258,6 +260,11 @@ file specified with parameter `hdf5File`.
 
 ## Correspondence analysis results
 
+- [`featureChromPeaks()`](https://sneumann.github.io/xcms/reference/featureChromPeaks.md):
+  get the mapping between features and chromatographic peaks. See
+  [`featureChromPeaks()`](https://sneumann.github.io/xcms/reference/featureChromPeaks.md)
+  for details.
+
 - [`featureDefinitions()`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md):
   similarly to
   [`featureDefinitions()`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)
@@ -266,8 +273,12 @@ file specified with parameter `hdf5File`.
   objects, this method returns a `data.frame` with the characteristics
   for the defined LC-MS features. The function for `XcmsExperimentHdf5`
   does however **not** return the `"peakidx"` column with the indices of
-  the chromatographic peaks per feature. Also, the columns are returned
-  in alphabetic order.
+  the chromatographic peaks per feature. This information can be
+  extracted with the
+  [`featurePeakidx()`](https://sneumann.github.io/xcms/reference/featureChromPeaks.md)
+  function. Note: the columns of the data frame returned by
+  [`featureDefinitions()`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)
+  are in alphabetic order.
 
 - [`featureValues()`](https://sneumann.github.io/xcms/reference/XCMSnExp-peak-grouping-results.md):
   for parameter `value`, the option `value = "index"` (i.e. returning
@@ -324,7 +335,7 @@ xmse
 #>  xcms results:
 #>   - chromatographic peaks in MS level(s): 1 
 #>  results storage file:
-#>    /tmp/RtmpR7KJj9/file48e25a3a10ce
+#>    /tmp/RtmpL9y8Ok/file258b51f0430c
 
 ## Extract selected columnds from the chromatographic peak detection
 ## results

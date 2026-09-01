@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.11.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.11.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -41,7 +41,21 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="4.11" id="xcms-411">xcms 4.11<a class="anchor" aria-label="anchor" href="#xcms-411"></a></h2>
 <div class="section level3">
-<h3 id="changes-in-version-4-11">Changes in version 4.11.1<a class="anchor" aria-label="anchor" href="#changes-in-version-4-11"></a></h3>
+<h3 id="changes-in-version-4-11">Changes in version 4.11.3<a class="anchor" aria-label="anchor" href="#changes-in-version-4-11"></a></h3>
+<ul><li>Workaround for errors reading subsets of data from HDF5 files with <code>XcmsExperimentHdf5</code>: original issue reported in <em>rhdf5</em>: <a href="https://github.com/Huber-group-EMBL/rhdf5/issues/240" class="external-link uri">https://github.com/Huber-group-EMBL/rhdf5/issues/240</a> . Code can be reverted once the problem is fixed upstream in <em>rhdf5</em>.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="changes-in-version-4-11-1">Changes in version 4.11.2<a class="anchor" aria-label="anchor" href="#changes-in-version-4-11-1"></a></h3>
+<ul><li>Add support to return chromatographic data as a <code>Chromatograms</code> object with the <code><a href="../reference/chromatogram-method.html">chromatogram()</a></code> method from <code>MsExperiment</code>, <code>XcmsExperiment</code> and <code>XcmsExperimentHdf5</code> objects.</li>
+<li>Add support for <code>Chromatograms</code> to the <code><a href="../reference/chromPeakChromatograms.html">chromPeakChromatograms()</a></code> method for <code>XcmsExperiment</code> and <code>XcmsExperimentHdf5</code> objects.</li>
+<li>Add support for <code>Chromatograms</code> to the <code><a href="../reference/featureChromatograms.html">featureChromatograms()</a></code> method for <code>XcmsExperiment</code> and <code>XcmsExperimentHdf5</code> objects.</li>
+<li>Add new methods <code><a href="../reference/featureChromPeaks.html">featureChromPeaks()</a></code> and <code><a href="../reference/featureChromPeaks.html">featurePeakidx()</a></code> to access the mapping between features and chromatographic peaks.</li>
+<li>
+<code><a href="../reference/loadXcmsData.html">loadXcmsData()</a></code> updates parameter class definitions in the object’s <em>process history</em>.</li>
+<li>Fix <code>chromPeakData&lt;-</code> for <code>XcmsExperiment</code> not supporting a <code>DataFrame</code> as input (issue <a href="https://github.com/sneumann/xcms/issues/839" class="external-link">#839</a>).</li>
+</ul></div>
+<div class="section level3">
+<h3 id="changes-in-version-4-11-2">Changes in version 4.11.1<a class="anchor" aria-label="anchor" href="#changes-in-version-4-11-2"></a></h3>
 <ul><li>
 <code>refineChromPeaks,MergeNeighboringPeakParam</code>: drop row names of intermediate objects to avoid potentially misleading warning message.</li>
 </ul></div>
@@ -700,8 +714,7 @@
 <li>Replace xcmsDirect.Rnw with rmarkdown-based vignette using the new user interface.</li>
 <li>issue <a href="https://github.com/sneumann/xcms/issues/196" class="external-link">#196</a>: removed the unnecessary requirement for same-dimension profile matrices in adjustRtime,XCMSnExp,ObiwarpParam.</li>
 <li>issue <a href="https://github.com/sneumann/xcms/issues/194" class="external-link">#194</a>: fixes in retcor.obiwarp: 1) subset raw data if scanrange != NULL.
-<ol start="2" style="list-style-type: decimal"><li>if the mz range of the two files to be aligned differ, expand them correctly. Depending on the profStep and the mz values/ranges the matrices were not expanded correctly.</li>
-</ol></li>
+2) if the mz range of the two files to be aligned differ, expand them correctly. Depending on the profStep and the mz values/ranges the matrices were not expanded correctly.</li>
 <li>Potential problems in the plotChromPeakDensity function.</li>
 </ul></div>
 <div class="section level3">
@@ -1137,7 +1150,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.9000.</p>
 </div>
 
     </footer></div>

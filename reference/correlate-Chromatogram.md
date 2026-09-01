@@ -1,7 +1,7 @@
 # Correlate chromatograms
 
 **For `xcms` \>= 3.15.3 please use
-[`MSnbase::compareChromatograms()`](https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html)
+[`MSnbase::compareChromatograms()`](https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html)
 instead of `correlate`**
 
 Correlate intensities of two chromatograms with each other. If the two

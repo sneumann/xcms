@@ -25,7 +25,7 @@ Arguments section."><meta property="og:image" content="https://sneumann.github.i
 
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.11.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.11.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -739,7 +739,7 @@ detection on <code><a href="https://lgatto.github.io/MSnbase/reference/MChromato
 <span class="r-in"><span><span class="va">xchrs</span> <span class="op">&lt;-</span> <span class="fu">XChromatograms</span><span class="op">(</span><span class="va">dta</span>, chromPeaks <span class="op">=</span> <span class="va">pks</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Create an XChromatograms from XChromatogram objects</span></span></span>
-<span class="r-in"><span><span class="va">dta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">dta</span>, <span class="va">as</span>, <span class="st">"XChromatogram"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">dta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">dta</span>, <span class="va">as</span>, <span class="st">"XChromatogram"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">dta</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">pks</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">xchrs</span> <span class="op">&lt;-</span> <span class="fu">XChromatograms</span><span class="op">(</span><span class="va">dta</span>, nrow <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
@@ -792,7 +792,7 @@ detection on <code><a href="https://lgatto.github.io/MSnbase/reference/MChromato
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[1]]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Object of class "XProcessHistory"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  type: Peak detection </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  date: Sun Jul  5 13:00:15 2026 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  date: Tue Sep  1 08:28:03 2026 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  info:  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  fileIndex: 1,2 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Parameter class: CentWaveParam </span>
@@ -871,7 +871,7 @@ detection on <code><a href="https://lgatto.github.io/MSnbase/reference/MChromato
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lgatto.github.io/MSnbase" class="external-link">MSnbase</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co">## Create a XChromatogram object</span></span></span>
 <span class="r-in"><span><span class="va">pks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span>nrow <span class="op">=</span> <span class="fl">1</span>, ncol <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">pks</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"rt"</span>, <span class="st">"rtmin"</span>, <span class="st">"rtmax"</span>, <span class="st">"into"</span>, <span class="st">"maxo"</span>, <span class="st">"sn"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">pks</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"rt"</span>, <span class="st">"rtmin"</span>, <span class="st">"rtmax"</span>, <span class="st">"into"</span>, <span class="st">"maxo"</span>, <span class="st">"sn"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">pks</span><span class="op">[</span>, <span class="st">"rtmin"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">2</span></span></span>
 <span class="r-in"><span><span class="va">pks</span><span class="op">[</span>, <span class="st">"rtmax"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">9</span></span></span>
 <span class="r-in"><span><span class="va">pks</span><span class="op">[</span>, <span class="st">"rt"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">4</span></span></span>
@@ -927,7 +927,7 @@ detection on <code><a href="https://lgatto.github.io/MSnbase/reference/MChromato
 <span class="r-plt img"><img src="XChromatogram-6.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Add a second peak to the data.</span></span></span>
-<span class="r-in"><span><span class="va">pks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">xchr</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">7</span>, <span class="fl">7</span>, <span class="fl">10</span>, <span class="cn">NA</span>, <span class="fl">15</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">pks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">xchr</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">7</span>, <span class="fl">7</span>, <span class="fl">10</span>, <span class="cn">NA</span>, <span class="fl">15</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">xchr</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">pks</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Plot the peaks in different colors</span></span></span>
@@ -964,7 +964,7 @@ detection on <code><a href="https://lgatto.github.io/MSnbase/reference/MChromato
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.9000.</p>
 </div>
 
     </footer></div>

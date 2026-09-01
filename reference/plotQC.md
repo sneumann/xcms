@@ -59,7 +59,7 @@ Michael Wenk, Michael Wenk <michael.wenk@student.uni-halle.de>
 
 ``` r
 library(faahKO)
-xsg <- group(faahko)
+xsg <- xcms::group(faahko)
 
 plotQC(xsg, what="mzdevhist")
 

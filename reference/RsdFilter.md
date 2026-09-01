@@ -90,9 +90,9 @@ calculating the RSD.
 ## See also
 
 Other Filter features in xcms:
-[`BlankFlag`](https://sneumann.github.io/xcms/reference/BlankFlag.md),
-[`DratioFilter`](https://sneumann.github.io/xcms/reference/DratioFilter.md),
-[`PercentMissingFilter`](https://sneumann.github.io/xcms/reference/PercentMissingFilter.md)
+[`BlankFlag()`](https://sneumann.github.io/xcms/reference/BlankFlag.md),
+[`DratioFilter()`](https://sneumann.github.io/xcms/reference/DratioFilter.md),
+[`PercentMissingFilter()`](https://sneumann.github.io/xcms/reference/PercentMissingFilter.md)
 
 ## Author
 

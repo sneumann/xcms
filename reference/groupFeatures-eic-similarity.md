@@ -10,7 +10,7 @@ which the grouping (considering parameter `threshold`) will be
 performed.
 
 The
-[`MSnbase::compareChromatograms()`](https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html)
+[`MSnbase::compareChromatograms()`](https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html)
 function is used for similarity calculation which by default calculates
 the Pearson's correlation coefficient. The settings for
 [`compareChromatograms()`](https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html)
@@ -30,7 +30,7 @@ Parameter `FUN` defines the function to calculate the similarity score
 and defaults to `FUN = cor` and `FUNARGS` allows to pass additional
 arguments to this function (defaults to
 `FUNARGS = list(use = "pairwise.complete.obs")`. See also
-[`MSnbase::compareChromatograms()`](https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html)
+[`MSnbase::compareChromatograms()`](https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html)
 for more information.
 
 The grouping of features based on the EIC similarity matrix is performed
@@ -112,7 +112,7 @@ groupFeatures(object, param, msLevel = 1L)
   documentation of
   [`MSnbase::Chromatogram()`](https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html)
   and
-  [`MSnbase::compareChromatograms()`](https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html)
+  [`MSnbase::compareChromatograms()`](https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html)
   for more information.
 
 - ALIGNFUNARGS:
@@ -125,7 +125,7 @@ groupFeatures(object, param, msLevel = 1L)
   `function` defining the function to be used to calculate a similarity
   between (aligned) chromatograms. Defaults to `FUN = cor`. See
   [`cor()`](https://rdrr.io/r/stats/cor.html) and
-  [`MSnbase::compareChromatograms()`](https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html)
+  [`MSnbase::compareChromatograms()`](https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html)
   for more information.
 
 - FUNARGS:

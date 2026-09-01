@@ -1,13 +1,13 @@
 # LC-MS data preprocessing and analysis with xcms
 
-**Package**: *[xcms](https://bioconductor.org/packages/3.23/xcms)*\
+**Package**: *[xcms](https://bioconductor.org/packages/3.24/xcms)*\
 **Authors**: Philippine Louail, Johannes Rainer\
-**Modified**: 2026-07-05 12:02:17.561418\
-**Compiled**: Sun Jul 5 13:04:40 2026
+**Modified**: 2026-09-01 07:29:04.203735\
+**Compiled**: Tue Sep 1 08:33:46 2026
 
 ## Introduction
 
-The *[xcms](https://bioconductor.org/packages/3.23/xcms)* package
+The *[xcms](https://bioconductor.org/packages/3.24/xcms)* package
 provides the functionality to perform the preprocessing of LC-MS, GC-MS
 or LC-MS/MS data in which raw signals from mzML, mzXML or CDF files are
 processed into *feature* abundances. This preprocessing includes
@@ -18,12 +18,12 @@ The first version of the package was already published in 2006 \[1\] and
 has since been updated and modernized in several rounds to better
 integrate it with other R-based packages for the analysis of untargeted
 metabolomics data. This includes version 3 of *xcms* that used the
-*[MSnbase](https://bioconductor.org/packages/3.23/MSnbase)* package for
+*[MSnbase](https://bioconductor.org/packages/3.24/MSnbase)* package for
 MS data representation \[2\]. The most recent update (*xcms* version 4)
 \[3\] enables in addition preprocessing of MS data represented by the
 modern
-*[MsExperiment](https://bioconductor.org/packages/3.23/MsExperiment)*
-and *[Spectra](https://bioconductor.org/packages/3.23/Spectra)* packages
+*[MsExperiment](https://bioconductor.org/packages/3.24/MsExperiment)*
+and *[Spectra](https://bioconductor.org/packages/3.24/Spectra)* packages
 which provides an even better integration with the
 [RforMassSpectrometry](https://rformassspectrometry.org) R package
 ecosystem simplifying e.g. also compound annotation \[4\].
@@ -44,7 +44,7 @@ website](https://rformassspectrometry.github.io/Metabonaut/).
 ### Data import
 
 *xcms* supports analysis of any LC-MS(/MS) data that can be imported
-with the *[Spectra](https://bioconductor.org/packages/3.23/Spectra)*
+with the *[Spectra](https://bioconductor.org/packages/3.24/Spectra)*
 package. Such data will typically be provided in (AIA/ANDI) NetCDF,
 mzXML and mzML format but can, through dedicated extensions to the
 *Spectra* package, also be imported from other sources, e.g. also
@@ -54,7 +54,7 @@ For demonstration purpose we will analyze in this document a small
 subset of the data from \[5\] in which the metabolic consequences of the
 knock-out of the fatty acid amide hydrolase (FAAH) gene in mice was
 investigated. The raw data files (in NetCDF format) are provided through
-the *[faahKO](https://bioconductor.org/packages/3.23/faahKO)* data
+the *[faahKO](https://bioconductor.org/packages/3.24/faahKO)* data
 package. The data set consists of samples from the spinal cords of 6
 knock-out and 6 wild-type mice. Each file contains data in centroid mode
 acquired in positive ion polarity from 200-600 m/z and 2500-4500
@@ -71,34 +71,13 @@ function (if the file is in *csv* or tabulator delimited text file
 format) or also using functions from the *readxl* R package if it is in
 Excel file format.
 
-``` r
-
-library(xcms)
-library(faahKO)
-library(RColorBrewer)
-library(pander)
-library(pheatmap)
-library(MsExperiment)
-
-## Get the full path to the CDF files
-cdfs <- dir(system.file("cdf", package = "faahKO"), full.names = TRUE,
-            recursive = TRUE)[c(1, 2, 5, 6, 7, 8, 11, 12)]
-## Create a phenodata data.frame
-pd <- data.frame(sample_name = sub(basename(cdfs), pattern = ".CDF",
-                                   replacement = "", fixed = TRUE),
-                 sample_group = c(rep("KO", 4), rep("WT", 4)),
-                 stringsAsFactors = FALSE)
-```
+[`library`](https://rdrr.io/r/base/library.html)`(`[`xcms`](https://github.com/sneumann/xcms)`)`` `[`library`](https://rdrr.io/r/base/library.html)`(`[`faahKO`](http://dx.doi.org/10.1021/bi0480335)`)`` `[`library`](https://rdrr.io/r/base/library.html)`(``RColorBrewer``)`` `[`library`](https://rdrr.io/r/base/library.html)`(`[`pander`](https://rapporter.github.io/pander/)`)`` `[`library`](https://rdrr.io/r/base/library.html)`(``pheatmap``)`` `[`library`](https://rdrr.io/r/base/library.html)`(`[`MsExperiment`](https://github.com/RforMassSpectrometry/MsExperiment)`)`` `` ``## Get the full path to the CDF files`` ``cdfs`` ``<-`` `[`dir`](https://rdrr.io/r/base/list.files.html)`(`[`system.file`](https://rdrr.io/r/base/system.file.html)`(``"cdf"``, package ``=`` ``"faahKO"``)``, full.names ``=`` ``TRUE``,`` `` recursive ``=`` ``TRUE``)``[`[`c`](https://rdrr.io/r/base/c.html)`(``1``, ``2``, ``5``, ``6``, ``7``, ``8``, ``11``, ``12``)``]`` ``## Create a phenodata data.frame`` ``pd`` ``<-`` `[`data.frame`](https://rdrr.io/r/base/data.frame.html)`(``sample_name ``=`` `[`sub`](https://rdrr.io/r/base/grep.html)`(`[`basename`](https://rdrr.io/r/base/basename.html)`(``cdfs``)``, pattern ``=`` ``".CDF"``,`` `` replacement ``=`` ``""``, fixed ``=`` ``TRUE``)``,`` `` sample_group ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(`[`rep`](https://rdrr.io/r/base/rep.html)`(``"KO"``, ``4``)``, `[`rep`](https://rdrr.io/r/base/rep.html)`(``"WT"``, ``4``)``)``,`` `` stringsAsFactors ``=`` ``FALSE``)`
 
 We next load our data using the `readMsExperiment` function from the
-*[MsExperiment](https://bioconductor.org/packages/3.23/MsExperiment)*
+*[MsExperiment](https://bioconductor.org/packages/3.24/MsExperiment)*
 package.
 
-``` r
-
-faahko <- readMsExperiment(spectraFiles = cdfs, sampleData = pd)
-faahko
-```
+`faahko`` ``<-`` `[`readMsExperiment`](https://rdrr.io/pkg/MsExperiment/man/readMsExperiment.html)`(``spectraFiles ``=`` ``cdfs``, sampleData ``=`` ``pd``)`` ``faahko`
 
     ## Object of class MsExperiment 
     ##  Spectra: MS1 (10224) 
@@ -110,7 +89,7 @@ The MS spectra data from our experiment is now available as a `Spectra`
 object within `faahko`. Note that this `MsExperiment` container could in
 addition to spectra data also contain other types of data or also
 references to other files. See the vignette from the
-*[MsExperiment](https://bioconductor.org/packages/3.23/MsExperiment)*
+*[MsExperiment](https://bioconductor.org/packages/3.24/MsExperiment)*
 for more details. Also, when loading data from mzML, mzXML or CDF files,
 by default only general spectra data is loaded into memory while the
 actual *peaks data*, i.e. the m/z and intensity values are only
@@ -122,7 +101,7 @@ also different alternative *backends* (and hence data representations)
 could be used for the `Spectra` object within `faahko` with eventually
 even lower memory footprint, or higher performance. See the package
 vignette from the
-*[Spectra](https://bioconductor.org/packages/3.23/Spectra)* package or
+*[Spectra](https://bioconductor.org/packages/3.24/Spectra)* package or
 the [SpectraTutorials](https://jorainer.github.io/SpectraTutorials)
 tutorial for more details on `Spectra` backends and how to change
 between them.
@@ -135,10 +114,7 @@ be accessed through the
 [`spectra()`](https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html)
 function.
 
-``` r
-
-spectra(faahko)
-```
+[`spectra`](https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html)`(``faahko``)`
 
     ## MSn data (Spectra) with 10224 spectra in a MsBackendMzR backend:
     ##         msLevel     rtime scanIndex
@@ -168,10 +144,7 @@ function can be used to get for each spectrum the information to which
 of the data files it belongs. Below we simply count the number of
 spectra per file.
 
-``` r
-
-table(fromFile(faahko))
-```
+[`table`](https://rdrr.io/r/base/table.html)`(`[`fromFile`](https://lgatto.github.io/MSnbase/reference/Spectrum-class.html)`(``faahko``)``)`
 
     ## 
     ##    1    2    3    4    5    6    7    8 
@@ -181,10 +154,7 @@ Information on samples can be retrieved through the
 [`sampleData()`](https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html)
 function.
 
-``` r
-
-sampleData(faahko)
-```
+[`sampleData`](https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html)`(``faahko``)`
 
     ## DataFrame with 8 rows and 3 columns
     ##          sample_name sample_group spectraOrigin
@@ -203,11 +173,7 @@ Each row in this `DataFrame` represents one sample (input file). Using
 Below we subset the `faahko` to the 3rd sample (file) and access its
 spectra and sample data.
 
-``` r
-
-faahko_3 <- faahko[3]
-spectra(faahko_3)
-```
+`faahko_3`` ``<-`` ``faahko``[``3``]`` `[`spectra`](https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html)`(``faahko_3``)`
 
     ## MSn data (Spectra) with 1278 spectra in a MsBackendMzR backend:
     ##        msLevel     rtime scanIndex
@@ -228,78 +194,41 @@ spectra(faahko_3)
     ## file(s):
     ## ko21.CDF
 
-``` r
-
-sampleData(faahko_3)
-```
+[`sampleData`](https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html)`(``faahko_3``)`
 
     ## DataFrame with 1 row and 3 columns
     ##          sample_name sample_group spectraOrigin
     ##          <character>  <character>   <character>
     ## ko21.CDF        ko21           KO /__w/_temp...
 
+#### Inspecting chromatographic data
+
 As a first evaluation of the data we below plot the base peak
 chromatogram (BPC) for each file in our experiment. We use the
 [`chromatogram()`](https://sneumann.github.io/xcms/reference/chromatogram-method.md)
 method and set the `aggregationFun` to `"max"` to return for each
 spectrum the maximal intensity and hence create the BPC from the raw
-data. To create a total ion chromatogram we could set `aggregationFun`
-to `"sum"`.
+data (using `"sum"` instead would create a total ion chromatogram). Note
+that we also set `return.type = "Chromatograms"` to switch to the newer
+infrastructure for chromatographic data in R, provided by Bioconductor’s
+*[Chromatograms](https://bioconductor.org/packages/3.24/Chromatograms)*
+package.
 
-``` r
-
-## Get the base peak chromatograms. This reads data from the files.
-bpis <- chromatogram(faahko, aggregationFun = "max")
-## Define colors for the two groups
-group_colors <- paste0(brewer.pal(3, "Set1")[1:2], "60")
-names(group_colors) <- c("KO", "WT")
-
-## Plot all chromatograms.
-plot(bpis, col = group_colors[sampleData(faahko)$sample_group])
-```
+`## Get the base peak chromatograms. This reads data from the files.`` ``bpis`` ``<-`` `[`chromatogram`](https://sneumann.github.io/xcms/reference/chromatogram-method.md)`(``faahko``, aggregationFun ``=`` ``"max"``,`` `` return.type ``=`` ``"Chromatograms"``)`` ``## Define colors for the two groups`` ``group_colors`` ``<-`` `[`paste0`](https://rdrr.io/r/base/paste.html)`(`[`brewer.pal`](https://rdrr.io/pkg/RColorBrewer/man/ColorBrewer.html)`(``3``, ``"Set1"``)``[``1``:``2``]``, ``"60"``)`` `[`names`](https://rdrr.io/r/base/names.html)`(``group_colors``)`` ``<-`` `[`c`](https://rdrr.io/r/base/c.html)`(``"KO"``, ``"WT"``)`` `` ``## Plot all chromatograms.`` `[`library`](https://rdrr.io/r/base/library.html)`(`[`Chromatograms`](https://github.com/RforMassSpectrometry/Chromatograms)`)`` `[`plotChromatogramsOverlay`](https://sneumann.github.io/xcms/reference/plotChromatogramsOverlay.md)`(`` `` ``bpis``, col ``=`` ``group_colors``[`[`sampleData`](https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html)`(``faahko``)``$``sample_group``]``)`` `[`grid`](https://rdrr.io/r/graphics/grid.html)`(``)`
 
 ![Base peak
 chromatogram.](xcms_files/figure-html/data-inspection-bpc-1.png)
 
 Base peak chromatogram.
 
-The
-[`chromatogram()`](https://sneumann.github.io/xcms/reference/chromatogram-method.md)
-method returned a `MChromatograms` object that organizes individual
-`Chromatogram` objects (which in fact contain the chromatographic data)
-in a two-dimensional array: columns represent samples and rows
-(optionally) m/z and/or retention time ranges. Below we extract the
-chromatogram of the first sample and access its retention time and
-intensity values.
-
-``` r
-
-bpi_1 <- bpis[1, 1]
-rtime(bpi_1) |> head()
-```
-
-    ## [1] 2501.378 2502.943 2504.508 2506.073 2507.638 2509.203
-
-``` r
-
-intensity(bpi_1) |> head()
-```
-
-    ## [1] 43888 43960 43392 42632 42200 42288
-
 From the BPC above it seems that after around 4200 seconds no signal is
 measured anymore. Thus, we filter below the full data set to a retention
 time range from 2550 to 4250 seconds using the
 [`filterRt()`](https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html)
 function. Note that at present this will only subset the spectra within
-the `MsExperiment`. Subsequently we re-create also the BPC.
+the `MsExperiment`.
 
-``` r
-
-faahko <- filterRt(faahko, rt = c(2550, 4250))
-## creating the BPC on the subsetted data
-bpis <- chromatogram(faahko, aggregationFun = "max")
-```
+`faahko`` ``<-`` `[`filterRt`](https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html)`(``faahko``, rt ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``2550``, ``4250``)``)`
 
 We next create boxplots representing the distribution of the total ion
 currents per data file. Such plots can be very useful to spot
@@ -309,18 +238,47 @@ function on the `Spectra` object within `faahko` and split the values by
 file using
 [`fromFile()`](https://lgatto.github.io/MSnbase/reference/Spectrum-class.html).
 
-``` r
-
-## Get the total ion current by file
-tc <- spectra(faahko) |>
-    tic() |>
-    split(f = fromFile(faahko))
-boxplot(tc, col = group_colors[sampleData(faahko)$sample_group],
-        ylab = "intensity", main = "Total ion current")
-```
+`## Get the total ion current by file`` ``tc`` ``<-`` `[`spectra`](https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html)`(``faahko``)`` ``|>`` `` `[`tic`](https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html)`(``)`` ``|>`` `` `[`split`](https://rdrr.io/r/base/split.html)`(``f ``=`` `[`fromFile`](https://lgatto.github.io/MSnbase/reference/Spectrum-class.html)`(``faahko``)``)`` `[`boxplot`](https://rdrr.io/r/graphics/boxplot.html)`(``tc``, col ``=`` ``group_colors``[`[`sampleData`](https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html)`(``faahko``)``$``sample_group``]``,`` `` ylab ``=`` ``"intensity"``, main ``=`` ``"Total ion current"``)`
 
 ![Distribution of total ion currents per
 file.](xcms_files/figure-html/data-inspection-tic-boxplot-1.png)
+
+Distribution of total ion currents per file.
+
+#### Inspecting chromatographic data, legacy framework
+
+While the
+*[Chromatograms](https://bioconductor.org/packages/3.24/Chromatograms)*
+will become the new standard infrastructure to represent and handle
+chromatographic data, *xcms* still fully supports the legacy
+*MSnbase*-based objects. To use the legacy objects (that at present
+provide more functionality) use `return.type = "MChromatograms"` in the
+[`chromatogram()`](https://sneumann.github.io/xcms/reference/chromatogram-method.md)
+calls.
+
+`## Get the base peak chromatograms. This reads data from the files.`` ``bpis`` ``<-`` `[`chromatogram`](https://sneumann.github.io/xcms/reference/chromatogram-method.md)`(``faahko``, aggregationFun ``=`` ``"max"``,`` `` return.type ``=`` ``"MChromatograms"``)`` `` ``## Plot all chromatograms.`` `[`plot`](https://rdrr.io/r/base/plot.html)`(``bpis``, col ``=`` ``group_colors``[`[`sampleData`](https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html)`(``faahko``)``$``sample_group``]``)`` `[`grid`](https://rdrr.io/r/graphics/grid.html)`(``)`
+
+![Base peak
+chromatogram.](xcms_files/figure-html/legacy-data-inspection-bpc-1.png)
+
+Base peak chromatogram.
+
+With `return.type = "MChromatograms"`, the
+[`chromatogram()`](https://sneumann.github.io/xcms/reference/chromatogram-method.md)
+method returned the data as a legacy `MChromatograms` object.
+
+We next create boxplots representing the distribution of the total ion
+currents per data file. Such plots can be very useful to spot
+potentially problematic MS runs. To extract this information, we use the
+[`tic()`](https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html)
+function on the `Spectra` object within `faahko` and split the values by
+file using
+[`fromFile()`](https://lgatto.github.io/MSnbase/reference/Spectrum-class.html).
+
+`## Get the total ion current by file`` ``tc`` ``<-`` `[`spectra`](https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html)`(``faahko``)`` ``|>`` `` `[`tic`](https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html)`(``)`` ``|>`` `` `[`split`](https://rdrr.io/r/base/split.html)`(``f ``=`` `[`fromFile`](https://lgatto.github.io/MSnbase/reference/Spectrum-class.html)`(``faahko``)``)`` `[`boxplot`](https://rdrr.io/r/graphics/boxplot.html)`(``tc``, col ``=`` ``group_colors``[`[`sampleData`](https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html)`(``faahko``)``$``sample_group``]``,`` `` ylab ``=`` ``"intensity"``, main ``=`` ``"Total ion current"``)`
+
+![Distribution of total ion currents per
+file.](xcms_files/figure-html/legacy-data-inspection-tic-boxplot-1.png)
 
 Distribution of total ion currents per file.
 
@@ -335,26 +293,10 @@ bins. The clustering is then performed using complete linkage
 hierarchical clustering on the pairwise correlations of the binned base
 peak chromatograms.
 
-``` r
-
-## Bin the BPC
-bpis_bin <- bin(bpis, binSize = 2)
-
-## Calculate correlation on the log2 transformed base peak intensities
-cormat <- cor(log2(do.call(cbind, lapply(bpis_bin, intensity))))
-colnames(cormat) <- rownames(cormat) <- bpis_bin$sample_name
-
-## Define which phenodata columns should be highlighted in the plot
-ann <- data.frame(group = bpis_bin$sample_group)
-rownames(ann) <- bpis_bin$sample_name
-
-## Perform the cluster analysis
-pheatmap(cormat, annotation = ann,
-         annotation_color = list(group = group_colors))
-```
+`## Bin the BPC`` ``bpis_bin`` ``<-`` `[`bin`](https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html)`(``bpis``, binSize ``=`` ``2``)`` `` ``## Calculate correlation on the log2 transformed base peak intensities`` ``cormat`` ``<-`` `[`cor`](https://rdrr.io/r/stats/cor.html)`(`[`log2`](https://rdrr.io/r/base/Log.html)`(`[`do.call`](https://rdrr.io/r/base/do.call.html)`(``cbind``, `[`lapply`](https://rdrr.io/r/base/lapply.html)`(``bpis_bin``, ``intensity``)``)``)``)`` `[`colnames`](https://rdrr.io/r/base/colnames.html)`(``cormat``)`` ``<-`` `[`rownames`](https://rdrr.io/r/base/colnames.html)`(``cormat``)`` ``<-`` ``bpis_bin``$``sample_name`` `` ``## Define which phenodata columns should be highlighted in the plot`` ``ann`` ``<-`` `[`data.frame`](https://rdrr.io/r/base/data.frame.html)`(``group ``=`` ``bpis_bin``$``sample_group``)`` `[`rownames`](https://rdrr.io/r/base/colnames.html)`(``ann``)`` ``<-`` ``bpis_bin``$``sample_name`` `` ``## Perform the cluster analysis`` `[`pheatmap`](https://rdrr.io/pkg/pheatmap/man/pheatmap.html)`(``cormat``, annotation ``=`` ``ann``,`` `` annotation_color ``=`` `[`list`](https://rdrr.io/r/base/list.html)`(``group ``=`` ``group_colors``)``)`
 
 ![Grouping of samples based on similarity of their base peak
-chromatogram.](xcms_files/figure-html/data-inspection-bpc-heatmap-1.png)
+chromatogram.](xcms_files/figure-html/legacy-data-inspection-bpc-heatmap-1.png)
 
 Grouping of samples based on similarity of their base peak chromatogram.
 
@@ -382,15 +324,7 @@ Below we extract the EIC for one compound using the
 function by specifying in addition the m/z and retention time range
 where we would expect the signal for that compound.
 
-``` r
-
-## Define the rt and m/z range of the peak area
-rtr <- c(2700, 2900)
-mzr <- c(334.9, 335.1)
-## extract the chromatogram
-chr_raw <- chromatogram(faahko, mz = mzr, rt = rtr)
-plot(chr_raw, col = group_colors[chr_raw$sample_group])
-```
+`## Define the rt and m/z range of the peak area`` ``rtr`` ``<-`` `[`c`](https://rdrr.io/r/base/c.html)`(``2700``, ``2900``)`` ``mzr`` ``<-`` `[`c`](https://rdrr.io/r/base/c.html)`(``334.9``, ``335.1``)`` ``## extract the chromatogram`` ``chr_raw`` ``<-`` `[`chromatogram`](https://sneumann.github.io/xcms/reference/chromatogram-method.md)`(``faahko``, mz ``=`` ``mzr``, rt ``=`` ``rtr``)`` `[`plot`](https://rdrr.io/r/base/plot.html)`(``chr_raw``, col ``=`` ``group_colors``[``chr_raw``$``sample_group``]``)`
 
 ![Extracted ion chromatogram for one
 peak.](xcms_files/figure-html/peak-detection-plot-eic-1.png)
@@ -423,13 +357,7 @@ finally plot the object with `type = "XIC"` to produce the plot below.
 We use the *pipe* (`|>`) operator to better illustrate the corresponding
 workflow.
 
-``` r
-
-faahko |>
-filterRt(rt = rtr) |>
-filterMz(mz = mzr) |>
-plot(type = "XIC")
-```
+`faahko`` ``|>`` `[`filterRt`](https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html)`(``rt ``=`` ``rtr``)`` ``|>`` `[`filterMz`](https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html)`(``mz ``=`` ``mzr``)`` ``|>`` `[`plot`](https://rdrr.io/r/base/plot.html)`(``type ``=`` ``"XIC"``)`
 
 ![Visualization of the raw MS data for one peak. For each plot: upper
 panel: chromatogram plotting the intensity values against the retention
@@ -481,19 +409,13 @@ for this algorithm. We use a `CentWaveParam` parameter object to use and
 configure the *centWave* algorithm with default settings, except for
 `snthresh`.
 
-``` r
-
-xchr <- findChromPeaks(chr_raw, param = CentWaveParam(snthresh = 2))
-```
+`xchr`` ``<-`` `[`findChromPeaks`](https://sneumann.github.io/xcms/reference/findChromPeaks.md)`(``chr_raw``, param ``=`` `[`CentWaveParam`](https://sneumann.github.io/xcms/reference/findChromPeaks-centWave.md)`(``snthresh ``=`` ``2``)``)`
 
 We can access the identified chromatographic peaks with the
 [`chromPeaks()`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)
 function.
 
-``` r
-
-chromPeaks(xchr)
-```
+[`chromPeaks`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``xchr``)`
 
     ##        mz mzmin mzmax       rt    rtmin    rtmax        into        intb  maxo
     ## mzmin 335 334.9 335.1 2781.505 2761.160 2809.674  412134.255  355516.374 16856
@@ -530,10 +452,7 @@ data frame that allows to add arbitrary annotations to each
 chromatographic peak, such as e.g. the MS level in which the peak was
 detected:
 
-``` r
-
-chromPeakData(xchr)
-```
+[`chromPeakData`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``xchr``)`
 
     ## DataFrame with 12 rows and 4 columns
     ##        ms_level is_filled       row    column
@@ -559,16 +478,7 @@ need to define one color for each row of `chromPeaks(xchr)` - column
 `"column"` (or `"sample"` if present) in that peak matrix specifies the
 sample in which the peak was identified).
 
-``` r
-
-## Define a color for each sample
-sample_colors <- group_colors[xchr$sample_group]
-## Define the background color for each chromatographic peak
-bg <- sample_colors[chromPeaks(xchr)[, "column"]]
-## Parameter `col` defines the color of each sample/line, `peakBg` of each
-## chromatographic peak.
-plot(xchr, col = sample_colors, peakBg = bg)
-```
+`## Define a color for each sample`` ``sample_colors`` ``<-`` ``group_colors``[``xchr``$``sample_group``]`` ``## Define the background color for each chromatographic peak`` ``bg`` ``<-`` ``sample_colors``[`[`chromPeaks`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``xchr``)``[``, ``"column"``]``]`` ``` ## Parameter `col` defines the color of each sample/line, `peakBg` of each ``` ``## chromatographic peak.`` `[`plot`](https://rdrr.io/r/base/plot.html)`(``xchr``, col ``=`` ``sample_colors``, peakBg ``=`` ``bg``)`
 
 ![Signal for an example peak. Red and blue colors represent KO and wild
 type samples, respectively. Peak area of identified chromatographic
@@ -587,12 +497,7 @@ of this vignette. With this setting we consider only ROIs with at least
 6 centroids with an intensity larger than 5000 for the *centWave*
 chromatographic peak detection.
 
-``` r
-
-cwp <- CentWaveParam(peakwidth = c(20, 80), noise = 5000,
-                     prefilter = c(6, 5000))
-faahko <- findChromPeaks(faahko, param = cwp)
-```
+`cwp`` ``<-`` `[`CentWaveParam`](https://sneumann.github.io/xcms/reference/findChromPeaks-centWave.md)`(``peakwidth ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``20``, ``80``)``, noise ``=`` ``5000``,`` `` prefilter ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``6``, ``5000``)``)`` ``faahko`` ``<-`` `[`findChromPeaks`](https://sneumann.github.io/xcms/reference/findChromPeaks.md)`(``faahko``, param ``=`` ``cwp``)`
 
 The results of
 [`findChromPeaks()`](https://sneumann.github.io/xcms/reference/findChromPeaks.md)
@@ -609,11 +514,7 @@ The `chromPeaks` function can also here be used to access the results
 from the chromatographic peak detection. Below we show the first 6
 identified chromatographic peaks.
 
-``` r
-
-chromPeaks(faahko) |>
-    head()
-```
+[`chromPeaks`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``faahko``)`` ``|>`` `` `[`head`](https://rdrr.io/r/utils/head.html)`(``)`
 
     ##           mz mzmin mzmax       rt    rtmin    rtmax     into     intb  maxo sn
     ## CP0001 594.0 594.0 594.0 2601.535 2581.191 2637.529 161042.2 146073.3  7850 11
@@ -649,10 +550,7 @@ function. This data frame could also be used to add/store arbitrary
 annotations for each detected peak (that don’t necessarily need to be
 numeric).
 
-``` r
-
-chromPeakData(faahko)
-```
+[`chromPeakData`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``faahko``)`
 
     ## DataFrame with 2908 rows and 2 columns
     ##         ms_level is_filled
@@ -682,11 +580,7 @@ they can be calculated afterwards by using the
 function with the `XcmsExperiment` object and the
 `BetaDistributionParam` parameter object as input:
 
-``` r
-
-beta_metrics <- chromPeakSummary(faahko, BetaDistributionParam())
-head(beta_metrics)
-```
+`beta_metrics`` ``<-`` `[`chromPeakSummary`](https://sneumann.github.io/xcms/reference/chromPeakSummary.md)`(``faahko``, `[`BetaDistributionParam`](https://sneumann.github.io/xcms/reference/chromPeakSummary.md)`(``)``)`` `[`head`](https://rdrr.io/r/utils/head.html)`(``beta_metrics``)`
 
     ##         beta_cor beta_snr
     ## CP0001 0.9865868 5.349210
@@ -702,10 +596,7 @@ is thus a numeric matrix with the values for these quality estimates,
 one row for each chromatographic peak. Using summary statistics, one can
 explore the distribution of these metrics in the data.
 
-``` r
-
-summary(beta_metrics)
-```
+[`summary`](https://rdrr.io/r/base/summary.html)`(``beta_metrics``)`
 
     ##     beta_cor          beta_snr    
     ##  Min.   :-0.8541   Min.   :3.921  
@@ -724,29 +615,15 @@ extracted with the function `chromPeakChromatograms`. An example of a
 peak with a high *beta_cor* and for a peak with a low *beta_cor* score
 is given below.
 
-``` r
-
-beta_metrics[c(4, 6), ]
-```
+`beta_metrics``[`[`c`](https://rdrr.io/r/base/c.html)`(``4``, ``6``)``, ``]`
 
     ##         beta_cor beta_snr
     ## CP0004 0.9883246 6.044377
     ## CP0006 0.1358883 4.995241
 
-``` r
+`eics`` ``<-`` `[`chromPeakChromatograms`](https://sneumann.github.io/xcms/reference/chromPeakChromatograms.md)`(`` `` ``faahko``, peaks ``=`` `[`rownames`](https://rdrr.io/r/base/colnames.html)`(`[`chromPeaks`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``faahko``)``)``[`[`c`](https://rdrr.io/r/base/c.html)`(``4``, ``6``)``]``)`
 
-eics <- chromPeakChromatograms(
-    faahko, peaks = rownames(chromPeaks(faahko))[c(4, 6)])
-```
-
-``` r
-
-peak_1 <- eics[1]
-peak_2 <- eics[2]
-par(mfrow = c(1, 2))
-plot(peak_1)
-plot(peak_2)
-```
+`peak_1`` ``<-`` ``eics``[``1``]`` ``peak_2`` ``<-`` ``eics``[``2``]`` `[`par`](https://rdrr.io/r/graphics/par.html)`(``mfrow ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``1``, ``2``)``)`` `[`plot`](https://rdrr.io/r/base/plot.html)`(``peak_1``)`` `[`plot`](https://rdrr.io/r/base/plot.html)`(``peak_2``)`
 
 ![Plots of high and low quality peaks. Left: peak CP0004 with a beta_cor
 = 0.98, right: peak CP0006 with a beta_cor =
@@ -782,23 +659,11 @@ them is lower than 75% of the smaller peak’s maximal intensity. See the
 [`?MergeNeighboringPeaksParam`](https://sneumann.github.io/xcms/reference/refineChromPeaks.md)
 help page for a detailed description of the settings and the approach.
 
-``` r
-
-mpp <- MergeNeighboringPeaksParam(expandRt = 4)
-faahko_pp <- refineChromPeaks(faahko, mpp)
-```
+`mpp`` ``<-`` `[`MergeNeighboringPeaksParam`](https://sneumann.github.io/xcms/reference/refineChromPeaks.md)`(``expandRt ``=`` ``4``)`` ``faahko_pp`` ``<-`` `[`refineChromPeaks`](https://sneumann.github.io/xcms/reference/refineChromPeaks.md)`(``faahko``, ``mpp``)`
 
 An example for a merged peak is given below.
 
-``` r
-
-mzr_1 <- 305.1 + c(-0.01, 0.01)
-chr_1 <- chromatogram(faahko[1], mz = mzr_1)
-chr_2 <- chromatogram(faahko_pp[1], mz = mzr_1)
-par(mfrow = c(1, 2))
-plot(chr_1)
-plot(chr_2)
-```
+`mzr_1`` ``<-`` ``305.1`` ``+`` `[`c`](https://rdrr.io/r/base/c.html)`(``-``0.01``, ``0.01``)`` ``chr_1`` ``<-`` `[`chromatogram`](https://sneumann.github.io/xcms/reference/chromatogram-method.md)`(``faahko``[``1``]``, mz ``=`` ``mzr_1``)`` ``chr_2`` ``<-`` `[`chromatogram`](https://sneumann.github.io/xcms/reference/chromatogram-method.md)`(``faahko_pp``[``1``]``, mz ``=`` ``mzr_1``)`` `[`par`](https://rdrr.io/r/graphics/par.html)`(``mfrow ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``1``, ``2``)``)`` `[`plot`](https://rdrr.io/r/base/plot.html)`(``chr_1``)`` `[`plot`](https://rdrr.io/r/base/plot.html)`(``chr_2``)`
 
 ![Result from the peak refinement step. Left: data before processing,
 right: after refinement. The splitted peak was merged into
@@ -814,15 +679,7 @@ two peaks into a single one (right panel in the figure above). Other
 close peaks, with a lower intensity between them, were however not
 merged (see below).
 
-``` r
-
-mzr_1 <- 496.2 + c(-0.01, 0.01)
-chr_1 <- chromatogram(faahko[1], mz = mzr_1)
-chr_2 <- chromatogram(faahko_pp[1], mz = mzr_1)
-par(mfrow = c(1, 2))
-plot(chr_1)
-plot(chr_2)
-```
+`mzr_1`` ``<-`` ``496.2`` ``+`` `[`c`](https://rdrr.io/r/base/c.html)`(``-``0.01``, ``0.01``)`` ``chr_1`` ``<-`` `[`chromatogram`](https://sneumann.github.io/xcms/reference/chromatogram-method.md)`(``faahko``[``1``]``, mz ``=`` ``mzr_1``)`` ``chr_2`` ``<-`` `[`chromatogram`](https://sneumann.github.io/xcms/reference/chromatogram-method.md)`(``faahko_pp``[``1``]``, mz ``=`` ``mzr_1``)`` `[`par`](https://rdrr.io/r/graphics/par.html)`(``mfrow ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``1``, ``2``)``)`` `[`plot`](https://rdrr.io/r/base/plot.html)`(``chr_1``)`` `[`plot`](https://rdrr.io/r/base/plot.html)`(``chr_2``)`
 
 ![Result from the peak refinement step. Left: data before processing,
 right: after refinement. The peaks were not
@@ -841,22 +698,14 @@ peaks is **higher** than 75% of the smaller peak’s maximal intensity.
 Setting this value too low could eventually result in merging of isomers
 as shown below.
 
-``` r
-
-#' Too low minProp could cause merging of isomers!
-res <- refineChromPeaks(chr_1, MergeNeighboringPeaksParam(minProp = 0.05))
-chromPeaks(res)
-```
+`#' Too low minProp could cause merging of isomers!`` ``res`` ``<-`` `[`refineChromPeaks`](https://sneumann.github.io/xcms/reference/refineChromPeaks.md)`(``chr_1``, `[`MergeNeighboringPeaksParam`](https://sneumann.github.io/xcms/reference/refineChromPeaks.md)`(``minProp ``=`` ``0.05``)``)`` `[`chromPeaks`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``res``)`
 
     ##         mz  mzmin  mzmax       rt    rtmin    rtmax     into intb    maxo  sn
     ## CPM1 496.2 496.19 496.21 3384.012 3294.809 3412.181 45940118   NA 1128960 177
     ##      sample row column
     ## CPM1      1   1      1
 
-``` r
-
-plot(res)
-```
+[`plot`](https://rdrr.io/r/base/plot.html)`(``res``)`
 
 ![](xcms_files/figure-html/peak-postprocessing-chr-1.png)
 
@@ -867,10 +716,7 @@ settings.
 Before proceeding we next replace the `faahko` object with the results
 from the peak refinement step.
 
-``` r
-
-faahko <- faahko_pp
-```
+`faahko`` ``<-`` ``faahko_pp`
 
 Below we use the data from the
 [`chromPeaks()`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)
@@ -878,23 +724,7 @@ matrix to calculate per-file summaries of the peak detection results,
 such as the number of peaks per file as well as the distribution of the
 retention time widths.
 
-``` r
-
-summary_fun <- function(z)
-    c(peak_count = nrow(z), rt = quantile(z[, "rtmax"] - z[, "rtmin"]))
-
-T <- chromPeaks(faahko) |>
-    split.data.frame(f = chromPeaks(faahko)[, "sample"]) |>
-    lapply(FUN = summary_fun) |>
-    do.call(what = rbind)
-rownames(T) <- basename(fileNames(faahko))
-pandoc.table(
-    T,
-    caption = paste0("Summary statistics on identified chromatographic",
-                     " peaks. Shown are number of identified peaks per",
-                     " sample and widths/duration of chromatographic ",
-                     "peaks."))
-```
+`summary_fun`` ``<-`` ``function``(``z``)`` `` `[`c`](https://rdrr.io/r/base/c.html)`(``peak_count ``=`` `[`nrow`](https://rdrr.io/r/base/nrow.html)`(``z``)``, rt ``=`` `[`quantile`](https://rdrr.io/r/stats/quantile.html)`(``z``[``, ``"rtmax"``]`` ``-`` ``z``[``, ``"rtmin"``]``)``)`` `` ``T`` ``<-`` `[`chromPeaks`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``faahko``)`` ``|>`` `` `[`split.data.frame`](https://rdrr.io/r/base/split.html)`(``f ``=`` `[`chromPeaks`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``faahko``)``[``, ``"sample"``]``)`` ``|>`` `` `[`lapply`](https://rdrr.io/r/base/lapply.html)`(``FUN ``=`` ``summary_fun``)`` ``|>`` `` `[`do.call`](https://rdrr.io/r/base/do.call.html)`(``what ``=`` ``rbind``)`` `[`rownames`](https://rdrr.io/r/base/colnames.html)`(``T``)`` ``<-`` `[`basename`](https://rdrr.io/r/base/basename.html)`(`[`fileNames`](https://lgatto.github.io/MSnbase/reference/pSet-class.html)`(``faahko``)``)`` `[`pandoc.table`](https://rdrr.io/pkg/pander/man/pandoc.table.return.html)`(`` `` ``T``,`` `` caption ``=`` `[`paste0`](https://rdrr.io/r/base/paste.html)`(``"Summary statistics on identified chromatographic"``,`` `` ``" peaks. Shown are number of identified peaks per"``,`` `` ``" sample and widths/duration of chromatographic "``,`` `` ``"peaks."``)``)`
 
 |              | peak_count | rt.0% | rt.25% | rt.50% | rt.75% | rt.100% |
 |:------------:|:----------:|:-----:|:------:|:------:|:------:|:-------:|
@@ -917,10 +747,7 @@ will return all identified chromatographic peaks in a result object it
 is also possible to extract only chromatographic peaks for a specified
 m/z and/or rt range:
 
-``` r
-
-chromPeaks(faahko, mz = c(334.9, 335.1), rt = c(2700, 2900))
-```
+[`chromPeaks`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``faahko``, mz ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``334.9``, ``335.1``)``, rt ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``2700``, ``2900``)``)`
 
     ##         mz mzmin mzmax       rt    rtmin    rtmax      into      intb  maxo sn
     ## CP0038 335   335   335 2781.505 2761.160 2809.674  412134.3  383167.4 16856 23
@@ -940,10 +767,7 @@ the m/z - retention time space for one file using the
 [`plotChromPeaks()`](https://sneumann.github.io/xcms/reference/plotChromPeaks.md)
 function. Below we plot this information for the third sample.
 
-``` r
-
-plotChromPeaks(faahko, file = 3)
-```
+[`plotChromPeaks`](https://sneumann.github.io/xcms/reference/plotChromPeaks.md)`(``faahko``, file ``=`` ``3``)`
 
 ![Identified chromatographic peaks in the m/z by retention time space
 for one
@@ -959,10 +783,7 @@ of the bins in rt dimension in which peaks should be counted. This
 number of chromatographic peaks within each bin is then shown
 color-coded in the resulting plot.
 
-``` r
-
-plotChromPeakImage(faahko, binSize = 10)
-```
+[`plotChromPeakImage`](https://sneumann.github.io/xcms/reference/plotChromPeaks.md)`(``faahko``, binSize ``=`` ``10``)`
 
 ![Frequency of identified chromatographic peaks along the retention time
 axis. The frequency is color coded with higher frequency being
@@ -984,11 +805,7 @@ the detected peaks in that region using the
 [`chromPeaks()`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)
 function.
 
-``` r
-
-chr_ex <- chromatogram(faahko, mz = mzr, rt = rtr)
-chromPeaks(chr_ex)
-```
+`chr_ex`` ``<-`` `[`chromatogram`](https://sneumann.github.io/xcms/reference/chromatogram-method.md)`(``faahko``, mz ``=`` ``mzr``, rt ``=`` ``rtr``)`` `[`chromPeaks`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``chr_ex``)`
 
     ##         mz mzmin mzmax       rt    rtmin    rtmax      into      intb  maxo sn
     ## CP0038 335   335   335 2781.505 2761.160 2809.674  412134.3  383167.4 16856 23
@@ -1006,12 +823,7 @@ chromPeaks(chr_ex)
 We can also plot this extracted ion chromatogram which will also
 visualize all identified chromatographic peaks in that region.
 
-``` r
-
-sample_colors <- group_colors[chr_ex$sample_group]
-plot(chr_ex, col = group_colors[chr_raw$sample_group], lwd = 2,
-     peakBg = sample_colors[chromPeaks(chr_ex)[, "sample"]])
-```
+`sample_colors`` ``<-`` ``group_colors``[``chr_ex``$``sample_group``]`` `[`plot`](https://rdrr.io/r/base/plot.html)`(``chr_ex``, col ``=`` ``group_colors``[``chr_raw``$``sample_group``]``, lwd ``=`` ``2``,`` `` peakBg ``=`` ``sample_colors``[`[`chromPeaks`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``chr_ex``)``[``, ``"sample"``]``]``)`
 
 ![Signal for an example peak. Red and blue colors represent KO and wild
 type samples, respectively. The signal area of identified
@@ -1030,12 +842,7 @@ position for each identified chromatographic peak with a single point
 (`peakType = "point"`). Below we plot the data again using
 `peakType = "rectangle"`.
 
-``` r
-
-plot(chr_ex, col = sample_colors, peakType = "rectangle",
-     peakCol = sample_colors[chromPeaks(chr_ex)[, "sample"]],
-     peakBg = NA)
-```
+[`plot`](https://rdrr.io/r/base/plot.html)`(``chr_ex``, col ``=`` ``sample_colors``, peakType ``=`` ``"rectangle"``,`` `` peakCol ``=`` ``sample_colors``[`[`chromPeaks`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``chr_ex``)``[``, ``"sample"``]``]``,`` `` peakBg ``=`` ``NA``)`
 
 ![Signal for an example peak. Red and blue colors represent KO and wild
 type samples, respectively. The rectangles indicate the identified
@@ -1050,15 +857,7 @@ Finally we plot also the distribution of peak intensity per sample. This
 allows to investigate whether systematic differences in peak signals
 between samples are present.
 
-``` r
-
-## Extract a list of per-sample peak intensities (in log2 scale)
-ints <- split(log2(chromPeaks(faahko)[, "into"]),
-              f = chromPeaks(faahko)[, "sample"])
-boxplot(ints, varwidth = TRUE, col = sample_colors,
-        ylab = expression(log[2]~intensity), main = "Peak intensities")
-grid(nx = NA, ny = NULL)
-```
+`## Extract a list of per-sample peak intensities (in log2 scale)`` ``ints`` ``<-`` `[`split`](https://rdrr.io/r/base/split.html)`(`[`log2`](https://rdrr.io/r/base/Log.html)`(`[`chromPeaks`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``faahko``)``[``, ``"into"``]``)``,`` `` f ``=`` `[`chromPeaks`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``faahko``)``[``, ``"sample"``]``)`` `[`boxplot`](https://rdrr.io/r/graphics/boxplot.html)`(``ints``, varwidth ``=`` ``TRUE``, col ``=`` ``sample_colors``,`` `` ylab ``=`` `[`expression`](https://rdrr.io/r/base/expression.html)`(``log``[``2``]``~``intensity``)``, main ``=`` ``"Peak intensities"``)`` `[`grid`](https://rdrr.io/r/graphics/grid.html)`(``nx ``=`` ``NA``, ny ``=`` ``NULL``)`
 
 ![Peak intensity distribution per
 sample.](xcms_files/figure-html/peak-detection-chrom-peak-intensity-boxplot-1.png)
@@ -1102,10 +901,7 @@ samples. We use a `binSize = 0.6` which creates warping functions in m/z
 bins of 0.6. Also here it is advisable to modify and adapt the settings
 for each experiment.
 
-``` r
-
-faahko <- adjustRtime(faahko, param = ObiwarpParam(binSize = 0.6))
-```
+`faahko`` ``<-`` `[`adjustRtime`](https://sneumann.github.io/xcms/reference/adjustRtime.md)`(``faahko``, param ``=`` `[`ObiwarpParam`](https://sneumann.github.io/xcms/reference/adjustRtime.md)`(``binSize ``=`` ``0.6``)``)`
 
 Note that
 [`adjustRtime()`](https://sneumann.github.io/xcms/reference/adjustRtime.md),
@@ -1118,27 +914,15 @@ function or using
 [`rtime()`](https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html) with
 parameter `adjusted = TRUE` (the default):
 
-``` r
-
-## Extract adjusted retention times
-adjustedRtime(faahko) |> head()
-```
+`## Extract adjusted retention times`` `[`adjustedRtime`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``faahko``)`` ``|>`` `[`head`](https://rdrr.io/r/utils/head.html)`(``)`
 
     ## [1] 2551.457 2553.089 2554.720 2556.352 2557.983 2559.615
 
-``` r
-
-## Or simply use the rtime method
-rtime(faahko) |> head()
-```
+`## Or simply use the rtime method`` `[`rtime`](https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html)`(``faahko``)`` ``|>`` `[`head`](https://rdrr.io/r/utils/head.html)`(``)`
 
     ## [1] 2551.457 2553.089 2554.720 2556.352 2557.983 2559.615
 
-``` r
-
-## Get raw (unadjusted) retention times
-rtime(faahko, adjusted = FALSE) |> head()
-```
+`## Get raw (unadjusted) retention times`` `[`rtime`](https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html)`(``faahko``, adjusted ``=`` ``FALSE``)`` ``|>`` `[`head`](https://rdrr.io/r/utils/head.html)`(``)`
 
     ## [1] 2551.457 2553.022 2554.586 2556.151 2557.716 2559.281
 
@@ -1152,19 +936,7 @@ chromatographic peaks by the
 function (which would not make much sense for a BPC) we use
 `chromPeaks = "none"` below.
 
-``` r
-
-## Get the base peak chromatograms.
-bpis_adj <- chromatogram(faahko, aggregationFun = "max", chromPeaks = "none")
-par(mfrow = c(3, 1), mar = c(4.5, 4.2, 1, 0.5))
-plot(bpis, col = sample_colors)
-grid()
-plot(bpis_adj, col = sample_colors)
-grid()
-## Plot also the difference of adjusted to raw retention time.
-plotAdjustedRtime(faahko, col = sample_colors)
-grid()
-```
+`## Get the base peak chromatograms.`` ``bpis_adj`` ``<-`` `[`chromatogram`](https://sneumann.github.io/xcms/reference/chromatogram-method.md)`(``faahko``, aggregationFun ``=`` ``"max"``, chromPeaks ``=`` ``"none"``)`` `[`par`](https://rdrr.io/r/graphics/par.html)`(``mfrow ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``3``, ``1``)``, mar ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``4.5``, ``4.2``, ``1``, ``0.5``)``)`` `[`plot`](https://rdrr.io/r/base/plot.html)`(``bpis``, col ``=`` ``sample_colors``)`` `[`grid`](https://rdrr.io/r/graphics/grid.html)`(``)`` `[`plot`](https://rdrr.io/r/base/plot.html)`(``bpis_adj``, col ``=`` ``sample_colors``)`` `[`grid`](https://rdrr.io/r/graphics/grid.html)`(``)`` ``## Plot also the difference of adjusted to raw retention time.`` `[`plotAdjustedRtime`](https://sneumann.github.io/xcms/reference/plotAdjustedRtime.md)`(``faahko``, col ``=`` ``sample_colors``)`` `[`grid`](https://rdrr.io/r/graphics/grid.html)`(``)`
 
 ![Obiwarp aligned data. Base peak chromatogram before (top) and after
 alignment (middle) and difference between adjusted and raw retention
@@ -1180,17 +952,7 @@ indicate poorly performing samples or alignment.
 
 At last we evaluate also the impact of the alignment on the test peak.
 
-``` r
-
-par(mfrow = c(2, 1))
-## Plot the raw data
-plot(chr_raw, col = sample_colors)
-grid()
-## Extract the chromatogram from the adjusted object
-chr_adj <- chromatogram(faahko, rt = rtr, mz = mzr)
-plot(chr_adj, col = sample_colors, peakType = "none")
-grid()
-```
+[`par`](https://rdrr.io/r/graphics/par.html)`(``mfrow ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``2``, ``1``)``)`` ``## Plot the raw data`` `[`plot`](https://rdrr.io/r/base/plot.html)`(``chr_raw``, col ``=`` ``sample_colors``)`` `[`grid`](https://rdrr.io/r/graphics/grid.html)`(``)`` ``## Extract the chromatogram from the adjusted object`` ``chr_adj`` ``<-`` `[`chromatogram`](https://sneumann.github.io/xcms/reference/chromatogram-method.md)`(``faahko``, rt ``=`` ``rtr``, mz ``=`` ``mzr``)`` `[`plot`](https://rdrr.io/r/base/plot.html)`(``chr_adj``, col ``=`` ``sample_colors``, peakType ``=`` ``"none"``)`` `[`grid`](https://rdrr.io/r/graphics/grid.html)`(``)`
 
 ![Example extracted ion chromatogram before (top) and after alignment
 (bottom).](xcms_files/figure-html/alignment-peak-groups-example-peak-1.png)
@@ -1273,14 +1035,7 @@ outlined above. In addition to removing adjusted retention times for all
 spectra, this function will also *restore* the original retention times
 for identified chromatographic peaks.
 
-``` r
-
-faahko <- dropAdjustedRtime(faahko)
-
-## Define the experimental layout
-sampleData(faahko)$sample_type <- "study"
-sampleData(faahko)$sample_type[c(1, 4, 7)] <- "QC"
-```
+`faahko`` ``<-`` `[`dropAdjustedRtime`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``faahko``)`` `` ``## Define the experimental layout`` `[`sampleData`](https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html)`(``faahko``)``$``sample_type`` ``<-`` ``"study"`` `[`sampleData`](https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html)`(``faahko``)``$``sample_type``[`[`c`](https://rdrr.io/r/base/c.html)`(``1``, ``4``, ``7``)``]`` ``<-`` ``"QC"`
 
 For an alignment with the *peak groups* method an initial peak grouping
 (correspondence) analysis is required, because the algorithm estimates
@@ -1295,20 +1050,7 @@ there are no sample groups in the experiment, `sampleGroups` should be
 set to a single value for each file
 (e.g. `rep(1, length(fileNames(faahko))`).
 
-``` r
-
-## Initial peak grouping. Use sample_type as grouping variable
-pdp_subs <- PeakDensityParam(sampleGroups = sampleData(faahko)$sample_type,
-                             minFraction = 0.9)
-faahko <- groupChromPeaks(faahko, param = pdp_subs)
-
-## Define subset-alignment options and perform the alignment
-pgp_subs <- PeakGroupsParam(
-    minFraction = 0.85,
-    subset = which(sampleData(faahko)$sample_type == "QC"),
-    subsetAdjust = "average", span = 0.4)
-faahko <- adjustRtime(faahko, param = pgp_subs)
-```
+`## Initial peak grouping. Use sample_type as grouping variable`` ``pdp_subs`` ``<-`` `[`PeakDensityParam`](https://sneumann.github.io/xcms/reference/groupChromPeaks.md)`(``sampleGroups ``=`` `[`sampleData`](https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html)`(``faahko``)``$``sample_type``,`` `` minFraction ``=`` ``0.9``)`` ``faahko`` ``<-`` `[`groupChromPeaks`](https://sneumann.github.io/xcms/reference/groupChromPeaks.md)`(``faahko``, param ``=`` ``pdp_subs``)`` `` ``## Define subset-alignment options and perform the alignment`` ``pgp_subs`` ``<-`` `[`PeakGroupsParam`](https://sneumann.github.io/xcms/reference/adjustRtime.md)`(`` `` minFraction ``=`` ``0.85``,`` `` subset ``=`` `[`which`](https://rdrr.io/r/base/which.html)`(`[`sampleData`](https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html)`(``faahko``)``$``sample_type`` ``==`` ``"QC"``)``,`` `` subsetAdjust ``=`` ``"average"``, span ``=`` ``0.4``)`` ``faahko`` ``<-`` `[`adjustRtime`](https://sneumann.github.io/xcms/reference/adjustRtime.md)`(``faahko``, param ``=`` ``pgp_subs``)`
 
 Below we plot the results of the alignment highlighting the subset
 samples in green. This nicely shows how the interpolation of the
@@ -1319,18 +1061,7 @@ retention times of 2 being more similar to those of sample 1. Sample 3
 on the other hand gets adjusted giving more weight to the second subset
 sample (4).
 
-``` r
-
-clrs <- rep("#00000040", 8)
-clrs[sampleData(faahko)$sample_type == "QC"] <- c("#00ce0080")
-par(mfrow = c(2, 1), mar = c(4, 4.5, 1, 0.5))
-plot(chromatogram(faahko, aggregationFun = "max", chromPeaks = "none"),
-     col = clrs)
-grid()
-plotAdjustedRtime(faahko, col = clrs, peakGroupsPch = 1,
-                  peakGroupsCol = "#00ce0040")
-grid()
-```
+`clrs`` ``<-`` `[`rep`](https://rdrr.io/r/base/rep.html)`(``"#00000040"``, ``8``)`` ``clrs``[`[`sampleData`](https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html)`(``faahko``)``$``sample_type`` ``==`` ``"QC"``]`` ``<-`` `[`c`](https://rdrr.io/r/base/c.html)`(``"#00ce0080"``)`` `[`par`](https://rdrr.io/r/graphics/par.html)`(``mfrow ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``2``, ``1``)``, mar ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``4``, ``4.5``, ``1``, ``0.5``)``)`` `[`plot`](https://rdrr.io/r/base/plot.html)`(`[`chromatogram`](https://sneumann.github.io/xcms/reference/chromatogram-method.md)`(``faahko``, aggregationFun ``=`` ``"max"``, chromPeaks ``=`` ``"none"``)``,`` `` col ``=`` ``clrs``)`` `[`grid`](https://rdrr.io/r/graphics/grid.html)`(``)`` `[`plotAdjustedRtime`](https://sneumann.github.io/xcms/reference/plotAdjustedRtime.md)`(``faahko``, col ``=`` ``clrs``, peakGroupsPch ``=`` ``1``,`` `` peakGroupsCol ``=`` ``"#00ce0040"``)`` `[`grid`](https://rdrr.io/r/graphics/grid.html)`(``)`
 
 ![Subset-alignment results with option average. Difference between
 adjusted and raw retention times along the retention time axis. Samples
@@ -1372,21 +1103,7 @@ function and a `PeakDensityParam` object with parameter
 samples a chromatographic peak was present) - parameter `sampleGroups`
 is used to define to which sample group each sample belongs.
 
-``` r
-
-## Define the mz slice.
-mzr <- c(305.05, 305.15)
-
-## Extract and plot the chromatograms
-chr_mzr <- chromatogram(faahko, mz = mzr)
-## Define the parameters for the peak density method
-pdp <- PeakDensityParam(sampleGroups = sampleData(faahko)$sample_group,
-                        minFraction = 0.4, bw = 30)
-plotChromPeakDensity(chr_mzr, col = sample_colors, param = pdp,
-                     peakBg = sample_colors[chromPeaks(chr_mzr)[, "sample"]],
-                     peakCol = sample_colors[chromPeaks(chr_mzr)[, "sample"]],
-                     peakPch = 16)
-```
+`## Define the mz slice.`` ``mzr`` ``<-`` `[`c`](https://rdrr.io/r/base/c.html)`(``305.05``, ``305.15``)`` `` ``## Extract and plot the chromatograms`` ``chr_mzr`` ``<-`` `[`chromatogram`](https://sneumann.github.io/xcms/reference/chromatogram-method.md)`(``faahko``, mz ``=`` ``mzr``)`` ``## Define the parameters for the peak density method`` ``pdp`` ``<-`` `[`PeakDensityParam`](https://sneumann.github.io/xcms/reference/groupChromPeaks.md)`(``sampleGroups ``=`` `[`sampleData`](https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html)`(``faahko``)``$``sample_group``,`` `` minFraction ``=`` ``0.4``, bw ``=`` ``30``)`` `[`plotChromPeakDensity`](https://sneumann.github.io/xcms/reference/plotChromPeakDensity.md)`(``chr_mzr``, col ``=`` ``sample_colors``, param ``=`` ``pdp``,`` `` peakBg ``=`` ``sample_colors``[`[`chromPeaks`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``chr_mzr``)``[``, ``"sample"``]``]``,`` `` peakCol ``=`` ``sample_colors``[`[`chromPeaks`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``chr_mzr``)``[``, ``"sample"``]``]``,`` `` peakPch ``=`` ``16``)`
 
 ![Example for peak density correspondence. Upper panel: chromatogram for
 an mz slice with multiple chromatographic peaks. lower panel: identified
@@ -1437,26 +1154,12 @@ peak in the data set.
 See also the [xcms tutorial](https://jorainer.github.io/xcmsTutorials)
 for more examples and details.
 
-``` r
-
-## Perform the correspondence using fixed m/z bin sizes.
-pdp <- PeakDensityParam(sampleGroups = sampleData(faahko)$sample_group,
-                        minFraction = 0.4, bw = 30)
-faahko <- groupChromPeaks(faahko, param = pdp)
-```
+`## Perform the correspondence using fixed m/z bin sizes.`` ``pdp`` ``<-`` `[`PeakDensityParam`](https://sneumann.github.io/xcms/reference/groupChromPeaks.md)`(``sampleGroups ``=`` `[`sampleData`](https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html)`(``faahko``)``$``sample_group``,`` `` minFraction ``=`` ``0.4``, bw ``=`` ``30``)`` ``faahko`` ``<-`` `[`groupChromPeaks`](https://sneumann.github.io/xcms/reference/groupChromPeaks.md)`(``faahko``, param ``=`` ``pdp``)`
 
 As an alternative we perform the correspondence using m/z relative bin
 sizes.
 
-``` r
-
-## Drop feature definitions and re-perform the correspondence
-## using m/z-relative bin sizes.
-faahko_ppm <- groupChromPeaks(
-    dropFeatureDefinitions(faahko),
-    PeakDensityParam(sampleGroups = sampleData(faahko)$sample_group,
-                     minFraction = 0.4, bw = 30, ppm = 10))
-```
+`## Drop feature definitions and re-perform the correspondence`` ``## using m/z-relative bin sizes.`` ``faahko_ppm`` ``<-`` `[`groupChromPeaks`](https://sneumann.github.io/xcms/reference/groupChromPeaks.md)`(`` `` `[`dropFeatureDefinitions`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``faahko``)``,`` `` `[`PeakDensityParam`](https://sneumann.github.io/xcms/reference/groupChromPeaks.md)`(``sampleGroups ``=`` `[`sampleData`](https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html)`(``faahko``)``$``sample_group``,`` `` minFraction ``=`` ``0.4``, bw ``=`` ``30``, ppm ``=`` ``10``)``)`
 
 The results will be *mostly* similar, except for the higher m/z range
 (in which larger m/z bins will be used). Below we plot the m/z range for
@@ -1466,18 +1169,7 @@ two approaches hence we proceed the analysis with the fixed bin size
 setting. A stronger relationship would be expected for example for data
 measured on TOF instruments.
 
-``` r
-
-## Calculate m/z width of features
-mzw <- featureDefinitions(faahko)$mzmax - featureDefinitions(faahko)$mzmin
-mzw_ppm <- featureDefinitions(faahko_ppm)$mzmax -
-                                        featureDefinitions(faahko_ppm)$mzmin
-plot(featureDefinitions(faahko_ppm)$mzmed, mzw_ppm,
-     xlab = "m/z", ylab = "m/z width", pch = 21,
-     col = "#0000ff20", bg = "#0000ff10")
-points(featureDefinitions(faahko)$mzmed, mzw, pch = 21,
-     col = "#ff000020", bg = "#ff000010")
-```
+`## Calculate m/z width of features`` ``mzw`` ``<-`` `[`featureDefinitions`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``faahko``)``$``mzmax`` ``-`` `[`featureDefinitions`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``faahko``)``$``mzmin`` ``mzw_ppm`` ``<-`` `[`featureDefinitions`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``faahko_ppm``)``$``mzmax`` ``-`` `` `[`featureDefinitions`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``faahko_ppm``)``$``mzmin`` `[`plot`](https://rdrr.io/r/base/plot.html)`(`[`featureDefinitions`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``faahko_ppm``)``$``mzmed``, ``mzw_ppm``,`` `` xlab ``=`` ``"m/z"``, ylab ``=`` ``"m/z width"``, pch ``=`` ``21``,`` `` col ``=`` ``"#0000ff20"``, bg ``=`` ``"#0000ff10"``)`` `[`points`](https://rdrr.io/r/graphics/points.html)`(`[`featureDefinitions`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``faahko``)``$``mzmed``, ``mzw``, pch ``=`` ``21``,`` `` col ``=`` ``"#ff000020"``, bg ``=`` ``"#ff000010"``)`
 
 ![Relationship between a feature's m/z and the m/z width (max - min m/z)
 of the feature. Red points represent the results with the fixed m/z bin
@@ -1496,13 +1188,14 @@ function. The former returns a data frame with general information on
 each of the defined features, with each row being one feature and
 columns providing information on the median m/z and retention time as
 well as the indices of the chromatographic peaks assigned to the feature
-in column `"peakidx"`. Below we show the information on the first 6
-features.
+in column `"peakidx"`. This mapping between features and chromatographic
+peaks can also be extracted using the
+[`featureChromPeaks()`](https://sneumann.github.io/xcms/reference/featureChromPeaks.md)
+and
+[`featurePeakidx()`](https://sneumann.github.io/xcms/reference/featureChromPeaks.md)
+functions. Below we show the information on the first 6 features.
 
-``` r
-
-featureDefinitions(faahko) |> head()
-```
+[`featureDefinitions`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``faahko``)`` ``|>`` `[`head`](https://rdrr.io/r/utils/head.html)`(``)`
 
     ##       mzmed mzmin mzmax    rtmed    rtmin    rtmax npeaks KO WT      peakidx
     ## FT001 200.1 200.1 200.1 2902.634 2882.603 2922.664      2  2  0    458, 1161
@@ -1530,10 +1223,7 @@ signal of the peaks corresponding to a feature in a sample are returned.
 This is then generally used as the intensity matrix for downstream
 analysis. Below we extract the intensities for the first 6 features.
 
-``` r
-
-featureValues(faahko, value = "into") |> head()
-```
+[`featureValues`](https://sneumann.github.io/xcms/reference/XCMSnExp-peak-grouping-results.md)`(``faahko``, value ``=`` ``"into"``)`` ``|>`` `[`head`](https://rdrr.io/r/utils/head.html)`(``)`
 
     ##        ko15.CDF  ko16.CDF  ko21.CDF  ko22.CDF  wt15.CDF  wt16.CDF  wt21.CDF
     ## FT001        NA  506848.9        NA  169955.6        NA        NA        NA
@@ -1577,12 +1267,7 @@ data frame. If `features` is not defined, EICs are returned for **all**
 features in a data set, which can take also a considerable amount of
 time. Below we extract the chromatograms for the first 4 features.
 
-``` r
-
-feature_chroms <- featureChromatograms(faahko, features = 1:4)
-
-feature_chroms
-```
+`feature_chroms`` ``<-`` `[`featureChromatograms`](https://sneumann.github.io/xcms/reference/featureChromatograms.md)`(``faahko``, features ``=`` ``1``:``4``)`` `` ``feature_chroms`
 
     ## XChromatograms with 4 rows and 8 columns
     ##             ko15.CDF        ko16.CDF        ko21.CDF        ko22.CDF
@@ -1598,7 +1283,7 @@ feature_chroms
     ## [3,]        peaks: 1        peaks: 1        peaks: 1        peaks: 1
     ## [4,]        peaks: 1        peaks: 1        peaks: 0        peaks: 1
     ## phenoData with 4 variables
-    ## featureData with 4 variables
+    ## featureData with 5 variables
     ## - - - xcms preprocessing - - -
     ## Chromatographic peak detection:
     ##  method: centWave 
@@ -1609,11 +1294,7 @@ feature_chroms
 And plot the extracted ion chromatograms. We again use the group color
 for each identified peak to fill the area.
 
-``` r
-
-plot(feature_chroms, col = sample_colors,
-     peakBg = sample_colors[chromPeaks(feature_chroms)[, "sample"]])
-```
+[`plot`](https://rdrr.io/r/base/plot.html)`(``feature_chroms``, col ``=`` ``sample_colors``,`` `` peakBg ``=`` ``sample_colors``[`[`chromPeaks`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``feature_chroms``)``[``, ``"sample"``]``]``)`
 
 ![Extracted ion chromatograms for features 1 to
 4.](xcms_files/figure-html/feature-eic-1.png)
@@ -1623,11 +1304,7 @@ Extracted ion chromatograms for features 1 to 4.
 To access the EICs of the second feature we can simply subset the
 `feature_chroms` object.
 
-``` r
-
-eic_2 <- feature_chroms[2, ]
-chromPeaks(eic_2)
-```
+`eic_2`` ``<-`` ``feature_chroms``[``2``, ``]`` `[`chromPeaks`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``eic_2``)`
 
     ##         mz mzmin mzmax       rt    rtmin    rtmax    into    intb  maxo sn
     ## CP0048 205   205   205 2791.873 2771.300 2815.623 1924712 1850331 84280 64
@@ -1678,12 +1355,7 @@ Below we perform this gap filling on our test data and extract the
 feature values for the first 6 features after gap filling. An `NA` is
 reported if no signal is measured at all for a specific sample.
 
-``` r
-
-faahko <- fillChromPeaks(faahko, param = ChromPeakAreaParam())
-
-featureValues(faahko, value = "into") |> head()
-```
+`faahko`` ``<-`` `[`fillChromPeaks`](https://sneumann.github.io/xcms/reference/fillChromPeaks.md)`(``faahko``, param ``=`` `[`ChromPeakAreaParam`](https://sneumann.github.io/xcms/reference/fillChromPeaks.md)`(``)``)`` `` `[`featureValues`](https://sneumann.github.io/xcms/reference/XCMSnExp-peak-grouping-results.md)`(``faahko``, value ``=`` ``"into"``)`` ``|>`` `[`head`](https://rdrr.io/r/utils/head.html)`(``)`
 
     ##        ko15.CDF  ko16.CDF  ko21.CDF  ko22.CDF  wt15.CDF  wt16.CDF  wt21.CDF
     ## FT001  135162.4  506848.9  111657.3  169955.6  209929.4  141607.9  226853.7
@@ -1704,11 +1376,11 @@ featureValues(faahko, value = "into") |> head()
 
 While we can continue using the *xcms* result set for further analysis
 (e.g. also for feature grouping with the
-*[MsFeatures](https://bioconductor.org/packages/3.23/MsFeatures)*
+*[MsFeatures](https://bioconductor.org/packages/3.24/MsFeatures)*
 package; see the LC-MS feature grouping vignette for details) we could
 also extract all results as a `SummarizedExperiment` object. This is the
 *standard* data container for Bioconductor defined in the
-*[SummarizedExperiment](https://bioconductor.org/packages/3.23/SummarizedExperiment)*
+*[SummarizedExperiment](https://bioconductor.org/packages/3.24/SummarizedExperiment)*
 package and integration with other Bioconductor packages might thus be
 easier using that type of object. Below we use the
 [`quantify()`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
@@ -1725,10 +1397,7 @@ in which more than one chromatographic peak was assigned to a feature
 [`refineChromPeaks()`](https://sneumann.github.io/xcms/reference/refineChromPeaks.md)
 like described above to merge overlapping peaks in each sample).
 
-``` r
-
-library(SummarizedExperiment)
-```
+[`library`](https://rdrr.io/r/base/library.html)`(`[`SummarizedExperiment`](https://bioconductor.org/packages/SummarizedExperiment)`)`
 
     ## Loading required package: MatrixGenerics
 
@@ -1778,14 +1447,18 @@ library(SummarizedExperiment)
     ## 
     ##     IQR, mad, sd, var, xtabs
 
+    ## The following object is masked from 'package:utils':
+    ## 
+    ##     data
+
     ## The following objects are masked from 'package:base':
     ## 
     ##     anyDuplicated, aperm, append, as.data.frame, basename, cbind,
     ##     colnames, dirname, do.call, duplicated, eval, evalq, Filter, Find,
     ##     get, grep, grepl, is.unsorted, lapply, Map, mapply, match, mget,
     ##     order, paste, pmax, pmax.int, pmin, pmin.int, Position, rank,
-    ##     rbind, Reduce, rownames, sapply, saveRDS, table, tapply, unique,
-    ##     unsplit, which.max, which.min
+    ##     rbind, Reduce, rownames, sapply, saveRDS, scale, sequence, table,
+    ##     tapply, transform, unique, unsplit, which.max, which.min
 
     ## Loading required package: S4Vectors
 
@@ -1823,11 +1496,7 @@ library(SummarizedExperiment)
     ## 
     ##     anyMissing, rowMedians
 
-``` r
-
-res <- quantify(faahko, value = "into", method = "sum")
-res
-```
+`res`` ``<-`` `[`quantify`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)`(``faahko``, value ``=`` ``"into"``, method ``=`` ``"sum"``)`` ``res`
 
     ## class: SummarizedExperiment 
     ## dim: 351 8 
@@ -1847,10 +1516,7 @@ of this object. The
 provides annotations and information for each **row** in the
 `SummarizedExperiment` (which in our case are the **features**).
 
-``` r
-
-rowData(res)
-```
+[`rowData`](https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html)`(``res``)`
 
     ## DataFrame with 351 rows and 10 columns
     ##           mzmed     mzmin     mzmax     rtmed     rtmin     rtmax    npeaks
@@ -1885,10 +1551,7 @@ Annotations for **columns** (in our case **samples**) are stored as
 In this data frame each row contains annotations for one sample (and
 hence one column in the feature values matrix).
 
-``` r
-
-colData(res)
-```
+[`colData`](https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html)`(``res``)`
 
     ## DataFrame with 8 rows and 4 columns
     ##          sample_name sample_group spectraOrigin sample_type
@@ -1908,10 +1571,7 @@ to be numeric matrices with the number of rows and columns matching the
 number of features and samples, respectively. Below we list the names of
 the available assays.
 
-``` r
-
-assayNames(res)
-```
+[`assayNames`](https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html)`(``res``)`
 
     ## [1] "raw"
 
@@ -1920,10 +1580,7 @@ And we can access the actual data using the
 function, optionally also providing the name of the assay we want to
 access. Below we show the first 6 lines of that matrix.
 
-``` r
-
-assay(res) |> head()
-```
+[`assay`](https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html)`(``res``)`` ``|>`` `[`head`](https://rdrr.io/r/utils/head.html)`(``)`
 
     ##        ko15.CDF  ko16.CDF  ko21.CDF  ko22.CDF  wt15.CDF  wt16.CDF  wt21.CDF
     ## FT001  135162.4  506848.9  111657.3  169955.6  209929.4  141607.9  226853.7
@@ -1944,26 +1601,17 @@ Since a `SummarizedExperiment` supports multiple assays, we in addition
 add also the feature value matrix **without** filled-in values
 (i.e. feature intensities that were added by the gap filling step).
 
-``` r
-
-assays(res)$raw_nofill <- featureValues(faahko, filled = FALSE, method = "sum")
-```
+[`assays`](https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html)`(``res``)``$``raw_nofill`` ``<-`` `[`featureValues`](https://sneumann.github.io/xcms/reference/XCMSnExp-peak-grouping-results.md)`(``faahko``, filled ``=`` ``FALSE``, method ``=`` ``"sum"``)`
 
 With that we have now two assays in our result object.
 
-``` r
-
-assayNames(res)
-```
+[`assayNames`](https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html)`(``res``)`
 
     ## [1] "raw"        "raw_nofill"
 
 And we can extract the feature values without gap-filling:
 
-``` r
-
-assay(res, "raw_nofill") |> head()
-```
+[`assay`](https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html)`(``res``, ``"raw_nofill"``)`` ``|>`` `[`head`](https://rdrr.io/r/utils/head.html)`(``)`
 
     ##        ko15.CDF  ko16.CDF  ko21.CDF  ko22.CDF  wt15.CDF  wt16.CDF  wt21.CDF
     ## FT001        NA  506848.9        NA  169955.6        NA        NA        NA
@@ -1983,15 +1631,12 @@ assay(res, "raw_nofill") |> head()
 Finally, a history of the full processing with *xcms* is available as
 *metadata* in the `SummarizedExperiment`.
 
-``` r
-
-metadata(res)
-```
+[`metadata`](https://rdrr.io/pkg/S4Vectors/man/Annotated-class.html)`(``res``)`
 
     ## [[1]]
     ## Object of class "XProcessHistory"
     ##  type: Peak detection 
-    ##  date: Sun Jul  5 13:05:17 2026 
+    ##  date: Tue Sep  1 08:34:28 2026 
     ##  info:  
     ##  fileIndex: 1,2,3,4,5,6,7,8 
     ##  Parameter class: CentWaveParam 
@@ -2000,7 +1645,7 @@ metadata(res)
     ## [[2]]
     ## Object of class "XProcessHistory"
     ##  type: Peak refinement 
-    ##  date: Sun Jul  5 13:05:23 2026 
+    ##  date: Tue Sep  1 08:34:33 2026 
     ##  info:  
     ##  fileIndex: 1,2,3,4,5,6,7,8 
     ##  Parameter class: MergeNeighboringPeaksParam 
@@ -2009,7 +1654,7 @@ metadata(res)
     ## [[3]]
     ## Object of class "XProcessHistory"
     ##  type: Peak grouping 
-    ##  date: Sun Jul  5 13:05:34 2026 
+    ##  date: Tue Sep  1 08:34:47 2026 
     ##  info:  
     ##  fileIndex: 1,2,3,4,5,6,7,8 
     ##  Parameter class: PeakDensityParam 
@@ -2018,7 +1663,7 @@ metadata(res)
     ## [[4]]
     ## Object of class "XProcessHistory"
     ##  type: Retention time correction 
-    ##  date: Sun Jul  5 13:05:35 2026 
+    ##  date: Tue Sep  1 08:34:47 2026 
     ##  info:  
     ##  fileIndex: 1,2,3,4,5,6,7,8 
     ##  Parameter class: PeakGroupsParam 
@@ -2027,7 +1672,7 @@ metadata(res)
     ## [[5]]
     ## Object of class "XProcessHistory"
     ##  type: Peak grouping 
-    ##  date: Sun Jul  5 13:05:39 2026 
+    ##  date: Tue Sep  1 08:34:51 2026 
     ##  info:  
     ##  fileIndex: 1,2,3,4,5,6,7,8 
     ##  Parameter class: PeakDensityParam 
@@ -2036,7 +1681,7 @@ metadata(res)
     ## [[6]]
     ## Object of class "XProcessHistory"
     ##  type: Missing peak filling 
-    ##  date: Sun Jul  5 13:05:43 2026 
+    ##  date: Tue Sep  1 08:34:57 2026 
     ##  info:  
     ##  fileIndex: 1,2,3,4,5,6,7,8 
     ##  Parameter class: ChromPeakAreaParam 
@@ -2048,14 +1693,11 @@ object using the
 function. Below we extract the information for the first processing
 step.
 
-``` r
-
-processHistory(faahko)[[1]]
-```
+[`processHistory`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``faahko``)``[[``1``]``]`
 
     ## Object of class "XProcessHistory"
     ##  type: Peak detection 
-    ##  date: Sun Jul  5 13:05:17 2026 
+    ##  date: Tue Sep  1 08:34:28 2026 
     ##  info:  
     ##  fileIndex: 1,2,3,4,5,6,7,8 
     ##  Parameter class: CentWaveParam 
@@ -2064,10 +1706,7 @@ processHistory(faahko)[[1]]
 These processing steps contain also the individual parameter objects
 used for the analysis, hence allowing to exactly reproduce the analysis.
 
-``` r
-
-processHistory(faahko)[[1]] |> processParam()
-```
+[`processHistory`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``faahko``)``[[``1``]``]`` ``|>`` `[`processParam`](https://sneumann.github.io/xcms/reference/ProcessHistory-class.md)`(``)`
 
     ## Object of class:  CentWaveParam 
     ##  Parameters:
@@ -2092,27 +1731,7 @@ grouping of the samples in this experiment. Note that we did not perform
 any data normalization hence the grouping might (and will) also be
 influenced by technical biases.
 
-``` r
-
-## Extract the features and log2 transform them
-ft_ints <- log2(assay(res, "raw"))
-
-## Perform the PCA omitting all features with an NA in any of the
-## samples. Also, the intensities are mean centered.
-pc <- prcomp(t(na.omit(ft_ints)), center = TRUE)
-
-## Plot the PCA
-pcSummary <- summary(pc)
-plot(pc$x[, 1], pc$x[,2], pch = 21, main = "",
-     xlab = paste0("PC1: ", format(pcSummary$importance[2, 1] * 100,
-                                   digits = 3), " % variance"),
-     ylab = paste0("PC2: ", format(pcSummary$importance[2, 2] * 100,
-                                   digits = 3), " % variance"),
-     col = "darkgrey", bg = sample_colors, cex = 2)
-grid()
-text(pc$x[, 1], pc$x[,2], labels = res$sample_name, col = "darkgrey",
-     pos = 3, cex = 2)
-```
+`## Extract the features and log2 transform them`` ``ft_ints`` ``<-`` `[`log2`](https://rdrr.io/r/base/Log.html)`(`[`assay`](https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html)`(``res``, ``"raw"``)``)`` `` ``## Perform the PCA omitting all features with an NA in any of the`` ``## samples. Also, the intensities are mean centered.`` ``pc`` ``<-`` `[`prcomp`](https://rdrr.io/r/stats/prcomp.html)`(`[`t`](https://rdrr.io/r/base/t.html)`(`[`na.omit`](https://rdrr.io/r/stats/na.fail.html)`(``ft_ints``)``)``, center ``=`` ``TRUE``)`` `` ``## Plot the PCA`` ``pcSummary`` ``<-`` `[`summary`](https://rdrr.io/r/base/summary.html)`(``pc``)`` `[`plot`](https://rdrr.io/r/base/plot.html)`(``pc``$``x``[``, ``1``]``, ``pc``$``x``[``,``2``]``, pch ``=`` ``21``, main ``=`` ``""``,`` `` xlab ``=`` `[`paste0`](https://rdrr.io/r/base/paste.html)`(``"PC1: "``, `[`format`](https://rdrr.io/r/base/format.html)`(``pcSummary``$``importance``[``2``, ``1``]`` ``*`` ``100``,`` `` digits ``=`` ``3``)``, ``" % variance"``)``,`` `` ylab ``=`` `[`paste0`](https://rdrr.io/r/base/paste.html)`(``"PC2: "``, `[`format`](https://rdrr.io/r/base/format.html)`(``pcSummary``$``importance``[``2``, ``2``]`` ``*`` ``100``,`` `` digits ``=`` ``3``)``, ``" % variance"``)``,`` `` col ``=`` ``"darkgrey"``, bg ``=`` ``sample_colors``, cex ``=`` ``2``)`` `[`grid`](https://rdrr.io/r/graphics/grid.html)`(``)`` `[`text`](https://rdrr.io/r/graphics/text.html)`(``pc``$``x``[``, ``1``]``, ``pc``$``x``[``,``2``]``, labels ``=`` ``res``$``sample_name``, col ``=`` ``"darkgrey"``,`` `` pos ``=`` ``3``, cex ``=`` ``2``)`
 
 ![PCA for the faahKO data set, un-normalized
 intensities.](xcms_files/figure-html/final-pca-1.png)
@@ -2161,29 +1780,11 @@ assessment and filtering only on QC samples.
 
 Both examples are shown below:
 
-``` r
-
-# To set up parameter `f` to filter only based on QC samples
-f <- sampleData(faahko)$sample_type
-f[f != "QC"] <- NA
-
-# To set up parameter `f` to filter per sample type excluding QC samples
-f <- sampleData(faahko)$sample_type
-f[f == "QC"] <- NA
-
-missing_filter <- PercentMissingFilter(threshold = 30, f = f)
-# Apply the filter to faakho object
-filtered_faahko <- filterFeatures(object = faahko, filter = missing_filter)
-```
+`` # To set up parameter `f` to filter only based on QC samples ``` ``f`` ``<-`` `[`sampleData`](https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html)`(``faahko``)``$``sample_type`` ``f``[``f`` ``!=`` ``"QC"``]`` ``<-`` ``NA`` `` ``` # To set up parameter `f` to filter per sample type excluding QC samples ``` ``f`` ``<-`` `[`sampleData`](https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html)`(``faahko``)``$``sample_type`` ``f``[``f`` ``==`` ``"QC"``]`` ``<-`` ``NA`` `` ``missing_filter`` ``<-`` `[`PercentMissingFilter`](https://sneumann.github.io/xcms/reference/PercentMissingFilter.md)`(``threshold ``=`` ``30``, f ``=`` ``f``)`` ``# Apply the filter to faakho object`` ``filtered_faahko`` ``<-`` `[`filterFeatures`](https://sneumann.github.io/xcms/reference/filterFeatures.md)`(``object ``=`` ``faahko``, filter ``=`` ``missing_filter``)`
 
     ## 3 features were removed
 
-``` r
-
-# Apply the filter to res object
-missing_filter <- PercentMissingFilter(threshold = 30, f = f)
-filtered_res <- filterFeatures(object = res, filter = missing_filter)
-```
+`# Apply the filter to res object`` ``missing_filter`` ``<-`` `[`PercentMissingFilter`](https://sneumann.github.io/xcms/reference/PercentMissingFilter.md)`(``threshold ``=`` ``30``, f ``=`` ``f``)`` ``filtered_res`` ``<-`` `[`filterFeatures`](https://sneumann.github.io/xcms/reference/filterFeatures.md)`(``object ``=`` ``res``, filter ``=`` ``missing_filter``)`
 
     ## 3 features were removed
 
@@ -2203,27 +1804,11 @@ standard deviation (coefficient of variation) for a specified
 `threshold`. It is recommended to base the computation on quality
 control (QC) samples, as demonstrated below:
 
-``` r
-
-# Set up parameters for RsdFilter
-rsd_filter <- RsdFilter(
-    threshold = 0.3,
-    qcIndex = sampleData(filtered_faahko)$sample_type == "QC")
-
-# Apply the filter to faakho object
-filtered_faahko <- filterFeatures(object = filtered_faahko, filter = rsd_filter)
-```
+`# Set up parameters for RsdFilter`` ``rsd_filter`` ``<-`` `[`RsdFilter`](https://sneumann.github.io/xcms/reference/RsdFilter.md)`(`` `` threshold ``=`` ``0.3``,`` `` qcIndex ``=`` `[`sampleData`](https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html)`(``filtered_faahko``)``$``sample_type`` ``==`` ``"QC"``)`` `` ``# Apply the filter to faakho object`` ``filtered_faahko`` ``<-`` `[`filterFeatures`](https://sneumann.github.io/xcms/reference/filterFeatures.md)`(``object ``=`` ``filtered_faahko``, filter ``=`` ``rsd_filter``)`
 
     ## 252 features were removed
 
-``` r
-
-# Now apply the same strategy to the res object
-rsd_filter <- RsdFilter(
-    threshold = 0.3, qcIndex = filtered_res$sample_type == "QC")
-filtered_res <- filterFeatures(
-    object = filtered_res, filter = rsd_filter, assay = "raw")
-```
+`# Now apply the same strategy to the res object`` ``rsd_filter`` ``<-`` `[`RsdFilter`](https://sneumann.github.io/xcms/reference/RsdFilter.md)`(`` `` threshold ``=`` ``0.3``, qcIndex ``=`` ``filtered_res``$``sample_type`` ``==`` ``"QC"``)`` ``filtered_res`` ``<-`` `[`filterFeatures`](https://sneumann.github.io/xcms/reference/filterFeatures.md)`(`` `` object ``=`` ``filtered_res``, filter ``=`` ``rsd_filter``, assay ``=`` ``"raw"``)`
 
     ## 257 features were removed
 
@@ -2234,32 +1819,11 @@ The `DratioFilter` can be used to filter features based on the D-ratio
 or *dispersion ratio*, which compares the standard deviation in QC
 samples to that in study samples.
 
-``` r
-
-# Set up parameters for DratioFilter
-dratio_filter <- DratioFilter(
-    threshold = 0.5,
-    qcIndex = sampleData(filtered_faahko)$sample_type == "QC",
-    studyIndex = sampleData(filtered_faahko)$sample_type == "study")
-
-# Apply the filter to faahko object
-filtered_faakho <- filterFeatures(object = filtered_faahko,
-                                  filter = dratio_filter)
-```
+`# Set up parameters for DratioFilter`` ``dratio_filter`` ``<-`` `[`DratioFilter`](https://sneumann.github.io/xcms/reference/DratioFilter.md)`(`` `` threshold ``=`` ``0.5``,`` `` qcIndex ``=`` `[`sampleData`](https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html)`(``filtered_faahko``)``$``sample_type`` ``==`` ``"QC"``,`` `` studyIndex ``=`` `[`sampleData`](https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html)`(``filtered_faahko``)``$``sample_type`` ``==`` ``"study"``)`` `` ``# Apply the filter to faahko object`` ``filtered_faakho`` ``<-`` `[`filterFeatures`](https://sneumann.github.io/xcms/reference/filterFeatures.md)`(``object ``=`` ``filtered_faahko``,`` `` filter ``=`` ``dratio_filter``)`
 
     ## 38 features were removed
 
-``` r
-
-# Now same but for the res object
-dratio_filter <- DratioFilter(
-    threshold = 0.5,
-    qcIndex = filtered_res$sample_type == "QC",
-    studyIndex = filtered_res$sample_type == "study")
-
-filtered_res <- filterFeatures(object = filtered_res,
-                               filter = dratio_filter)
-```
+`# Now same but for the res object`` ``dratio_filter`` ``<-`` `[`DratioFilter`](https://sneumann.github.io/xcms/reference/DratioFilter.md)`(`` `` threshold ``=`` ``0.5``,`` `` qcIndex ``=`` ``filtered_res``$``sample_type`` ``==`` ``"QC"``,`` `` studyIndex ``=`` ``filtered_res``$``sample_type`` ``==`` ``"study"``)`` `` ``filtered_res`` ``<-`` `[`filterFeatures`](https://sneumann.github.io/xcms/reference/filterFeatures.md)`(``object ``=`` ``filtered_res``,`` `` filter ``=`` ``dratio_filter``)`
 
     ## 38 features were removed
 
@@ -2282,11 +1846,7 @@ Let’s load an already analyzed dataset `ref` and our previous dataset
 before alignment, which will be `tst`. We will first restrict their
 retention time range to be the same for both dataset.
 
-``` r
-
-ref <- loadXcmsData("xmse")
-tst <- loadXcmsData("faahko_sub2")
-```
+`ref`` ``<-`` `[`loadXcmsData`](https://sneumann.github.io/xcms/reference/loadXcmsData.md)`(``"xmse"``)`` ``tst`` ``<-`` `[`loadXcmsData`](https://sneumann.github.io/xcms/reference/loadXcmsData.md)`(``"faahko_sub2"``)`
 
 Now, we will attempt to align these two samples with the previous
 dataset. The first step is to extract landmark features (referred to as
@@ -2299,20 +1859,11 @@ parameter within the
 [`filterFeatures()`](https://sneumann.github.io/xcms/reference/filterFeatures.md)
 function (see section above for more information on this method)
 
-``` r
-
-f <- sampleData(ref)$sample_type
-f[f != "QC"] <- NA
-ref <- filterFeatures(ref, PercentMissingFilter(threshold = 0, f = f))
-```
+`f`` ``<-`` `[`sampleData`](https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html)`(``ref``)``$``sample_type`` ``f``[``f`` ``!=`` ``"QC"``]`` ``<-`` ``NA`` ``ref`` ``<-`` `[`filterFeatures`](https://sneumann.github.io/xcms/reference/filterFeatures.md)`(``ref``, `[`PercentMissingFilter`](https://sneumann.github.io/xcms/reference/PercentMissingFilter.md)`(``threshold ``=`` ``0``, f ``=`` ``f``)``)`
 
     ## 4 features were removed
 
-``` r
-
-ref_mz_rt <- featureDefinitions(ref)[, c("mzmed","rtmed")]
-head(ref_mz_rt)
-```
+`ref_mz_rt`` ``<-`` `[`featureDefinitions`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``ref``)``[``, `[`c`](https://rdrr.io/r/base/c.html)`(``"mzmed"``,``"rtmed"``)``]`` `[`head`](https://rdrr.io/r/utils/head.html)`(``ref_mz_rt``)`
 
     ##       mzmed    rtmed
     ## FT001 200.1 2902.634
@@ -2322,10 +1873,7 @@ head(ref_mz_rt)
     ## FT005 233.0 3023.579
     ## FT006 241.1 3683.299
 
-``` r
-
-nrow(ref_mz_rt)
-```
+[`nrow`](https://rdrr.io/r/base/nrow.html)`(``ref_mz_rt``)`
 
     ## [1] 347
 
@@ -2344,45 +1892,17 @@ be found by searching
 [`?adjustRtime`](https://sneumann.github.io/xcms/reference/adjustRtime.md).
 Below is an example using default parameters.
 
-``` r
-
-param <- LamaParama(lamas = ref_mz_rt, method = "loess", span = 0.5,
-                    outlierTolerance = 3, zeroWeight = 10, ppm = 20,
-                    tolerance = 0, toleranceRt = 20, bs = "tp")
-
-#' input into `adjustRtime()`
-tst_adjusted <- adjustRtime(tst, param = param)
-tst_adjusted <- applyAdjustedRtime(tst_adjusted)
-```
+`param`` ``<-`` `[`LamaParama`](https://sneumann.github.io/xcms/reference/LamaParama.md)`(``lamas ``=`` ``ref_mz_rt``, method ``=`` ``"loess"``, span ``=`` ``0.5``,`` `` outlierTolerance ``=`` ``3``, zeroWeight ``=`` ``10``, ppm ``=`` ``20``,`` `` tolerance ``=`` ``0``, toleranceRt ``=`` ``20``, bs ``=`` ``"tp"``)`` `` ``` #' input into `adjustRtime()` ``` ``tst_adjusted`` ``<-`` `[`adjustRtime`](https://sneumann.github.io/xcms/reference/adjustRtime.md)`(``tst``, param ``=`` ``param``)`` ``tst_adjusted`` ``<-`` `[`applyAdjustedRtime`](https://sneumann.github.io/xcms/reference/applyAdjustedRtime.md)`(``tst_adjusted``)`
 
 We extract the base peak chromatogram (BPC) to visualize and evaluate
 the alignment:
 
-``` r
-
-#' evaluate the results with BPC
-bpc <- chromatogram(ref, chromPeaks = "none")
-bpc_tst_raw <- chromatogram(tst, chromPeaks = "none")
-bpc_tst_adj <- chromatogram(tst_adjusted, chromPeaks = "none")
-```
+`#' evaluate the results with BPC`` ``bpc`` ``<-`` `[`chromatogram`](https://sneumann.github.io/xcms/reference/chromatogram-method.md)`(``ref``, chromPeaks ``=`` ``"none"``)`` ``bpc_tst_raw`` ``<-`` `[`chromatogram`](https://sneumann.github.io/xcms/reference/chromatogram-method.md)`(``tst``, chromPeaks ``=`` ``"none"``)`` ``bpc_tst_adj`` ``<-`` `[`chromatogram`](https://sneumann.github.io/xcms/reference/chromatogram-method.md)`(``tst_adjusted``, chromPeaks ``=`` ``"none"``)`
 
 We generate plots to visually compare the alignment to the reference
 dataset (black) both before (red) and after (blue) adjustment:
 
-``` r
-
-#' BPC of a sample
-par(mfrow = c(1, 2),  mar = c(4, 2.5, 1, 0.5))
-plot(bpc[1, 1], col = "#00000080", main = "Before Alignment")
-points(rtime(bpc_tst_raw[1, 1]), intensity(bpc_tst_raw[1, 1]), type = "l",
-       col = "#ff000080")
-grid()
-
-plot(bpc[1, 1], col = "#00000080", main = "After Alignment")
-points(rtime(bpc_tst_adj[1, 1]), intensity(bpc_tst_adj[1, 1]), type = "l",
-       col = "#0000ff80")
-grid()
-```
+`#' BPC of a sample`` `[`par`](https://rdrr.io/r/graphics/par.html)`(``mfrow ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``1``, ``2``)``, mar ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``4``, ``2.5``, ``1``, ``0.5``)``)`` `[`plot`](https://rdrr.io/r/base/plot.html)`(``bpc``[``1``, ``1``]``, col ``=`` ``"#00000080"``, main ``=`` ``"Before Alignment"``)`` `[`points`](https://rdrr.io/r/graphics/points.html)`(`[`rtime`](https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html)`(``bpc_tst_raw``[``1``, ``1``]``)``, `[`intensity`](https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html)`(``bpc_tst_raw``[``1``, ``1``]``)``, type ``=`` ``"l"``,`` `` col ``=`` ``"#ff000080"``)`` `[`grid`](https://rdrr.io/r/graphics/grid.html)`(``)`` `` `[`plot`](https://rdrr.io/r/base/plot.html)`(``bpc``[``1``, ``1``]``, col ``=`` ``"#00000080"``, main ``=`` ``"After Alignment"``)`` `[`points`](https://rdrr.io/r/graphics/points.html)`(`[`rtime`](https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html)`(``bpc_tst_adj``[``1``, ``1``]``)``, `[`intensity`](https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html)`(``bpc_tst_adj``[``1``, ``1``]``)``, type ``=`` ``"l"``,`` `` col ``=`` ``"#0000ff80"``)`` `[`grid`](https://rdrr.io/r/graphics/grid.html)`(``)`
 
 ![](xcms_files/figure-html/unnamed-chunk-30-1.png)
 
@@ -2394,19 +1914,7 @@ assessment of how well the *lamas* correspond with the chromatographic
 peaks in each file. This analysis can be conducted prior to any
 adjustments.
 
-``` r
-
-param <- matchLamasChromPeaks(tst, param = param)
-mtch <- matchedRtimes(param)
-
-#' BPC of the first sample with matches to lamas overlay
-par(mfrow = c(1, 1))
-plot(bpc[1, 1], col = "#00000080", main = "Distribution CP matched to Lamas")
-points(rtime(bpc_tst_adj[1, 1]), intensity(bpc_tst_adj[1, 1]), type = "l",
-       col = "#0000ff80")
-grid()
-abline(v = mtch[[1]]$obs)
-```
+`param`` ``<-`` `[`matchLamasChromPeaks`](https://sneumann.github.io/xcms/reference/LamaParama.md)`(``tst``, param ``=`` ``param``)`` ``mtch`` ``<-`` `[`matchedRtimes`](https://sneumann.github.io/xcms/reference/LamaParama.md)`(``param``)`` `` ``#' BPC of the first sample with matches to lamas overlay`` `[`par`](https://rdrr.io/r/graphics/par.html)`(``mfrow ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``1``, ``1``)``)`` `[`plot`](https://rdrr.io/r/base/plot.html)`(``bpc``[``1``, ``1``]``, col ``=`` ``"#00000080"``, main ``=`` ``"Distribution CP matched to Lamas"``)`` `[`points`](https://rdrr.io/r/graphics/points.html)`(`[`rtime`](https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html)`(``bpc_tst_adj``[``1``, ``1``]``)``, `[`intensity`](https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html)`(``bpc_tst_adj``[``1``, ``1``]``)``, type ``=`` ``"l"``,`` `` col ``=`` ``"#0000ff80"``)`` `[`grid`](https://rdrr.io/r/graphics/grid.html)`(``)`` `[`abline`](https://rdrr.io/r/graphics/abline.html)`(``v ``=`` ``mtch``[[``1``]``]``$``obs``)`
 
 ![](xcms_files/figure-html/unnamed-chunk-31-1.png)
 
@@ -2417,15 +1925,7 @@ this particular sample no chromatographic peaks were matched to the
 region was not good. For the second file, chrom peaks could also be
 matched in that region resulting in a better alignment.
 
-``` r
-
-par(mfrow = c(1, 1))
-plot(bpc[1, 2], col = "#00000080", main = "Distribution CP matched to Lamas")
-points(rtime(bpc_tst_adj[1, 2]), intensity(bpc_tst_adj[1, 2]), type = "l",
-       col = "#0000ff80")
-grid()
-abline(v = mtch[[2]]$obs)
-```
+[`par`](https://rdrr.io/r/graphics/par.html)`(``mfrow ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``1``, ``1``)``)`` `[`plot`](https://rdrr.io/r/base/plot.html)`(``bpc``[``1``, ``2``]``, col ``=`` ``"#00000080"``, main ``=`` ``"Distribution CP matched to Lamas"``)`` `[`points`](https://rdrr.io/r/graphics/points.html)`(`[`rtime`](https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html)`(``bpc_tst_adj``[``1``, ``2``]``)``, `[`intensity`](https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html)`(``bpc_tst_adj``[``1``, ``2``]``)``, type ``=`` ``"l"``,`` `` col ``=`` ``"#0000ff80"``)`` `[`grid`](https://rdrr.io/r/graphics/grid.html)`(``)`` `[`abline`](https://rdrr.io/r/graphics/abline.html)`(``v ``=`` ``mtch``[[``2``]``]``$``obs``)`
 
 ![](xcms_files/figure-html/unnamed-chunk-32-1.png)
 
@@ -2440,31 +1940,18 @@ the file. Additionally, it is feasible to directly
 file of interest, showcasing the distribution of these chromatographic
 peaks along with the fitted model line.
 
-``` r
-
-#' access summary of matches and model information
-summary <- summarizeLamaMatch(param)
-summary
-```
+`#' access summary of matches and model information`` ``summary`` ``<-`` `[`summarizeLamaMatch`](https://sneumann.github.io/xcms/reference/LamaParama.md)`(``param``)`` ``summary`
 
     ##   Total_peaks Matched_peaks Total_lamas Model_summary
     ## 1          87            34         347  30, c(0.....
     ## 2         100            51         347  48, c(0.....
     ## 3          61            34         347  33, c(0.....
 
-``` r
-
-#' coverage for each file
-summary$Matched_peaks / summary$Total_peaks * 100
-```
+`#' coverage for each file`` ``summary``$``Matched_peaks`` ``/`` ``summary``$``Total_peaks`` ``*`` ``100`
 
     ## [1] 39.08046 51.00000 55.73770
 
-``` r
-
-#' access the information on the model of for the first file
-summary$Model_summary[[1]]
-```
+`#' access the information on the model of for the first file`` ``summary``$``Model_summary``[[``1``]``]`
 
     ## Call:
     ## loess(formula = ref ~ obs, data = rt_map, weights = weights, 
@@ -2484,14 +1971,7 @@ summary$Model_summary[[1]]
     ##  parametric:  FALSE
     ## drop.square:  FALSE
 
-``` r
-
-#' Plot obs vs. ref with fitting line
-plot(param, index = 1L, main = "ChromPeaks versus Lamas for the first file",
-     colPoint = "red")
-abline(0, 1, lty = 3, col = "grey")
-grid()
-```
+`#' Plot obs vs. ref with fitting line`` `[`plot`](https://rdrr.io/r/base/plot.html)`(``param``, index ``=`` ``1L``, main ``=`` ``"ChromPeaks versus Lamas for the first file"``,`` `` colPoint ``=`` ``"red"``)`` `[`abline`](https://rdrr.io/r/graphics/abline.html)`(``0``, ``1``, lty ``=`` ``3``, col ``=`` ``"grey"``)`` `[`grid`](https://rdrr.io/r/graphics/grid.html)`(``)`
 
 ![](xcms_files/figure-html/unnamed-chunk-33-1.png)
 
@@ -2539,17 +2019,11 @@ parameter class. Note also that
 [`bpstart()`](https://rdrr.io/pkg/BiocParallel/man/BiocParallelParam-class.html)
 is used below to initialize the parallel processes.
 
-``` r
-
-register(bpstart(MulticoreParam(2)))
-```
+[`register`](https://rdrr.io/pkg/BiocParallel/man/register.html)`(`[`bpstart`](https://rdrr.io/pkg/BiocParallel/man/BiocParallelParam-class.html)`(`[`MulticoreParam`](https://rdrr.io/pkg/BiocParallel/man/MulticoreParam-class.html)`(``2``)``)``)`
 
 Windows supports only socket-based parallel processing:
 
-``` r
-
-register(bpstart(SnowParam(2)))
-```
+[`register`](https://rdrr.io/pkg/BiocParallel/man/register.html)`(`[`bpstart`](https://rdrr.io/pkg/BiocParallel/man/BiocParallelParam-class.html)`(`[`SnowParam`](https://rdrr.io/pkg/BiocParallel/man/SnowParam-class.html)`(``2``)``)``)`
 
 ### Main differences to the `MSnbase`-based *xcms* version 3
 
@@ -2581,19 +2055,16 @@ but will be subsequently updated.
   *xcms*.
 - [SpectraTutorials](https://sneumann.github.io/xcms/articles/):
   tutorials describing the
-  *[Spectra](https://bioconductor.org/packages/3.23/Spectra)* package
+  *[Spectra](https://bioconductor.org/packages/3.24/Spectra)* package
   and its functionality.
 
 ## Session information
 
 R packages used for this document are listed below.
 
-``` r
+[`sessionInfo`](https://rdrr.io/r/utils/sessionInfo.html)`(``)`
 
-sessionInfo()
-```
-
-    ## R version 4.6.0 (2026-04-24)
+    ## R version 4.6.1 (2026-06-24)
     ## Platform: x86_64-pc-linux-gnu
     ## Running under: Ubuntu 24.04.4 LTS
     ## 
@@ -2617,67 +2088,67 @@ sessionInfo()
     ## [8] base     
     ## 
     ## other attached packages:
-    ##  [1] SummarizedExperiment_1.42.0 Biobase_2.72.0             
-    ##  [3] GenomicRanges_1.64.0        Seqinfo_1.2.0              
-    ##  [5] IRanges_2.46.0              S4Vectors_0.50.1           
-    ##  [7] BiocGenerics_0.58.1         generics_0.1.4             
-    ##  [9] MatrixGenerics_1.24.0       matrixStats_1.5.0          
-    ## [11] MsExperiment_1.14.0         ProtGenerics_1.44.0        
-    ## [13] pheatmap_1.0.13             RColorBrewer_1.1-3         
-    ## [15] pander_0.6.6                faahKO_1.52.0              
-    ## [17] xcms_4.11.1                 BiocParallel_1.46.0        
-    ## [19] BiocStyle_2.40.0           
+    ##  [1] SummarizedExperiment_1.43.0 Biobase_2.73.2             
+    ##  [3] GenomicRanges_1.65.1        Seqinfo_1.3.2              
+    ##  [5] IRanges_2.47.5              S4Vectors_0.51.9           
+    ##  [7] BiocGenerics_0.59.12        generics_0.1.4             
+    ##  [9] MatrixGenerics_1.25.0       matrixStats_1.5.0          
+    ## [11] Chromatograms_1.3.3         MsExperiment_1.15.0        
+    ## [13] ProtGenerics_1.45.0         pheatmap_1.0.13            
+    ## [15] RColorBrewer_1.1-3          pander_0.6.6               
+    ## [17] faahKO_1.53.0               xcms_4.11.3                
+    ## [19] BiocParallel_1.47.0         BiocStyle_2.41.0           
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] DBI_1.3.0                   rlang_1.2.0                
+    ##  [1] DBI_1.3.0                   rlang_1.3.0                
     ##  [3] magrittr_2.0.5              clue_0.3-68                
-    ##  [5] MassSpecWavelet_1.78.0      otel_0.2.0                 
-    ##  [7] compiler_4.6.0              PTMods_1.0.0               
+    ##  [5] MassSpecWavelet_1.79.2      otel_0.2.0                 
+    ##  [7] compiler_4.6.1              PTMods_1.1.0               
     ##  [9] systemfonts_1.3.2           vctrs_0.7.3                
     ## [11] reshape2_1.4.5              stringr_1.6.0              
     ## [13] crayon_1.5.3                pkgconfig_2.0.3            
-    ## [15] MetaboCoreUtils_1.20.1      fastmap_1.2.0              
-    ## [17] XVector_0.52.0              rmarkdown_2.31             
-    ## [19] preprocessCore_1.74.0       ragg_1.5.2                 
-    ## [21] purrr_1.2.2                 xfun_0.59                  
-    ## [23] MultiAssayExperiment_1.38.0 cachem_1.1.0               
+    ## [15] MetaboCoreUtils_1.21.1      fastmap_1.2.0              
+    ## [17] XVector_0.53.0              rmarkdown_2.31             
+    ## [19] preprocessCore_1.75.0       ragg_1.5.2                 
+    ## [21] purrr_1.2.2                 xfun_0.60                  
+    ## [23] MultiAssayExperiment_1.39.0 cachem_1.1.0               
     ## [25] jsonlite_2.0.0              progress_1.2.3             
-    ## [27] DelayedArray_0.38.2         prettyunits_1.2.0          
-    ## [29] parallel_4.6.0              cluster_2.1.8.2            
-    ## [31] R6_2.6.1                    bslib_0.11.0               
-    ## [33] stringi_1.8.7               limma_3.68.4               
+    ## [27] DelayedArray_0.39.6         prettyunits_1.2.0          
+    ## [29] parallel_4.6.1              cluster_2.1.8.3            
+    ## [31] R6_2.6.1                    bslib_0.12.0               
+    ## [33] stringi_1.8.9               limma_3.69.4               
     ## [35] jquerylib_0.1.4             iterators_1.0.14           
-    ## [37] Rcpp_1.1.1-1.1              bookdown_0.47              
-    ## [39] knitr_1.51                  Matrix_1.7-5               
-    ## [41] igraph_2.3.2                tidyselect_1.2.1           
+    ## [37] Rcpp_1.1.2                  bookdown_0.48              
+    ## [39] knitr_1.51                  Matrix_1.7-6               
+    ## [41] igraph_2.3.3                tidyselect_1.2.1           
     ## [43] abind_1.4-8                 yaml_2.3.12                
     ## [45] doParallel_1.0.17           codetools_0.2-20           
-    ## [47] affy_1.90.0                 lattice_0.22-9             
+    ## [47] affy_1.91.0                 lattice_0.23-1             
     ## [49] tibble_3.3.1                plyr_1.8.9                 
     ## [51] S7_0.2.2                    evaluate_1.0.5             
-    ## [53] desc_1.4.3                  Spectra_1.22.2             
-    ## [55] pillar_1.11.1               affyio_1.82.0              
+    ## [53] desc_1.4.3                  Spectra_1.23.3             
+    ## [55] pillar_1.11.1               affyio_1.83.0              
     ## [57] BiocManager_1.30.27         foreach_1.5.2              
-    ## [59] MSnbase_2.37.0              MALDIquant_1.22.3          
+    ## [59] MSnbase_2.39.5              MALDIquant_1.22.3          
     ## [61] ncdf4_1.24                  hms_1.1.4                  
     ## [63] ggplot2_4.0.3               scales_1.4.0               
-    ## [65] glue_1.8.1                  MsFeatures_1.20.0          
-    ## [67] lazyeval_0.2.3              tools_4.6.0                
-    ## [69] mzID_1.50.0                 data.table_1.18.4          
-    ## [71] QFeatures_1.22.0            vsn_3.80.0                 
-    ## [73] mzR_2.46.0                  fs_2.1.0                   
-    ## [75] XML_3.99-0.23               grid_4.6.0                 
-    ## [77] impute_1.86.0               tidyr_1.3.2                
-    ## [79] MsCoreUtils_1.24.0          PSMatch_1.16.0             
+    ## [65] glue_1.8.1                  MsFeatures_1.21.0          
+    ## [67] lazyeval_0.2.3              tools_4.6.1                
+    ## [69] mzID_1.51.0                 data.table_1.18.6.1        
+    ## [71] QFeatures_1.23.1            vsn_3.81.0                 
+    ## [73] mzR_2.47.0                  fs_2.1.0                   
+    ## [75] XML_3.99-0.24               grid_4.6.1                 
+    ## [77] impute_1.87.0               tidyr_1.3.2                
+    ## [79] MsCoreUtils_1.25.4          PSMatch_1.17.0             
     ## [81] cli_3.6.6                   textshaping_1.0.5          
-    ## [83] S4Arrays_1.12.0             dplyr_1.2.1                
-    ## [85] AnnotationFilter_1.36.0     pcaMethods_2.4.0           
+    ## [83] S4Arrays_1.13.0             dplyr_1.2.1                
+    ## [85] AnnotationFilter_1.37.0     pcaMethods_2.5.0           
     ## [87] gtable_0.3.6                sass_0.4.10                
-    ## [89] digest_0.6.39               SparseArray_1.12.2         
+    ## [89] digest_0.6.39               SparseArray_1.13.2         
     ## [91] htmlwidgets_1.6.4           farver_2.1.2               
-    ## [93] htmltools_0.5.9             pkgdown_2.2.0.9000         
+    ## [93] htmltools_0.5.9             pkgdown_2.2.1.9000         
     ## [95] lifecycle_1.0.5             statmod_1.5.2              
-    ## [97] MASS_7.3-65
+    ## [97] MASS_7.3-66
 
 ## References
 

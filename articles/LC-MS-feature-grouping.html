@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.11.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.11.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (links[i].hostname != window.location.hostname)
       links[i].target = '_blank';
 });
-</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.23/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer<br><strong>Modified</strong>: 2026-07-05 12:02:17.560235<br><strong>Compiled</strong>: Sun Jul 5 13:02:49 2026</p>
+</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.24/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer<br><strong>Modified</strong>: 2026-09-01 07:29:04.202546<br><strong>Compiled</strong>: Tue Sep 1 08:30:57 2026</p>
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
@@ -94,10 +94,10 @@ ions generated during ionization will be detected as different features.
 <em>Compounding</em> aims now at grouping such features presumably
 representing signal from the same originating compound to reduce data
 set complexity (and to aid in subsequent annotation steps). General MS
-feature grouping functionality if defined by the <em><a href="https://bioconductor.org/packages/3.23/MsFeatures" class="external-link">MsFeatures</a></em>
-package with additional functionality being implemented in the <em><a href="https://bioconductor.org/packages/3.23/xcms" class="external-link">xcms</a></em> package
+feature grouping functionality if defined by the <em><a href="https://bioconductor.org/packages/3.24/MsFeatures" class="external-link">MsFeatures</a></em>
+package with additional functionality being implemented in the <em><a href="https://bioconductor.org/packages/3.24/xcms" class="external-link">xcms</a></em> package
 to enable the compounding of LC-MS data.</p>
-<p>This document provides a simple compounding workflow using <em><a href="https://bioconductor.org/packages/3.23/xcms" class="external-link">xcms</a></em>. Note
+<p>This document provides a simple compounding workflow using <em><a href="https://bioconductor.org/packages/3.24/xcms" class="external-link">xcms</a></em>. Note
 that the present functionality does not (yet) <em>aggregate</em> or
 combine the actual features per values, but does only define the feature
 groups (one per compound).</p>
@@ -106,7 +106,7 @@ groups (one per compound).</p>
 <h2 id="compounding-of-lc-ms-data">Compounding of LC-MS data<a class="anchor" aria-label="anchor" href="#compounding-of-lc-ms-data"></a>
 </h2>
 <p>We demonstrate the compounding (feature grouping) functionality on
-the simple toy data set used also in the <em><a href="https://bioconductor.org/packages/3.23/xcms" class="external-link">xcms</a></em> package
+the simple toy data set used also in the <em><a href="https://bioconductor.org/packages/3.24/xcms" class="external-link">xcms</a></em> package
 and provided through the <em>faahKO</em> package. This data set consists
 of samples from 4 mice with knock-out of the fatty acid amide hydrolase
 (FAAH) and 4 wild type mice. Pre-processing of this data set is
@@ -263,7 +263,7 @@ below group features within a retention time window of 10 seconds into
 of these feature groups (i.e. how many features are grouped
 together).</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/featureGroups.html" class="external-link">featureGroups</a></span><span class="op">(</span><span class="va">xmse</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/featureGroups.html" class="external-link">featureGroups</a></span><span class="op">(</span><span class="va">xmse</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## FG.001 FG.002 FG.003 FG.004 FG.005 FG.006 FG.007 FG.008 FG.009 FG.010 FG.011 </span></span>
 <span><span class="co">##      4      6      2      4      6      5      2      4      3      4      3 </span></span>
@@ -316,7 +316,7 @@ larger rt window.</p>
 <span></span>
 <span><span class="co">## Repeat the grouping</span></span>
 <span><span class="va">xmse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures.html" class="external-link">groupFeatures</a></span><span class="op">(</span><span class="va">xmse</span>, <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures-similar-rtime.html" class="external-link">SimilarRtimeParam</a></span><span class="op">(</span><span class="fl">20</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/featureGroups.html" class="external-link">featureGroups</a></span><span class="op">(</span><span class="va">xmse</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/featureGroups.html" class="external-link">featureGroups</a></span><span class="op">(</span><span class="va">xmse</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## FG.001 FG.002 FG.003 FG.004 FG.005 FG.006 FG.007 FG.008 FG.009 FG.010 FG.011 </span></span>
 <span><span class="co">##      4      6      2      4      6      5      2      4      3      4      3 </span></span>
@@ -378,9 +378,9 @@ with a heatmap.</p>
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">pheatmap</span><span class="op">)</span></span>
 <span><span class="va">fvals</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log2</a></span><span class="op">(</span><span class="fu"><a href="../reference/XCMSnExp-peak-grouping-results.html">featureValues</a></span><span class="op">(</span><span class="va">xmse</span>, filled <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">cormat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">fvals</span><span class="op">)</span>, use <span class="op">=</span> <span class="st">"pairwise.complete.obs"</span><span class="op">)</span></span>
+<span><span class="va">cormat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">fvals</span><span class="op">)</span>, use <span class="op">=</span> <span class="st">"pairwise.complete.obs"</span><span class="op">)</span></span>
 <span><span class="va">ann</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>fgroup <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/featureGroups.html" class="external-link">featureGroups</a></span><span class="op">(</span><span class="va">xmse</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">ann</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">cormat</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">ann</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">cormat</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/pheatmap/man/pheatmap.html" class="external-link">pheatmap</a></span><span class="op">(</span><span class="va">cormat</span>, annotation_row <span class="op">=</span> <span class="va">ann</span>, cluster_rows <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                cluster_cols <span class="op">=</span> <span class="cn">TRUE</span>, show_rownames <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -410,7 +410,7 @@ for details and options.</p>
 <code class="sourceCode R"><span><span class="va">xmse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures.html" class="external-link">groupFeatures</a></span><span class="op">(</span></span>
 <span>    <span class="va">xmse</span>, <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures-similar-abundance.html" class="external-link">AbundanceSimilarityParam</a></span><span class="op">(</span>threshold <span class="op">=</span> <span class="fl">0.7</span>, transform <span class="op">=</span> <span class="va">log2</span><span class="op">)</span>,</span>
 <span>    filled <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/featureGroups.html" class="external-link">featureGroups</a></span><span class="op">(</span><span class="va">xmse</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/featureGroups.html" class="external-link">featureGroups</a></span><span class="op">(</span><span class="va">xmse</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## FG.001.001 FG.001.002 FG.002.001 FG.002.002 FG.002.003 FG.002.004 FG.003.001 </span></span>
 <span><span class="co">##          3          1          2          2          1          1          1 </span></span>
@@ -502,8 +502,8 @@ otherwise.</p>
 <span>    <span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, pch <span class="op">=</span> <span class="fl">16</span>, col <span class="op">=</span> <span class="va">col</span><span class="op">)</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/graphics/grid.html" class="external-link">grid</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
-<span><span class="va">fts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/grep.html" class="external-link">grep</a></span><span class="op">(</span><span class="st">"FG.040"</span>, <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/featureGroups.html" class="external-link">featureGroups</a></span><span class="op">(</span><span class="va">xmse</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/pairs.html" class="external-link">pairs</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">fvals</span><span class="op">[</span><span class="va">fts</span>, <span class="op">]</span><span class="op">)</span>, gap <span class="op">=</span> <span class="fl">0.1</span>, main <span class="op">=</span> <span class="st">"FG.040"</span>, panel <span class="op">=</span> <span class="va">cor_plot</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">fts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grep</a></span><span class="op">(</span><span class="st">"FG.040"</span>, <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/featureGroups.html" class="external-link">featureGroups</a></span><span class="op">(</span><span class="va">xmse</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/pairs.html" class="external-link">pairs</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">fvals</span><span class="op">[</span><span class="va">fts</span>, <span class="op">]</span><span class="op">)</span>, gap <span class="op">=</span> <span class="fl">0.1</span>, main <span class="op">=</span> <span class="st">"FG.040"</span>, panel <span class="op">=</span> <span class="va">cor_plot</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
 <img src="LC-MS-feature-grouping_files/figure-html/abundance-correlation-fg040-1.png" class="r-plt" alt="Pairwise correlation plot for all features initially grouped into the feature group FG.040." width="768"><p class="caption">
 Pairwise correlation plot for all features initially grouped into the
@@ -558,7 +558,7 @@ a threshold a correlation coefficient of 0.7.</p>
 also loading the raw MS data to extract the ion chromatograms for each
 feature. The results of the grouping are shown below.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/featureGroups.html" class="external-link">featureGroups</a></span><span class="op">(</span><span class="va">xmse</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/featureGroups.html" class="external-link">featureGroups</a></span><span class="op">(</span><span class="va">xmse</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## FG.001.001.001 FG.001.002.001 FG.002.001.001 FG.002.002.001 FG.002.003.001 </span></span>
 <span><span class="co">##              3              1              2              2              1 </span></span>
@@ -676,16 +676,16 @@ based on EIC correlation. We first extract the EICs for all features
 from this initial feature group. With <code>n = 1</code> we specify to
 extract the EIC only from the sample with the highest intensity.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">fidx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/grep.html" class="external-link">grep</a></span><span class="op">(</span><span class="st">"FG.013.001."</span>, <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/featureGroups.html" class="external-link">featureGroups</a></span><span class="op">(</span><span class="va">xmse</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">fidx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grep</a></span><span class="op">(</span><span class="st">"FG.013.001."</span>, <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/featureGroups.html" class="external-link">featureGroups</a></span><span class="op">(</span><span class="va">xmse</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">eics</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/featureChromatograms.html">featureChromatograms</a></span><span class="op">(</span></span>
-<span>    <span class="va">xmse</span>, features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="fu"><a href="../reference/XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">xmse</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="va">fidx</span><span class="op">]</span>,</span>
+<span>    <span class="va">xmse</span>, features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="fu"><a href="../reference/XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">xmse</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="va">fidx</span><span class="op">]</span>,</span>
 <span>    filled <span class="op">=</span> <span class="cn">TRUE</span>, n <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <p>Next we plot the EICs using a different color for each of the
 subgroups. With <code>peakType = "none"</code> we disable the
 highlighting of the detected chromatographic peaks.</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cols</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#ff000080"</span>, <span class="st">"#0000ff80"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">cols</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/featureGroups.html" class="external-link">featureGroups</a></span><span class="op">(</span><span class="va">xmse</span><span class="op">)</span><span class="op">[</span><span class="va">fidx</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">cols</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/featureGroups.html" class="external-link">featureGroups</a></span><span class="op">(</span><span class="va">xmse</span><span class="op">)</span><span class="op">[</span><span class="va">fidx</span><span class="op">]</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/plotChromatogramsOverlay.html">plotChromatogramsOverlay</a></span><span class="op">(</span><span class="va">eics</span>, col <span class="op">=</span> <span class="va">cols</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/featureGroups.html" class="external-link">featureGroups</a></span><span class="op">(</span><span class="va">xmse</span><span class="op">)</span><span class="op">[</span><span class="va">fidx</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>                         lwd <span class="op">=</span> <span class="fl">2</span>, peakType <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span></code></pre></div>
@@ -715,15 +715,15 @@ some samples along the retention time dimension and can thus not
 represent the signal from the same compound.</p>
 <p>We evaluate next the sub-grouping in another feature group.</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">fidx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/grep.html" class="external-link">grep</a></span><span class="op">(</span><span class="st">"FG.045.001."</span>, <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/featureGroups.html" class="external-link">featureGroups</a></span><span class="op">(</span><span class="va">xmse</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">fidx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grep</a></span><span class="op">(</span><span class="st">"FG.045.001."</span>, <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/featureGroups.html" class="external-link">featureGroups</a></span><span class="op">(</span><span class="va">xmse</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">eics</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/featureChromatograms.html">featureChromatograms</a></span><span class="op">(</span></span>
-<span>    <span class="va">xmse</span>, features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="fu"><a href="../reference/XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">xmse</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="va">fidx</span><span class="op">]</span>,</span>
+<span>    <span class="va">xmse</span>, features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="fu"><a href="../reference/XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">xmse</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="va">fidx</span><span class="op">]</span>,</span>
 <span>    filled <span class="op">=</span> <span class="cn">TRUE</span>, n <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <p>Next we plot the EICs using a different color for each of the
 subgroups.</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cols</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#ff000080"</span>, <span class="st">"#0000ff80"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">cols</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/featureGroups.html" class="external-link">featureGroups</a></span><span class="op">(</span><span class="va">xmse</span><span class="op">)</span><span class="op">[</span><span class="va">fidx</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">cols</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/featureGroups.html" class="external-link">featureGroups</a></span><span class="op">(</span><span class="va">xmse</span><span class="op">)</span><span class="op">[</span><span class="va">fidx</span><span class="op">]</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/plotChromatogramsOverlay.html">plotChromatogramsOverlay</a></span><span class="op">(</span><span class="va">eics</span>, col <span class="op">=</span> <span class="va">cols</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/featureGroups.html" class="external-link">featureGroups</a></span><span class="op">(</span><span class="va">xmse</span><span class="op">)</span><span class="op">[</span><span class="va">fidx</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>                         lwd <span class="op">=</span> <span class="fl">2</span>, peakType <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span></code></pre></div>
@@ -770,7 +770,7 @@ example just 30 randomly selected features) to an initial feature group
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">xmse</span><span class="op">)</span><span class="op">$</span><span class="va">feature_group</span> <span class="op">&lt;-</span> <span class="cn">NA_character_</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
-<span><span class="va">fts_idx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="fu"><a href="../reference/XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">xmse</span><span class="op">)</span><span class="op">)</span>, <span class="fl">30</span><span class="op">)</span></span>
+<span><span class="va">fts_idx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="fu"><a href="../reference/XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">xmse</span><span class="op">)</span><span class="op">)</span>, <span class="fl">30</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">xmse</span><span class="op">)</span><span class="op">$</span><span class="va">feature_group</span><span class="op">[</span><span class="va">fts_idx</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"FG"</span></span></code></pre></div>
 <p>Any call to <code>groupFeatures</code> would now simply sub-group
 this set of 30 features. Any feature which has an <code>NA</code> in the
@@ -778,7 +778,7 @@ this set of 30 features. Any feature which has an <code>NA</code> in the
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">xmse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures.html" class="external-link">groupFeatures</a></span><span class="op">(</span><span class="va">xmse</span>, <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures-similar-rtime.html" class="external-link">SimilarRtimeParam</a></span><span class="op">(</span>diffRt <span class="op">=</span> <span class="fl">20</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">xmse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures.html" class="external-link">groupFeatures</a></span><span class="op">(</span><span class="va">xmse</span>, <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures-similar-abundance.html" class="external-link">AbundanceSimilarityParam</a></span><span class="op">(</span>threshold <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/featureGroups.html" class="external-link">featureGroups</a></span><span class="op">(</span><span class="va">xmse</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/featureGroups.html" class="external-link">featureGroups</a></span><span class="op">(</span><span class="va">xmse</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## FG.001.001 FG.001.002 FG.002.001 FG.002.002 FG.003.001 FG.003.002 FG.004.001 </span></span>
 <span><span class="co">##          1          1          1          1          1          1          1 </span></span>
@@ -795,7 +795,7 @@ this set of 30 features. Any feature which has an <code>NA</code> in the
 </h2>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## R version 4.6.0 (2026-04-24)</span></span>
+<pre><code><span><span class="co">## R version 4.6.1 (2026-06-24)</span></span>
 <span><span class="co">## Platform: x86_64-pc-linux-gnu</span></span>
 <span><span class="co">## Running under: Ubuntu 24.04.4 LTS</span></span>
 <span><span class="co">## </span></span>
@@ -819,64 +819,65 @@ this set of 30 features. Any feature which has an <code>NA</code> in the
 <span><span class="co">## [8] base     </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## other attached packages:</span></span>
-<span><span class="co">##  [1] pheatmap_1.0.13     faahKO_1.52.0       MSnbase_2.37.0     </span></span>
-<span><span class="co">##  [4] ProtGenerics_1.44.0 S4Vectors_0.50.1    mzR_2.46.0         </span></span>
-<span><span class="co">##  [7] Rcpp_1.1.1-1.1      Biobase_2.72.0      BiocGenerics_0.58.1</span></span>
-<span><span class="co">## [10] generics_0.1.4      MsFeatures_1.20.0   xcms_4.11.1        </span></span>
-<span><span class="co">## [13] BiocParallel_1.46.0 BiocStyle_2.40.0   </span></span>
+<span><span class="co">##  [1] pheatmap_1.0.13      faahKO_1.53.0        MSnbase_2.39.5      </span></span>
+<span><span class="co">##  [4] S4Vectors_0.51.9     Biobase_2.73.2       BiocGenerics_0.59.12</span></span>
+<span><span class="co">##  [7] generics_0.1.4       mzR_2.47.0           Rcpp_1.1.2          </span></span>
+<span><span class="co">## [10] MsFeatures_1.21.0    xcms_4.11.3          BiocParallel_1.47.0 </span></span>
+<span><span class="co">## [13] BiocStyle_2.41.0    </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
-<span><span class="co">##   [1] DBI_1.3.0                   rlang_1.2.0                </span></span>
+<span><span class="co">##   [1] DBI_1.3.0                   rlang_1.3.0                </span></span>
 <span><span class="co">##   [3] magrittr_2.0.5              clue_0.3-68                </span></span>
-<span><span class="co">##   [5] MassSpecWavelet_1.78.0      otel_0.2.0                 </span></span>
-<span><span class="co">##   [7] matrixStats_1.5.0           compiler_4.6.0             </span></span>
-<span><span class="co">##   [9] PTMods_1.0.0                systemfonts_1.3.2          </span></span>
+<span><span class="co">##   [5] MassSpecWavelet_1.79.2      otel_0.2.0                 </span></span>
+<span><span class="co">##   [7] matrixStats_1.5.0           compiler_4.6.1             </span></span>
+<span><span class="co">##   [9] PTMods_1.1.0                systemfonts_1.3.2          </span></span>
 <span><span class="co">##  [11] vctrs_0.7.3                 reshape2_1.4.5             </span></span>
-<span><span class="co">##  [13] stringr_1.6.0               crayon_1.5.3               </span></span>
-<span><span class="co">##  [15] pkgconfig_2.0.3             MetaboCoreUtils_1.20.1     </span></span>
-<span><span class="co">##  [17] fastmap_1.2.0               XVector_0.52.0             </span></span>
-<span><span class="co">##  [19] rmarkdown_2.31              preprocessCore_1.74.0      </span></span>
-<span><span class="co">##  [21] ragg_1.5.2                  purrr_1.2.2                </span></span>
-<span><span class="co">##  [23] xfun_0.59                   MultiAssayExperiment_1.38.0</span></span>
-<span><span class="co">##  [25] cachem_1.1.0                jsonlite_2.0.0             </span></span>
-<span><span class="co">##  [27] progress_1.2.3              DelayedArray_0.38.2        </span></span>
-<span><span class="co">##  [29] prettyunits_1.2.0           parallel_4.6.0             </span></span>
-<span><span class="co">##  [31] cluster_2.1.8.2             R6_2.6.1                   </span></span>
-<span><span class="co">##  [33] bslib_0.11.0                stringi_1.8.7              </span></span>
-<span><span class="co">##  [35] RColorBrewer_1.1-3          limma_3.68.4               </span></span>
-<span><span class="co">##  [37] GenomicRanges_1.64.0        jquerylib_0.1.4            </span></span>
-<span><span class="co">##  [39] iterators_1.0.14            Seqinfo_1.2.0              </span></span>
-<span><span class="co">##  [41] bookdown_0.47               SummarizedExperiment_1.42.0</span></span>
-<span><span class="co">##  [43] knitr_1.51                  IRanges_2.46.0             </span></span>
-<span><span class="co">##  [45] Matrix_1.7-5                igraph_2.3.2               </span></span>
-<span><span class="co">##  [47] tidyselect_1.2.1            abind_1.4-8                </span></span>
-<span><span class="co">##  [49] yaml_2.3.12                 doParallel_1.0.17          </span></span>
-<span><span class="co">##  [51] codetools_0.2-20            affy_1.90.0                </span></span>
-<span><span class="co">##  [53] lattice_0.22-9              tibble_3.3.1               </span></span>
-<span><span class="co">##  [55] plyr_1.8.9                  S7_0.2.2                   </span></span>
-<span><span class="co">##  [57] evaluate_1.0.5              desc_1.4.3                 </span></span>
-<span><span class="co">##  [59] Spectra_1.22.2              pillar_1.11.1              </span></span>
-<span><span class="co">##  [61] affyio_1.82.0               BiocManager_1.30.27        </span></span>
-<span><span class="co">##  [63] MatrixGenerics_1.24.0       foreach_1.5.2              </span></span>
-<span><span class="co">##  [65] MALDIquant_1.22.3           ncdf4_1.24                 </span></span>
-<span><span class="co">##  [67] hms_1.1.4                   ggplot2_4.0.3              </span></span>
-<span><span class="co">##  [69] scales_1.4.0                MsExperiment_1.14.0        </span></span>
-<span><span class="co">##  [71] glue_1.8.1                  lazyeval_0.2.3             </span></span>
-<span><span class="co">##  [73] tools_4.6.0                 mzID_1.50.0                </span></span>
-<span><span class="co">##  [75] data.table_1.18.4           QFeatures_1.22.0           </span></span>
-<span><span class="co">##  [77] vsn_3.80.0                  fs_2.1.0                   </span></span>
-<span><span class="co">##  [79] XML_3.99-0.23               grid_4.6.0                 </span></span>
-<span><span class="co">##  [81] impute_1.86.0               tidyr_1.3.2                </span></span>
-<span><span class="co">##  [83] MsCoreUtils_1.24.0          PSMatch_1.16.0             </span></span>
-<span><span class="co">##  [85] cli_3.6.6                   textshaping_1.0.5          </span></span>
-<span><span class="co">##  [87] S4Arrays_1.12.0             dplyr_1.2.1                </span></span>
-<span><span class="co">##  [89] AnnotationFilter_1.36.0     pcaMethods_2.4.0           </span></span>
-<span><span class="co">##  [91] gtable_0.3.6                sass_0.4.10                </span></span>
-<span><span class="co">##  [93] digest_0.6.39               SparseArray_1.12.2         </span></span>
-<span><span class="co">##  [95] htmlwidgets_1.6.4           farver_2.1.2               </span></span>
-<span><span class="co">##  [97] htmltools_0.5.9             pkgdown_2.2.0.9000         </span></span>
-<span><span class="co">##  [99] lifecycle_1.0.5             statmod_1.5.2              </span></span>
-<span><span class="co">## [101] MASS_7.3-65</span></span></code></pre>
+<span><span class="co">##  [13] stringr_1.6.0               ProtGenerics_1.45.0        </span></span>
+<span><span class="co">##  [15] crayon_1.5.3                pkgconfig_2.0.3            </span></span>
+<span><span class="co">##  [17] MetaboCoreUtils_1.21.1      fastmap_1.2.0              </span></span>
+<span><span class="co">##  [19] XVector_0.53.0              rmarkdown_2.31             </span></span>
+<span><span class="co">##  [21] preprocessCore_1.75.0       ragg_1.5.2                 </span></span>
+<span><span class="co">##  [23] purrr_1.2.2                 xfun_0.60                  </span></span>
+<span><span class="co">##  [25] MultiAssayExperiment_1.39.0 cachem_1.1.0               </span></span>
+<span><span class="co">##  [27] jsonlite_2.0.0              progress_1.2.3             </span></span>
+<span><span class="co">##  [29] DelayedArray_0.39.6         prettyunits_1.2.0          </span></span>
+<span><span class="co">##  [31] parallel_4.6.1              cluster_2.1.8.3            </span></span>
+<span><span class="co">##  [33] R6_2.6.1                    bslib_0.12.0               </span></span>
+<span><span class="co">##  [35] stringi_1.8.9               RColorBrewer_1.1-3         </span></span>
+<span><span class="co">##  [37] limma_3.69.4                GenomicRanges_1.65.1       </span></span>
+<span><span class="co">##  [39] jquerylib_0.1.4             iterators_1.0.14           </span></span>
+<span><span class="co">##  [41] Seqinfo_1.3.2               bookdown_0.48              </span></span>
+<span><span class="co">##  [43] SummarizedExperiment_1.43.0 knitr_1.51                 </span></span>
+<span><span class="co">##  [45] IRanges_2.47.5              Matrix_1.7-6               </span></span>
+<span><span class="co">##  [47] igraph_2.3.3                tidyselect_1.2.1           </span></span>
+<span><span class="co">##  [49] abind_1.4-8                 yaml_2.3.12                </span></span>
+<span><span class="co">##  [51] doParallel_1.0.17           codetools_0.2-20           </span></span>
+<span><span class="co">##  [53] affy_1.91.0                 lattice_0.23-1             </span></span>
+<span><span class="co">##  [55] tibble_3.3.1                plyr_1.8.9                 </span></span>
+<span><span class="co">##  [57] S7_0.2.2                    evaluate_1.0.5             </span></span>
+<span><span class="co">##  [59] desc_1.4.3                  Spectra_1.23.3             </span></span>
+<span><span class="co">##  [61] pillar_1.11.1               affyio_1.83.0              </span></span>
+<span><span class="co">##  [63] BiocManager_1.30.27         MatrixGenerics_1.25.0      </span></span>
+<span><span class="co">##  [65] foreach_1.5.2               MALDIquant_1.22.3          </span></span>
+<span><span class="co">##  [67] ncdf4_1.24                  hms_1.1.4                  </span></span>
+<span><span class="co">##  [69] ggplot2_4.0.3               scales_1.4.0               </span></span>
+<span><span class="co">##  [71] MsExperiment_1.15.0         glue_1.8.1                 </span></span>
+<span><span class="co">##  [73] lazyeval_0.2.3              tools_4.6.1                </span></span>
+<span><span class="co">##  [75] mzID_1.51.0                 data.table_1.18.6.1        </span></span>
+<span><span class="co">##  [77] QFeatures_1.23.1            vsn_3.81.0                 </span></span>
+<span><span class="co">##  [79] fs_2.1.0                    XML_3.99-0.24              </span></span>
+<span><span class="co">##  [81] grid_4.6.1                  impute_1.87.0              </span></span>
+<span><span class="co">##  [83] tidyr_1.3.2                 MsCoreUtils_1.25.4         </span></span>
+<span><span class="co">##  [85] PSMatch_1.17.0              cli_3.6.6                  </span></span>
+<span><span class="co">##  [87] textshaping_1.0.5           S4Arrays_1.13.0            </span></span>
+<span><span class="co">##  [89] Chromatograms_1.3.3         dplyr_1.2.1                </span></span>
+<span><span class="co">##  [91] AnnotationFilter_1.37.0     pcaMethods_2.5.0           </span></span>
+<span><span class="co">##  [93] gtable_0.3.6                sass_0.4.10                </span></span>
+<span><span class="co">##  [95] digest_0.6.39               SparseArray_1.13.2         </span></span>
+<span><span class="co">##  [97] htmlwidgets_1.6.4           farver_2.1.2               </span></span>
+<span><span class="co">##  [99] htmltools_0.5.9             pkgdown_2.2.1.9000         </span></span>
+<span><span class="co">## [101] lifecycle_1.0.5             statmod_1.5.2              </span></span>
+<span><span class="co">## [103] MASS_7.3-66</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
@@ -893,7 +894,7 @@ this set of 30 features. Any feature which has an <code>NA</code> in the
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.9000.</p>
 </div>
 
     </footer>

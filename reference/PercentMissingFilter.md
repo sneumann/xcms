@@ -80,9 +80,9 @@ met the user input threshold
 ## See also
 
 Other Filter features in xcms:
-[`BlankFlag`](https://sneumann.github.io/xcms/reference/BlankFlag.md),
-[`DratioFilter`](https://sneumann.github.io/xcms/reference/DratioFilter.md),
-[`RsdFilter`](https://sneumann.github.io/xcms/reference/RsdFilter.md)
+[`BlankFlag()`](https://sneumann.github.io/xcms/reference/BlankFlag.md),
+[`DratioFilter()`](https://sneumann.github.io/xcms/reference/DratioFilter.md),
+[`RsdFilter()`](https://sneumann.github.io/xcms/reference/RsdFilter.md)
 
 ## Author
 

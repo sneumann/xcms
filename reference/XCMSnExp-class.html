@@ -343,7 +343,7 @@ as rectangles with border color peakCol."><meta property="og:image" content="htt
 
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.11.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.11.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -541,7 +541,7 @@ results. If no function is specified the function simply returns the
 <p><code>XCMSnExp</code> objects can be combined with the <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> function. This
 combines identified chromatographic peaks and the objects' pheno data but
 discards alignment results or feature definitions.</p>
-<p><code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> plots the spectrum data (see <code><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html" class="external-link">MSnbase::plot()</a></code> for
+<p><code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> plots the spectrum data (see <code><a href="https://rdrr.io/r/base/plot.html" class="external-link">MSnbase::plot()</a></code> for
 <code>MSnExp</code> objects in the <em>MSnbase</em> package for more details.
 For <code>type = "XIC"</code>, identified chromatographic peaks will be indicated
 as rectangles with border color <code>peakCol</code>.</p>
@@ -640,6 +640,9 @@ as rectangles with border color <code>peakCol</code>.</p>
 <span></span>
 <span><span class="co"># S4 method for class 'XCMSnExp'</span></span>
 <span><span class="fu">dropAdjustedRtime</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for class 'XCMSnExp,xcmsSet'</span></span>
+<span><span class="fu">coerce</span><span class="op">(</span><span class="va">from</span>, to <span class="op">=</span> <span class="st">"xcmsSet"</span>, strict <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'XCMSnExp'</span></span>
 <span><span class="fu"><a href="profMat-xcmsSet.html">profMat</a></span><span class="op">(</span></span>
@@ -815,6 +818,18 @@ history steps to remove. By default <code>dropLastN = -1</code>, dropping the
 chromatographic peaks removes all process history steps related to peak
 grouping. Setting e.g. <code>dropLastN = 1</code> will only remove the most
 recent peak grouping related process history step.</p></dd>
+
+
+<dt id="arg-from">from<a class="anchor" aria-label="anchor" href="#arg-from"></a></dt>
+<dd><p>Original object.</p></dd>
+
+
+<dt id="arg-to">to<a class="anchor" aria-label="anchor" href="#arg-to"></a></dt>
+<dd><p><code>character(1)</code> defining the object to cast to.</p></dd>
+
+
+<dt id="arg-strict">strict<a class="anchor" aria-label="anchor" href="#arg-strict"></a></dt>
+<dd><p>Ignored.</p></dd>
 
 
 <dt id="arg-param">param<a class="anchor" aria-label="anchor" href="#arg-param"></a></dt>
@@ -1048,6 +1063,9 @@ missing chromatographic peaks for a feature in some samples.</p></div>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Load a test data set with detected peaks</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lgatto.github.io/MSnbase" class="external-link">MSnbase</a></span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: mzR</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: Rcpp</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: Biobase</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: BiocGenerics</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: generics</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
@@ -1061,22 +1079,22 @@ missing chromatographic peaks for a feature in some samples.</p></div>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> The following objects are masked from ‘package:stats’:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     IQR, mad, sd, var, xtabs</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> The following object is masked from ‘package:utils’:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     data</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> The following objects are masked from ‘package:base’:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     Filter, Find, Map, Position, Reduce, anyDuplicated, aperm, append,</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     as.data.frame, basename, cbind, colnames, dirname, do.call,</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     duplicated, eval, evalq, get, grep, grepl, is.unsorted, lapply,</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     mapply, match, mget, order, paste, pmax, pmax.int, pmin, pmin.int,</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>     rank, rbind, rownames, sapply, saveRDS, table, tapply, unique,</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>     unsplit, which.max, which.min</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: Biobase</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     rank, rbind, rownames, sapply, saveRDS, scale, sequence, table,</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     tapply, transform, unique, unsplit, which.max, which.min</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Welcome to Bioconductor</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     Vignettes contain introductory material; view with</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     'browseVignettes()'. To cite Bioconductor, see</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     'citation("Biobase")', and for packages 'citation("pkgname")'.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: mzR</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: Rcpp</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: S4Vectors</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: stats4</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
@@ -1088,7 +1106,7 @@ missing chromatographic peaks for a feature in some samples.</p></div>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     I, expand.grid, unname</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> This is MSnbase version 2.37.0 </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> This is MSnbase version 2.39.5 </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   Visit https://lgatto.github.io/MSnbase/ to get started.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  Consider switching to the 'R for Mass Spectrometry'</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  packages - see https://RforMassSpectrometry.org for details.</span>
@@ -1232,7 +1250,7 @@ missing chromatographic peaks for a feature in some samples.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  MSn retention times: 41:41 - 74:60 minutes</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> - - - Processing information - - -</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Data loaded [Wed Mar 12 08:36:21 2025] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Filter: select file(s) 2. [Sun Jul  5 13:00:11 2026] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Filter: select file(s) 2. [Tue Sep  1 08:27:59 2026] </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  MSnbase version: 2.33.3 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> - - - Meta data  - - -</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> phenoData</span>
@@ -1302,7 +1320,7 @@ missing chromatographic peaks for a feature in some samples.</p></div>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.9000.</p>
 </div>
 
     </footer></div>

@@ -94,7 +94,7 @@ chromatogram(
   msLevel = 1L,
   isolationWindowTargetMz = NULL,
   chunkSize = 2L,
-  return.type = "MChromatograms",
+  return.type = c("MChromatograms", "Chromatograms"),
   BPPARAM = bpparam()
 )
 
@@ -233,7 +233,7 @@ chromatogram(
   msLevel = 1L,
   chunkSize = 2L,
   isolationWindowTargetMz = NULL,
-  return.type = c("XChromatograms", "MChromatograms"),
+  return.type = c("XChromatograms", "MChromatograms", "Chromatograms"),
   include = character(),
   chromPeaks = c("apex_within", "any", "none"),
   BPPARAM = bpparam()
@@ -250,6 +250,15 @@ filterFile(
   keepFeatures = FALSE,
   ...
 )
+
+# S4 method for class 'XcmsExperiment,xcmsSet'
+coerce(from, to = "xcmsSet", strict = TRUE)
+
+# S4 method for class 'XcmsExperiment,XCMSnExp'
+coerce(from, to = "XCMSnExp", strict = TRUE)
+
+# S4 method for class 'XCMSnExp,XcmsExperiment'
+coerce(from, to = "XcmsExperiment", strict = TRUE)
 ```
 
 ## Arguments
@@ -361,8 +370,16 @@ filterFile(
   `character(1)` defining the class of the returned object. Can be
   either `"DataFrame"` (the default) or `"data.frame"`. For
   [`chromatogram()`](https://sneumann.github.io/xcms/reference/chromatogram-method.md):
-  `character(1)` defining the type of the returned object. Currently
-  only `return.type = "MChromatograms"` is supported.
+  `character(1)` defining the type of the returned object. For
+  `MsExperiment` objects `return.type = "MChromatograms"` (the default)
+  and `return.type = "Chromatograms"` allows to return a
+  [MSnbase::MChromatograms](https://lgatto.github.io/MSnbase/reference/MChromatograms-class.html)
+  or a
+  [`Chromatograms::Chromatograms()`](https://rdrr.io/pkg/Chromatograms/man/Chromatograms.html)
+  object, for `XcmsExperiment` also `return.type = "XChromatogram"` is
+  supported which returns the chromatographic data as a
+  [XChromatograms](https://sneumann.github.io/xcms/reference/XChromatogram.md)
+  object.
 
 - BPPARAM:
 
@@ -587,6 +604,18 @@ filterFile(
   `logical(1)`: wheter eventually present feature definitions should be
   retained in the returned (filtered) object.
 
+- from:
+
+  Original object.
+
+- to:
+
+  `character(1)` defining the object to cast to.
+
+- strict:
+
+  Ignored.
+
 ## Subset, filter and combine
 
 - `[`: subset an `XcmsExperiment` by **sample** (parameter `i`).
@@ -689,30 +718,35 @@ filterFile(
   data from (to e.g. for extracted ion chromatograms EICs). Both
   parameters are expected to be numerical two-column matrices with the
   first column defining the lower and the second the upper margin. Each
-  row can define a separate m/z - retention time region. Currently the
-  function returns a
-  [`MSnbase::MChromatograms()`](https://lgatto.github.io/MSnbase/reference/MChromatograms-class.html)
-  object for `object` being a `MsExperiment` or, for `object` being an
-  `XcmsExperiment`, either a `MChromatograms` or
+  row can define a separate m/z - retention time region.
+
+  The chromatographic data can be returned either as an
+  [MSnbase::MChromatograms](https://lgatto.github.io/MSnbase/reference/MChromatograms-class.html)
+  object (parameter `return.type = "MChromatograms"`, the default) or as
+  the newer
+  [`Chromatograms::Chromatograms()`](https://rdrr.io/pkg/Chromatograms/man/Chromatograms.html)
+  container (`return.type = "Chromatograms"`). If `object` is an *xcms*
+  result object (`XcmsExperiment`), the default is to return a
   [`XChromatograms()`](https://sneumann.github.io/xcms/reference/XChromatogram.md)
-  depending on parameter `return.type` (can be either `"MChromatograms"`
-  or `"XChromatograms"`). For the latter also chromatographic peaks
-  detected within the provided m/z and retention times are returned.
-  Parameter `chromPeaks` allows to specify which chromatographic peaks
-  should be reported. See documentation on the `chromPeaks` parameter
-  for more information. If the `XcmsExperiment` contains correspondence
-  results, also the associated feature definitions will be included in
-  the returned `XChromatograms`. By default the function returns
-  chromatograms from MS1 data, but by setting parameter `msLevel = 2L`
-  it is possible to e.g. extract also MS2 chromatograms. By default,
-  with parameter `isolationWindowTargetMz = NULL` or
+  object that contains also chromatographic peak and feature
+  information. For `XChromatograms` return type, the `chromPeaks`
+  parameter allows to specify which chromatographic peaks should be
+  reported. See documentation on the `chromPeaks` parameter for more
+  information. If the `XcmsExperiment` contains correspondence results,
+  also the associated feature definitions will be included in the
+  returned `XChromatograms`.
+
+  By default the function returns chromatograms from MS level 1, but by
+  setting parameter `msLevel = 2L` it is possible to extract MS2
+  chromatograms. By default, with parameter
+  `isolationWindowTargetMz = NULL` or
   `isolationWindowTargetMz = NA_real_`, data from **all** MS2 spectra
   will be considered in the chromatogram extraction. If MS2 data was
   generated within different m/z isolation windows (such as e.g. with
-  Scies SWATH data), the parameter `isolationWindowTargetMz` should be
-  used to ensure signal is only extracted from the respective isolation
+  Sciex SWATH data), the parameter `isolationWindowTargetMz` should be
+  used to ensure signal is only extracted from the specified isolation
   window. The
-  [`isolationWindowTargetMz()`](https://sneumann.github.io/xcms/reference/isolationWindowTargetMz-OnDiskMSnExp-method.md)
+  [`Spectra::isolationWindowTargetMz()`](https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html)
   function on the `Spectra` object can be used to inspect/list available
   isolation windows of a data set. See also the xcms *LC-MS/MS vignette*
   for examples and details.
@@ -890,6 +924,11 @@ filterFile(
   [`featureChromatograms()`](https://sneumann.github.io/xcms/reference/featureChromatograms.md)
   for more details.
 
+- [`featureChromPeaks()`](https://sneumann.github.io/xcms/reference/featureChromPeaks.md):
+  get the mapping between features and chromatographic peaks. See
+  [`featureChromPeaks()`](https://sneumann.github.io/xcms/reference/featureChromPeaks.md)
+  for details.
+
 - [`featureDefinitions()`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md):
   returns a `data.frame` with feature definitions or an empty
   `data.frame` if no correspondence analysis results are present.
@@ -897,6 +936,13 @@ filterFile(
   feature definitions that should be returned with the parameter `type`
   defining how these parameters should be used to subset the returned
   `data.frame`. See parameter descriptions for details.
+
+- [`featurePeakidx()`](https://sneumann.github.io/xcms/reference/featureChromPeaks.md):
+  get the indices of chromatographic peaks in the
+  [`chromPeaks()`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)
+  matrix assigned to each feature. See
+  [`featurePeakidx()`](https://sneumann.github.io/xcms/reference/featureChromPeaks.md)
+  for details.
 
 - [`featureSpectra()`](https://sneumann.github.io/xcms/reference/featureSpectra.md):
   returns a
@@ -2813,6 +2859,66 @@ chrs
 plot(chrs[2, ])
 
 
+## Extract chromatographic data for the first two chromatographic peaks
+## as the new `Chromatograms` object.
+chrs <- chromatogram(xmse,
+    mz = chromPeaks(xmse)[1:2, c("mzmin", "mzmax")],
+    rt = chromPeaks(xmse)[1:2, c("rtmin", "rtmax")],
+    return.type = "Chromatograms")
+chrs
+#> Chromatographic data (Chromatograms) with 6 chromatograms in a ChromBackendSpectra backend:
+#>   chromIndex msLevel mz
+#> 1         NA       1 NA
+#> 2         NA       1 NA
+#> 3         NA       1 NA
+#> 4         NA       1 NA
+#> 5         NA       1 NA
+#> 6         NA       1 NA
+#> ... 6 more  chromatogram variables/columns
+#> ... 2 peaksData variables
+#> 
+#> The Spectra object contains 269 spectra
+
+## Get the intensity values from each chromatogram
+intensity(chrs)
+#> [[1]]
+#>  [1] 35728 36008 37496 38152 37808 37360 37552 37384 36368 35168 34488 34432
+#> [13] 34520 34536 34168 33960 34064 34544
+#> 
+#> [[2]]
+#>  [1] 4271 4361 4299 4048 3878 3803 3710 3512   NA   NA 4019 4021 3937 3974 3978
+#> [16]   NA   NA 3537
+#> 
+#> [[3]]
+#>  [1] 24456 24592 24520 24696 25560 26168 25976 25048 24216 23504 23272 23568
+#> [13] 24160 24328 24176 24440 25496
+#> 
+#> [[4]]
+#>  [1]    NA   848  1390  2581  4259  6610  9830 14019 18352 22376 25800 28464
+#> [13] 29920 30336 30552 30544 29408 26656 23304 20256 17448 14819 12623 10956
+#> [25]  9240  7284  5305    NA  3159  2742
+#> 
+#> [[5]]
+#>  [1]    NA    NA    NA    NA    NA    NA    NA    NA    NA  9493 13641 17912
+#> [13] 22384 26888 31072 34176 36088 36704 36712 36040 34256 30936 27344 24704
+#> [25] 22728 20408 17392 14407 11749  9443
+#> 
+#> [[6]]
+#>  [1]    NA   762   867    NA    NA    NA  3368  5304  7847 10593 13235 15469
+#> [13] 17200 18264 18792 18928 18832 18336 17472 16368 15070 13463 11862 10698
+#> [25] 10034  9358    NA    NA    NA
+#> 
+
+## Plot all EICs into a single plot
+Chromatograms::plotChromatogramsOverlay(chrs)
+
+## Plot the first EIC on the 3 files
+Chromatograms::plotChromatogramsOverlay(chrs[1:3])
+
+
+## Plot the second EIC on the 3 files
+Chromatograms::plotChromatogramsOverlay(chrs[4:6])
+
 ## Subsetting the data to the results (and data) for the second sample
 a <- xmse[2]
 nrow(chromPeaks(xmse))
@@ -2847,6 +2953,7 @@ xmse <- adjustRtime(xmse, param = pgp)
 
 ## Visualizing the alignment results
 plotAdjustedRtime(xmse)
+
 
 ## Performing the final correspondence analysis
 xmse <- groupChromPeaks(xmse, param = pdp)
@@ -2902,7 +3009,7 @@ chrs
 #> [9,]         peaks: 1        peaks: 2        peaks: 0
 #> [10,]        peaks: 1        peaks: 1        peaks: 1
 #> phenoData with 3 variables
-#> featureData with 4 variables
+#> featureData with 5 variables
 #> - - - xcms preprocessing - - -
 #> Chromatographic peak detection:
 #>  method: centWave 

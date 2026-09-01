@@ -1,9 +1,9 @@
 # Compounding (grouping) of LC-MS features
 
-**Package**: *[xcms](https://bioconductor.org/packages/3.23/xcms)*\
+**Package**: *[xcms](https://bioconductor.org/packages/3.24/xcms)*\
 **Authors**: Johannes Rainer\
-**Modified**: 2026-07-05 12:02:17.560235\
-**Compiled**: Sun Jul 5 13:02:49 2026
+**Modified**: 2026-09-01 07:29:04.202546\
+**Compiled**: Tue Sep 1 08:30:57 2026
 
 ## Introduction
 
@@ -20,13 +20,13 @@ ions generated during ionization will be detected as different features.
 signal from the same originating compound to reduce data set complexity
 (and to aid in subsequent annotation steps). General MS feature grouping
 functionality if defined by the
-*[MsFeatures](https://bioconductor.org/packages/3.23/MsFeatures)*
+*[MsFeatures](https://bioconductor.org/packages/3.24/MsFeatures)*
 package with additional functionality being implemented in the
-*[xcms](https://bioconductor.org/packages/3.23/xcms)* package to enable
+*[xcms](https://bioconductor.org/packages/3.24/xcms)* package to enable
 the compounding of LC-MS data.
 
 This document provides a simple compounding workflow using
-*[xcms](https://bioconductor.org/packages/3.23/xcms)*. Note that the
+*[xcms](https://bioconductor.org/packages/3.24/xcms)*. Note that the
 present functionality does not (yet) *aggregate* or combine the actual
 features per values, but does only define the feature groups (one per
 compound).
@@ -35,7 +35,7 @@ compound).
 
 We demonstrate the compounding (feature grouping) functionality on the
 simple toy data set used also in the
-*[xcms](https://bioconductor.org/packages/3.23/xcms)* package and
+*[xcms](https://bioconductor.org/packages/3.24/xcms)* package and
 provided through the *faahKO* package. This data set consists of samples
 from 4 mice with knock-out of the fatty acid amide hydrolase (FAAH) and
 4 wild type mice. Pre-processing of this data set is described in detail
@@ -43,24 +43,13 @@ in the *main* vignette of the *xcms* package. Below we load all required
 packages and the result from this pre-processing updating also the
 location of the respective raw data files on the current machine.
 
-``` r
-
-library(MSnbase)
-library(xcms)
-library(faahKO)
-library(MsFeatures)
-
-xmse <- loadXcmsData("xmse")
-```
+[`library`](https://rdrr.io/r/base/library.html)`(`[`MSnbase`](https://lgatto.github.io/MSnbase)`)`` `[`library`](https://rdrr.io/r/base/library.html)`(`[`xcms`](https://github.com/sneumann/xcms)`)`` `[`library`](https://rdrr.io/r/base/library.html)`(`[`faahKO`](http://dx.doi.org/10.1021/bi0480335)`)`` `[`library`](https://rdrr.io/r/base/library.html)`(`[`MsFeatures`](https://github.com/RforMassSpectrometry/MsFeatures)`)`` `` ``xmse`` ``<-`` `[`loadXcmsData`](https://sneumann.github.io/xcms/reference/loadXcmsData.md)`(``"xmse"``)`
 
 Before performing the feature grouping we inspect the result object.
 With `featureDefinitions` we can extract the results from the
 correspondence analysis.
 
-``` r
-
-featureDefinitions(xmse) |> head()
-```
+[`featureDefinitions`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``xmse``)`` ``|>`` `[`head`](https://rdrr.io/r/utils/head.html)`(``)`
 
     ##       mzmed mzmin mzmax    rtmed    rtmin    rtmax npeaks KO WT      peakidx
     ## FT001 200.1 200.1 200.1 2902.634 2882.603 2922.664      2  2  0 458, 116....
@@ -92,10 +81,7 @@ in which no chromatographic peak for a feature was detected, all signal
 from the m/z - retention time range defined based on the detected
 chromatographic peaks was integrated.
 
-``` r
-
-head(featureValues(xmse, filled = FALSE))
-```
+[`head`](https://rdrr.io/r/utils/head.html)`(`[`featureValues`](https://sneumann.github.io/xcms/reference/XCMSnExp-peak-grouping-results.md)`(``xmse``, filled ``=`` ``FALSE``)``)`
 
     ##        ko15.CDF  ko16.CDF  ko21.CDF  ko22.CDF  wt15.CDF  wt16.CDF  wt21.CDF
     ## FT001        NA  506848.9        NA  169955.6        NA        NA        NA
@@ -112,10 +98,7 @@ head(featureValues(xmse, filled = FALSE))
     ## FT005  271128.0
     ## FT006  508546.4
 
-``` r
-
-head(featureValues(xmse, filled = TRUE))
-```
+[`head`](https://rdrr.io/r/utils/head.html)`(`[`featureValues`](https://sneumann.github.io/xcms/reference/XCMSnExp-peak-grouping-results.md)`(``xmse``, filled ``=`` ``TRUE``)``)`
 
     ##        ko15.CDF  ko16.CDF  ko21.CDF  ko22.CDF  wt15.CDF  wt16.CDF  wt21.CDF
     ## FT001  135162.4  506848.9  111657.3  169955.6  209929.4  141607.9  226853.7
@@ -183,13 +166,7 @@ The most intuitive and simple way to group features is based on their
 retention time. Before we perform this initial grouping we evaluate
 retention times and m/z of all features in the present data set.
 
-``` r
-
-plot(featureDefinitions(xmse)$rtmed, featureDefinitions(xmse)$mzmed,
-     xlab = "retention time", ylab = "m/z", main = "features",
-     col = "#00000080", pch = 21, bg = "#00000040")
-grid()
-```
+[`plot`](https://rdrr.io/r/base/plot.html)`(`[`featureDefinitions`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``xmse``)``$``rtmed``, `[`featureDefinitions`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``xmse``)``$``mzmed``,`` `` xlab ``=`` ``"retention time"``, ylab ``=`` ``"m/z"``, main ``=`` ``"features"``,`` `` col ``=`` ``"#00000080"``, pch ``=`` ``21``, bg ``=`` ``"#00000040"``)`` `[`grid`](https://rdrr.io/r/graphics/grid.html)`(``)`
 
 ![Plot of retention times and m/z for all features in the data
 set.](LC-MS-feature-grouping_files/figure-html/feature-rt-mz-plot-1.png)
@@ -201,19 +178,13 @@ can be spotted, especially at the beginning of the LC. We thus below
 group features within a retention time window of 10 seconds into
 *feature groups*.
 
-``` r
-
-xmse <- groupFeatures(xmse, param = SimilarRtimeParam(10))
-```
+`xmse`` ``<-`` `[`groupFeatures`](https://rdrr.io/pkg/MsFeatures/man/groupFeatures.html)`(``xmse``, param ``=`` `[`SimilarRtimeParam`](https://rdrr.io/pkg/MsFeatures/man/groupFeatures-similar-rtime.html)`(``10``)``)`
 
 The results from the feature grouping can be accessed with the
 `featureGroups` function. Below we determine the size of each of these
 feature groups (i.e. how many features are grouped together).
 
-``` r
-
-table(featureGroups(xmse))
-```
+[`table`](https://rdrr.io/r/base/table.html)`(`[`featureGroups`](https://rdrr.io/pkg/MsFeatures/man/featureGroups.html)`(``xmse``)``)`
 
     ## 
     ## FG.001 FG.002 FG.003 FG.004 FG.005 FG.006 FG.007 FG.008 FG.009 FG.010 FG.011 
@@ -247,12 +218,7 @@ In addition we visualize these feature groups with the
 `plotFeatureGroups` function which shows all features in the m/z -
 retention time space with grouped features being connected with a line.
 
-``` r
-
-plotFeatureGroups(xmse, pch = 21, lwd = 2, col = "#00000040",
-                  bg = "#00000020")
-grid()
-```
+[`plotFeatureGroups`](https://sneumann.github.io/xcms/reference/plotFeatureGroups.md)`(``xmse``, pch ``=`` ``21``, lwd ``=`` ``2``, col ``=`` ``"#00000040"``,`` `` bg ``=`` ``"#00000020"``)`` `[`grid`](https://rdrr.io/r/graphics/grid.html)`(``)`
 
 ![Feature groups defined with a rt window of 10
 seconds](LC-MS-feature-grouping_files/figure-html/feature-groups-rtime-plot-1.png)
@@ -265,16 +231,7 @@ thus first remove any defined feature groups assigning them a value of
 `NULL` and then re-perform the feature grouping using a larger rt
 window.
 
-``` r
-
-## Remove previous feature grouping results to repeat the rtime-based
-## feature grouping with different setting
-featureDefinitions(xmse)$feature_group <- NULL
-
-## Repeat the grouping
-xmse <- groupFeatures(xmse, SimilarRtimeParam(20))
-table(featureGroups(xmse))
-```
+`## Remove previous feature grouping results to repeat the rtime-based`` ``## feature grouping with different setting`` `[`featureDefinitions`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``xmse``)``$``feature_group`` ``<-`` ``NULL`` `` ``## Repeat the grouping`` ``xmse`` ``<-`` `[`groupFeatures`](https://rdrr.io/pkg/MsFeatures/man/groupFeatures.html)`(``xmse``, `[`SimilarRtimeParam`](https://rdrr.io/pkg/MsFeatures/man/groupFeatures-similar-rtime.html)`(``20``)``)`` `[`table`](https://rdrr.io/r/base/table.html)`(`[`featureGroups`](https://rdrr.io/pkg/MsFeatures/man/featureGroups.html)`(``xmse``)``)`
 
     ## 
     ## FG.001 FG.002 FG.003 FG.004 FG.005 FG.006 FG.007 FG.008 FG.009 FG.010 FG.011 
@@ -300,11 +257,7 @@ table(featureGroups(xmse))
     ## FG.111 FG.112 FG.113 FG.114 FG.115 FG.116 FG.117 FG.118 
     ##      2      2      1      1      1      1      1      1
 
-``` r
-
-plotFeatureGroups(xmse, pch = 21, lwd = 2, col = "#00000040", bg = "#00000020")
-grid()
-```
+[`plotFeatureGroups`](https://sneumann.github.io/xcms/reference/plotFeatureGroups.md)`(``xmse``, pch ``=`` ``21``, lwd ``=`` ``2``, col ``=`` ``"#00000040"``, bg ``=`` ``"#00000020"``)`` `[`grid`](https://rdrr.io/r/graphics/grid.html)`(``)`
 
 ![Feature groups defined with a rt window of 20
 seconds](LC-MS-feature-grouping_files/figure-html/feature-groups-rtime-plot2-1.png)
@@ -336,19 +289,7 @@ Before performing the grouping we could also evaluate the correlation of
 features based on their (log2 transformed) abundances across samples
 with a heatmap.
 
-``` r
-
-library(pheatmap)
-fvals <- log2(featureValues(xmse, filled = TRUE))
-
-cormat <- cor(t(fvals), use = "pairwise.complete.obs")
-ann <- data.frame(fgroup = featureGroups(xmse))
-rownames(ann) <- rownames(cormat)
-
-res <- pheatmap(cormat, annotation_row = ann, cluster_rows = TRUE,
-                cluster_cols = TRUE, show_rownames = FALSE,
-                show_colnames = FALSE)
-```
+[`library`](https://rdrr.io/r/base/library.html)`(``pheatmap``)`` ``fvals`` ``<-`` `[`log2`](https://rdrr.io/r/base/Log.html)`(`[`featureValues`](https://sneumann.github.io/xcms/reference/XCMSnExp-peak-grouping-results.md)`(``xmse``, filled ``=`` ``TRUE``)``)`` `` ``cormat`` ``<-`` `[`cor`](https://rdrr.io/r/stats/cor.html)`(`[`t`](https://rdrr.io/r/base/t.html)`(``fvals``)``, use ``=`` ``"pairwise.complete.obs"``)`` ``ann`` ``<-`` `[`data.frame`](https://rdrr.io/r/base/data.frame.html)`(``fgroup ``=`` `[`featureGroups`](https://rdrr.io/pkg/MsFeatures/man/featureGroups.html)`(``xmse``)``)`` `[`rownames`](https://rdrr.io/r/base/colnames.html)`(``ann``)`` ``<-`` `[`rownames`](https://rdrr.io/r/base/colnames.html)`(``cormat``)`` `` ``res`` ``<-`` `[`pheatmap`](https://rdrr.io/pkg/pheatmap/man/pheatmap.html)`(``cormat``, annotation_row ``=`` ``ann``, cluster_rows ``=`` ``TRUE``,`` `` cluster_cols ``=`` ``TRUE``, show_rownames ``=`` ``FALSE``,`` `` show_colnames ``=`` ``FALSE``)`
 
 ![Heatmap representing pairwise correlation of features based on
 abundances across samples. Features are grouped on rows and
@@ -373,13 +314,7 @@ analysis. See the help page for `groupFeatures` with
 `AbundanceSimilarityParam` in the `xcms` package for details and
 options.
 
-``` r
-
-xmse <- groupFeatures(
-    xmse, AbundanceSimilarityParam(threshold = 0.7, transform = log2),
-    filled = TRUE)
-table(featureGroups(xmse))
-```
+`xmse`` ``<-`` `[`groupFeatures`](https://rdrr.io/pkg/MsFeatures/man/groupFeatures.html)`(`` `` ``xmse``, `[`AbundanceSimilarityParam`](https://rdrr.io/pkg/MsFeatures/man/groupFeatures-similar-abundance.html)`(``threshold ``=`` ``0.7``, transform ``=`` ``log2``)``,`` `` filled ``=`` ``TRUE``)`` `[`table`](https://rdrr.io/r/base/table.html)`(`[`featureGroups`](https://rdrr.io/pkg/MsFeatures/man/featureGroups.html)`(``xmse``)``)`
 
     ## 
     ## FG.001.001 FG.001.002 FG.002.001 FG.002.002 FG.002.003 FG.002.004 FG.003.001 
@@ -465,17 +400,7 @@ grouping we in addition define a custom *panel plot* for the `pairs`
 function that plots data points in blue for features with a correlation
 coefficient above the selected threshold (`0.7`) and red otherwise.
 
-``` r
-
-cor_plot <- function(x, y) {
-    C <- cor(x, y, use = "pairwise.complete.obs")
-    col <- ifelse(C >= 0.7, yes = "#0000ff80", no = "#ff000080")
-    points(x, y, pch = 16, col = col)
-    grid()
-}
-fts <- grep("FG.040", featureGroups(xmse))
-pairs(t(fvals[fts, ]), gap = 0.1, main = "FG.040", panel = cor_plot)
-```
+`cor_plot`` ``<-`` ``function``(``x``, ``y``)`` ``{`` `` ``C`` ``<-`` `[`cor`](https://rdrr.io/r/stats/cor.html)`(``x``, ``y``, use ``=`` ``"pairwise.complete.obs"``)`` `` ``col`` ``<-`` `[`ifelse`](https://rdrr.io/r/base/ifelse.html)`(``C`` ``>=`` ``0.7``, yes ``=`` ``"#0000ff80"``, no ``=`` ``"#ff000080"``)`` `` `[`points`](https://rdrr.io/r/graphics/points.html)`(``x``, ``y``, pch ``=`` ``16``, col ``=`` ``col``)`` `` `[`grid`](https://rdrr.io/r/graphics/grid.html)`(``)`` ``}`` ``fts`` ``<-`` `[`grep`](https://rdrr.io/r/base/grep.html)`(``"FG.040"``, `[`featureGroups`](https://rdrr.io/pkg/MsFeatures/man/featureGroups.html)`(``xmse``)``)`` `[`pairs`](https://rdrr.io/r/graphics/pairs.html)`(`[`t`](https://rdrr.io/r/base/t.html)`(``fvals``[``fts``, ``]``)``, gap ``=`` ``0.1``, main ``=`` ``"FG.040"``, panel ``=`` ``cor_plot``)`
 
 ![Pairwise correlation plot for all features initially grouped into the
 feature group
@@ -527,19 +452,13 @@ page
 for details and options). We define as a threshold a correlation
 coefficient of 0.7.
 
-``` r
-
-xmse <- groupFeatures(xmse, EicSimilarityParam(threshold = 0.7, n = 2))
-```
+`xmse`` ``<-`` `[`groupFeatures`](https://rdrr.io/pkg/MsFeatures/man/groupFeatures.html)`(``xmse``, `[`EicSimilarityParam`](https://sneumann.github.io/xcms/reference/groupFeatures-eic-similarity.md)`(``threshold ``=`` ``0.7``, n ``=`` ``2``)``)`
 
 This is the computationally most intense approach since it involves also
 loading the raw MS data to extract the ion chromatograms for each
 feature. The results of the grouping are shown below.
 
-``` r
-
-table(featureGroups(xmse))
-```
+[`table`](https://rdrr.io/r/base/table.html)`(`[`featureGroups`](https://rdrr.io/pkg/MsFeatures/man/featureGroups.html)`(``xmse``)``)`
 
     ## 
     ## FG.001.001.001 FG.001.002.001 FG.002.001.001 FG.002.002.001 FG.002.003.001 
@@ -659,26 +578,13 @@ first extract the EICs for all features from this initial feature group.
 With `n = 1` we specify to extract the EIC only from the sample with the
 highest intensity.
 
-``` r
-
-fidx <- grep("FG.013.001.", featureGroups(xmse))
-eics <- featureChromatograms(
-    xmse, features = rownames(featureDefinitions(xmse))[fidx],
-    filled = TRUE, n = 1)
-```
+`fidx`` ``<-`` `[`grep`](https://rdrr.io/r/base/grep.html)`(``"FG.013.001."``, `[`featureGroups`](https://rdrr.io/pkg/MsFeatures/man/featureGroups.html)`(``xmse``)``)`` ``eics`` ``<-`` `[`featureChromatograms`](https://sneumann.github.io/xcms/reference/featureChromatograms.md)`(`` `` ``xmse``, features ``=`` `[`rownames`](https://rdrr.io/r/base/colnames.html)`(`[`featureDefinitions`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``xmse``)``)``[``fidx``]``,`` `` filled ``=`` ``TRUE``, n ``=`` ``1``)`
 
 Next we plot the EICs using a different color for each of the subgroups.
 With `peakType = "none"` we disable the highlighting of the detected
 chromatographic peaks.
 
-``` r
-
-cols <- c("#ff000080", "#0000ff80")
-names(cols) <- unique(featureGroups(xmse)[fidx])
-
-plotChromatogramsOverlay(eics, col = cols[featureGroups(xmse)[fidx]],
-                         lwd = 2, peakType = "none")
-```
+`cols`` ``<-`` `[`c`](https://rdrr.io/r/base/c.html)`(``"#ff000080"``, ``"#0000ff80"``)`` `[`names`](https://rdrr.io/r/base/names.html)`(``cols``)`` ``<-`` `[`unique`](https://rdrr.io/r/base/unique.html)`(`[`featureGroups`](https://rdrr.io/pkg/MsFeatures/man/featureGroups.html)`(``xmse``)``[``fidx``]``)`` `` `[`plotChromatogramsOverlay`](https://sneumann.github.io/xcms/reference/plotChromatogramsOverlay.md)`(``eics``, col ``=`` ``cols``[`[`featureGroups`](https://rdrr.io/pkg/MsFeatures/man/featureGroups.html)`(``xmse``)``[``fidx``]``]``,`` `` lwd ``=`` ``2``, peakType ``=`` ``"none"``)`
 
 ![Feature EICs per sample for features from a feature group defined by
 rentention time and feature abudances across samples. Features with high
@@ -689,12 +595,7 @@ Feature EICs per sample for features from a feature group defined by
 rentention time and feature abudances across samples. Features with high
 correlation of their EICs are shown in the same color.
 
-``` r
-
-plotChromatogramsOverlay(normalize(eics),
-                         col = cols[featureGroups(xmse)[fidx]],
-                         lwd = 2, peakType = "none")
-```
+[`plotChromatogramsOverlay`](https://sneumann.github.io/xcms/reference/plotChromatogramsOverlay.md)`(`[`normalize`](https://rdrr.io/pkg/BiocGenerics/man/normalize.html)`(``eics``)``,`` `` col ``=`` ``cols``[`[`featureGroups`](https://rdrr.io/pkg/MsFeatures/man/featureGroups.html)`(``xmse``)``[``fidx``]``]``,`` `` lwd ``=`` ``2``, peakType ``=`` ``"none"``)`
 
 ![Feature EICs per sample normalized to an absolute intensity of 1 for
 features from a feature group defined by rentention time and feature
@@ -715,24 +616,11 @@ the signal from the same compound.
 
 We evaluate next the sub-grouping in another feature group.
 
-``` r
-
-fidx <- grep("FG.045.001.", featureGroups(xmse))
-eics <- featureChromatograms(
-    xmse, features = rownames(featureDefinitions(xmse))[fidx],
-    filled = TRUE, n = 1)
-```
+`fidx`` ``<-`` `[`grep`](https://rdrr.io/r/base/grep.html)`(``"FG.045.001."``, `[`featureGroups`](https://rdrr.io/pkg/MsFeatures/man/featureGroups.html)`(``xmse``)``)`` ``eics`` ``<-`` `[`featureChromatograms`](https://sneumann.github.io/xcms/reference/featureChromatograms.md)`(`` `` ``xmse``, features ``=`` `[`rownames`](https://rdrr.io/r/base/colnames.html)`(`[`featureDefinitions`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``xmse``)``)``[``fidx``]``,`` `` filled ``=`` ``TRUE``, n ``=`` ``1``)`
 
 Next we plot the EICs using a different color for each of the subgroups.
 
-``` r
-
-cols <- c("#ff000080", "#0000ff80")
-names(cols) <- unique(featureGroups(xmse)[fidx])
-
-plotChromatogramsOverlay(eics, col = cols[featureGroups(xmse)[fidx]],
-                         lwd = 2, peakType = "none")
-```
+`cols`` ``<-`` `[`c`](https://rdrr.io/r/base/c.html)`(``"#ff000080"``, ``"#0000ff80"``)`` `[`names`](https://rdrr.io/r/base/names.html)`(``cols``)`` ``<-`` `[`unique`](https://rdrr.io/r/base/unique.html)`(`[`featureGroups`](https://rdrr.io/pkg/MsFeatures/man/featureGroups.html)`(``xmse``)``[``fidx``]``)`` `` `[`plotChromatogramsOverlay`](https://sneumann.github.io/xcms/reference/plotChromatogramsOverlay.md)`(``eics``, col ``=`` ``cols``[`[`featureGroups`](https://rdrr.io/pkg/MsFeatures/man/featureGroups.html)`(``xmse``)``[``fidx``]``]``,`` `` lwd ``=`` ``2``, peakType ``=`` ``"none"``)`
 
 ![Feature EICs per sample for features from a feature group defined by
 rentention time and feature abudances across samples. Features with high
@@ -743,12 +631,7 @@ Feature EICs per sample for features from a feature group defined by
 rentention time and feature abudances across samples. Features with high
 correlation of their EICs are shown in the same color.
 
-``` r
-
-plotChromatogramsOverlay(normalize(eics),
-                         col = cols[featureGroups(xmse)[fidx]],
-                         lwd = 2, peakType = "none")
-```
+[`plotChromatogramsOverlay`](https://sneumann.github.io/xcms/reference/plotChromatogramsOverlay.md)`(`[`normalize`](https://rdrr.io/pkg/BiocGenerics/man/normalize.html)`(``eics``)``,`` `` col ``=`` ``cols``[`[`featureGroups`](https://rdrr.io/pkg/MsFeatures/man/featureGroups.html)`(``xmse``)``[``fidx``]``]``,`` `` lwd ``=`` ``2``, peakType ``=`` ``"none"``)`
 
 ![Feature EICs per sample normalized to an absolute intensity of 1 for
 features from a feature group defined by rentention time and feature
@@ -781,25 +664,13 @@ To illustrate this we *reset* all feature groups by setting them to `NA`
 and assign our features of interest (in this example just 30 randomly
 selected features) to an initial feature group `"FG"`.
 
-``` r
-
-featureDefinitions(xmse)$feature_group <- NA_character_
-
-set.seed(123)
-fts_idx <- sample(1:nrow(featureDefinitions(xmse)), 30)
-featureDefinitions(xmse)$feature_group[fts_idx] <- "FG"
-```
+[`featureDefinitions`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``xmse``)``$``feature_group`` ``<-`` ``NA_character_`` `` `[`set.seed`](https://rdrr.io/r/base/Random.html)`(``123``)`` ``fts_idx`` ``<-`` `[`sample`](https://rdrr.io/r/base/sample.html)`(``1``:`[`nrow`](https://rdrr.io/r/base/nrow.html)`(`[`featureDefinitions`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``xmse``)``)``, ``30``)`` `[`featureDefinitions`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``xmse``)``$``feature_group``[``fts_idx``]`` ``<-`` ``"FG"`
 
 Any call to `groupFeatures` would now simply sub-group this set of 30
 features. Any feature which has an `NA` in the `"feature_group"` column
 will be ignored.
 
-``` r
-
-xmse <- groupFeatures(xmse, SimilarRtimeParam(diffRt = 20))
-xmse <- groupFeatures(xmse, AbundanceSimilarityParam(threshold = 0.7))
-table(featureGroups(xmse))
-```
+`xmse`` ``<-`` `[`groupFeatures`](https://rdrr.io/pkg/MsFeatures/man/groupFeatures.html)`(``xmse``, `[`SimilarRtimeParam`](https://rdrr.io/pkg/MsFeatures/man/groupFeatures-similar-rtime.html)`(``diffRt ``=`` ``20``)``)`` ``xmse`` ``<-`` `[`groupFeatures`](https://rdrr.io/pkg/MsFeatures/man/groupFeatures.html)`(``xmse``, `[`AbundanceSimilarityParam`](https://rdrr.io/pkg/MsFeatures/man/groupFeatures-similar-abundance.html)`(``threshold ``=`` ``0.7``)``)`` `[`table`](https://rdrr.io/r/base/table.html)`(`[`featureGroups`](https://rdrr.io/pkg/MsFeatures/man/featureGroups.html)`(``xmse``)``)`
 
     ## 
     ## FG.001.001 FG.001.002 FG.002.001 FG.002.002 FG.003.001 FG.003.002 FG.004.001 
@@ -813,12 +684,9 @@ table(featureGroups(xmse))
 
 ## Session information
 
-``` r
+[`sessionInfo`](https://rdrr.io/r/utils/sessionInfo.html)`(``)`
 
-sessionInfo()
-```
-
-    ## R version 4.6.0 (2026-04-24)
+    ## R version 4.6.1 (2026-06-24)
     ## Platform: x86_64-pc-linux-gnu
     ## Running under: Ubuntu 24.04.4 LTS
     ## 
@@ -842,63 +710,64 @@ sessionInfo()
     ## [8] base     
     ## 
     ## other attached packages:
-    ##  [1] pheatmap_1.0.13     faahKO_1.52.0       MSnbase_2.37.0     
-    ##  [4] ProtGenerics_1.44.0 S4Vectors_0.50.1    mzR_2.46.0         
-    ##  [7] Rcpp_1.1.1-1.1      Biobase_2.72.0      BiocGenerics_0.58.1
-    ## [10] generics_0.1.4      MsFeatures_1.20.0   xcms_4.11.1        
-    ## [13] BiocParallel_1.46.0 BiocStyle_2.40.0   
+    ##  [1] pheatmap_1.0.13      faahKO_1.53.0        MSnbase_2.39.5      
+    ##  [4] S4Vectors_0.51.9     Biobase_2.73.2       BiocGenerics_0.59.12
+    ##  [7] generics_0.1.4       mzR_2.47.0           Rcpp_1.1.2          
+    ## [10] MsFeatures_1.21.0    xcms_4.11.3          BiocParallel_1.47.0 
+    ## [13] BiocStyle_2.41.0    
     ## 
     ## loaded via a namespace (and not attached):
-    ##   [1] DBI_1.3.0                   rlang_1.2.0                
+    ##   [1] DBI_1.3.0                   rlang_1.3.0                
     ##   [3] magrittr_2.0.5              clue_0.3-68                
-    ##   [5] MassSpecWavelet_1.78.0      otel_0.2.0                 
-    ##   [7] matrixStats_1.5.0           compiler_4.6.0             
-    ##   [9] PTMods_1.0.0                systemfonts_1.3.2          
+    ##   [5] MassSpecWavelet_1.79.2      otel_0.2.0                 
+    ##   [7] matrixStats_1.5.0           compiler_4.6.1             
+    ##   [9] PTMods_1.1.0                systemfonts_1.3.2          
     ##  [11] vctrs_0.7.3                 reshape2_1.4.5             
-    ##  [13] stringr_1.6.0               crayon_1.5.3               
-    ##  [15] pkgconfig_2.0.3             MetaboCoreUtils_1.20.1     
-    ##  [17] fastmap_1.2.0               XVector_0.52.0             
-    ##  [19] rmarkdown_2.31              preprocessCore_1.74.0      
-    ##  [21] ragg_1.5.2                  purrr_1.2.2                
-    ##  [23] xfun_0.59                   MultiAssayExperiment_1.38.0
-    ##  [25] cachem_1.1.0                jsonlite_2.0.0             
-    ##  [27] progress_1.2.3              DelayedArray_0.38.2        
-    ##  [29] prettyunits_1.2.0           parallel_4.6.0             
-    ##  [31] cluster_2.1.8.2             R6_2.6.1                   
-    ##  [33] bslib_0.11.0                stringi_1.8.7              
-    ##  [35] RColorBrewer_1.1-3          limma_3.68.4               
-    ##  [37] GenomicRanges_1.64.0        jquerylib_0.1.4            
-    ##  [39] iterators_1.0.14            Seqinfo_1.2.0              
-    ##  [41] bookdown_0.47               SummarizedExperiment_1.42.0
-    ##  [43] knitr_1.51                  IRanges_2.46.0             
-    ##  [45] Matrix_1.7-5                igraph_2.3.2               
-    ##  [47] tidyselect_1.2.1            abind_1.4-8                
-    ##  [49] yaml_2.3.12                 doParallel_1.0.17          
-    ##  [51] codetools_0.2-20            affy_1.90.0                
-    ##  [53] lattice_0.22-9              tibble_3.3.1               
-    ##  [55] plyr_1.8.9                  S7_0.2.2                   
-    ##  [57] evaluate_1.0.5              desc_1.4.3                 
-    ##  [59] Spectra_1.22.2              pillar_1.11.1              
-    ##  [61] affyio_1.82.0               BiocManager_1.30.27        
-    ##  [63] MatrixGenerics_1.24.0       foreach_1.5.2              
-    ##  [65] MALDIquant_1.22.3           ncdf4_1.24                 
-    ##  [67] hms_1.1.4                   ggplot2_4.0.3              
-    ##  [69] scales_1.4.0                MsExperiment_1.14.0        
-    ##  [71] glue_1.8.1                  lazyeval_0.2.3             
-    ##  [73] tools_4.6.0                 mzID_1.50.0                
-    ##  [75] data.table_1.18.4           QFeatures_1.22.0           
-    ##  [77] vsn_3.80.0                  fs_2.1.0                   
-    ##  [79] XML_3.99-0.23               grid_4.6.0                 
-    ##  [81] impute_1.86.0               tidyr_1.3.2                
-    ##  [83] MsCoreUtils_1.24.0          PSMatch_1.16.0             
-    ##  [85] cli_3.6.6                   textshaping_1.0.5          
-    ##  [87] S4Arrays_1.12.0             dplyr_1.2.1                
-    ##  [89] AnnotationFilter_1.36.0     pcaMethods_2.4.0           
-    ##  [91] gtable_0.3.6                sass_0.4.10                
-    ##  [93] digest_0.6.39               SparseArray_1.12.2         
-    ##  [95] htmlwidgets_1.6.4           farver_2.1.2               
-    ##  [97] htmltools_0.5.9             pkgdown_2.2.0.9000         
-    ##  [99] lifecycle_1.0.5             statmod_1.5.2              
-    ## [101] MASS_7.3-65
+    ##  [13] stringr_1.6.0               ProtGenerics_1.45.0        
+    ##  [15] crayon_1.5.3                pkgconfig_2.0.3            
+    ##  [17] MetaboCoreUtils_1.21.1      fastmap_1.2.0              
+    ##  [19] XVector_0.53.0              rmarkdown_2.31             
+    ##  [21] preprocessCore_1.75.0       ragg_1.5.2                 
+    ##  [23] purrr_1.2.2                 xfun_0.60                  
+    ##  [25] MultiAssayExperiment_1.39.0 cachem_1.1.0               
+    ##  [27] jsonlite_2.0.0              progress_1.2.3             
+    ##  [29] DelayedArray_0.39.6         prettyunits_1.2.0          
+    ##  [31] parallel_4.6.1              cluster_2.1.8.3            
+    ##  [33] R6_2.6.1                    bslib_0.12.0               
+    ##  [35] stringi_1.8.9               RColorBrewer_1.1-3         
+    ##  [37] limma_3.69.4                GenomicRanges_1.65.1       
+    ##  [39] jquerylib_0.1.4             iterators_1.0.14           
+    ##  [41] Seqinfo_1.3.2               bookdown_0.48              
+    ##  [43] SummarizedExperiment_1.43.0 knitr_1.51                 
+    ##  [45] IRanges_2.47.5              Matrix_1.7-6               
+    ##  [47] igraph_2.3.3                tidyselect_1.2.1           
+    ##  [49] abind_1.4-8                 yaml_2.3.12                
+    ##  [51] doParallel_1.0.17           codetools_0.2-20           
+    ##  [53] affy_1.91.0                 lattice_0.23-1             
+    ##  [55] tibble_3.3.1                plyr_1.8.9                 
+    ##  [57] S7_0.2.2                    evaluate_1.0.5             
+    ##  [59] desc_1.4.3                  Spectra_1.23.3             
+    ##  [61] pillar_1.11.1               affyio_1.83.0              
+    ##  [63] BiocManager_1.30.27         MatrixGenerics_1.25.0      
+    ##  [65] foreach_1.5.2               MALDIquant_1.22.3          
+    ##  [67] ncdf4_1.24                  hms_1.1.4                  
+    ##  [69] ggplot2_4.0.3               scales_1.4.0               
+    ##  [71] MsExperiment_1.15.0         glue_1.8.1                 
+    ##  [73] lazyeval_0.2.3              tools_4.6.1                
+    ##  [75] mzID_1.51.0                 data.table_1.18.6.1        
+    ##  [77] QFeatures_1.23.1            vsn_3.81.0                 
+    ##  [79] fs_2.1.0                    XML_3.99-0.24              
+    ##  [81] grid_4.6.1                  impute_1.87.0              
+    ##  [83] tidyr_1.3.2                 MsCoreUtils_1.25.4         
+    ##  [85] PSMatch_1.17.0              cli_3.6.6                  
+    ##  [87] textshaping_1.0.5           S4Arrays_1.13.0            
+    ##  [89] Chromatograms_1.3.3         dplyr_1.2.1                
+    ##  [91] AnnotationFilter_1.37.0     pcaMethods_2.5.0           
+    ##  [93] gtable_0.3.6                sass_0.4.10                
+    ##  [95] digest_0.6.39               SparseArray_1.13.2         
+    ##  [97] htmlwidgets_1.6.4           farver_2.1.2               
+    ##  [99] htmltools_0.5.9             pkgdown_2.2.1.9000         
+    ## [101] lifecycle_1.0.5             statmod_1.5.2              
+    ## [103] MASS_7.3-66
 
 ## References

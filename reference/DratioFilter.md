@@ -108,9 +108,9 @@ Epub 2018 May 18. PMID: 29805336; PMCID: PMC5960010.
 ## See also
 
 Other Filter features in xcms:
-[`BlankFlag`](https://sneumann.github.io/xcms/reference/BlankFlag.md),
-[`PercentMissingFilter`](https://sneumann.github.io/xcms/reference/PercentMissingFilter.md),
-[`RsdFilter`](https://sneumann.github.io/xcms/reference/RsdFilter.md)
+[`BlankFlag()`](https://sneumann.github.io/xcms/reference/BlankFlag.md),
+[`PercentMissingFilter()`](https://sneumann.github.io/xcms/reference/PercentMissingFilter.md),
+[`RsdFilter()`](https://sneumann.github.io/xcms/reference/RsdFilter.md)
 
 ## Author
 

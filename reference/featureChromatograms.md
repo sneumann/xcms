@@ -1,28 +1,56 @@
 # Extract ion chromatograms for each feature
 
-Extract ion chromatograms for features in an
+`featureChromatograms()` extracts ion chromatograms for features in an
 [XcmsExperiment](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
 or
 [XCMSnExp](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)
 object. The function returns for each feature the extracted ion
-chromatograms (along with all associated chromatographic peaks) in each
-sample. The chromatogram is extracted from the m/z - rt region that
-includes **all** chromatographic peaks of a feature. By default, this
-region is defined using the range of the chromatographic peaks' m/z and
-retention times (with `mzmin = min`, `mzmax = max`, `rtmin = min` and
-`rtmax = max`). For some features, and depending on the data, the m/z
-and rt range can thus be relatively large. The boundaries of the m/z -
-rt region can also be restricted by changing parameters `mzmin`,
-`mzmax`, `rtmin` and `rtmax` to a different functions, such as `median`.
+chromatograms in each sample. Based on the setting for parameter
+`return.type` the results are returned as a legacy
+[MSnbase::MChromatograms](https://lgatto.github.io/MSnbase/reference/MChromatograms-class.html)
+or
+[`XChromatograms()`](https://sneumann.github.io/xcms/reference/XChromatogram.md)
+object (`return.type = "MChromatograms"` or
+`return.type = "XChromatograms"`, the default) or as a new
+[`Chromatograms::Chromatograms()`](https://rdrr.io/pkg/Chromatograms/man/Chromatograms.html)
+object (`return.type = "Chromatograms"`):
 
-By default only chromatographic peaks associated with a feature are
-included in the returned
-[XChromatograms](https://sneumann.github.io/xcms/reference/XChromatogram.md)
-object. For `object` being an `XCMSnExp` object parameter `include`
-allows also to return all chromatographic peaks with their apex position
-within the selected region (`include = "apex_within"`) or any
-chromatographic peak overlapping the m/z and retention time range
-(`include = "any"`).
+- `return.type = "MChromatograms"`: the chromatograms are extracted from
+  the m/z - rt region that includes all chromatographic peaks for a
+  feature. The
+  [`featureArea()`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
+  function is used to define this region which is defined using the
+  range of the chromatographic peaks' m/z and retention times. The
+  `MChromatograms` organizes the EICs per feature, i.e., each row in the
+  returned `MChromatograms` corresponds to one feature with columns
+  containing EICs per sample.
+
+- `return.type = "XChromatograms"`: chromatographic data is defined as
+  for `return.type = "MChromatograms"`, but the returned EICs contain in
+  addition also the information on the individual chromatographic peaks
+  as well as the feature definitions. For `object` being an `XCMSnExp`
+  object, parameter `include` allows also to return all chromatographic
+  peaks with their apex position within the selected region
+  (`include = "apex_within"`) or any chromatographic peak overlapping
+  the m/z and retention time range (`include = "any"`).
+
+- `return.type = "Chromatograms"`: the EICs, defined through
+  [`featureArea()`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
+  as described above, are returned as a
+  [`Chromatograms()`](https://rdrr.io/pkg/Chromatograms/man/Chromatograms.html)
+  object which organizes chromatograms sequentially in a list-like
+  structure: first all chromatograms for the first feature in all
+  samples, then those from the second feature and so on. See examples
+  for details. The feature ID is stored in the result object's
+  `$feature_id` variable. By default, the returned EICs represent the
+  chromatograms of the
+  [`featureArea()`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md),
+  but with `featureArea = FALSE` each returned chromatogram represents
+  the EIC for the actual area of the individual chromatographic peaks
+  assigned to the feature (same as with
+  [`chromPeakChromatograms()`](https://sneumann.github.io/xcms/reference/chromPeakChromatograms.md)).
+  The IDs of the chromatographic peaks can then be accessed through
+  `$chrom_peak_id`.
 
 ## Usage
 
@@ -36,12 +64,13 @@ featureChromatograms(
   expandMz = 0,
   aggregationFun = "max",
   features = character(),
-  return.type = "XChromatograms",
+  return.type = c("XChromatograms", "MChromatograms", "Chromatograms"),
   chunkSize = 2L,
   mzmin = min,
   mzmax = max,
   rtmin = min,
   rtmax = max,
+  featureArea = TRUE,
   ...,
   progressbar = TRUE,
   BPPARAM = bpparam()
@@ -104,11 +133,10 @@ featureChromatograms(
 
 - return.type:
 
-  `character(1)` defining how the result should be returned. At present
-  only `return.type = "XChromatograms"` is supported and the results are
-  thus returned as an
-  [`XChromatograms()`](https://sneumann.github.io/xcms/reference/XChromatogram.md)
-  object.
+  `character(1)` defining how the result should be returned. Supported
+  are `return.type = "XChromatograms"` (the default),
+  `return.type = "MChromatograms"` and `return.type = "Chromatograms"`.
+  See function descriptions for details.
 
 - chunkSize:
 
@@ -143,6 +171,12 @@ featureChromatograms(
   the EIC is integrated should be defined. Defaults to `rtmax = max`
   thus the largest `"rtmax"` value for all chromatographic peaks of a
   feature will be used.
+
+- featureArea:
+
+  For `object` being a `XcmsExperiment` and `return.type = FALSE`:
+  return EICs representing data within the identified chromatographic
+  peaks.
 
 - progressbar:
 
@@ -185,22 +219,32 @@ featureChromatograms(
 
 ## Value
 
-[`XChromatograms()`](https://sneumann.github.io/xcms/reference/XChromatogram.md)
-object. In future, depending on parameter `return.type`, the data might
-be returned as a different object.
+Depending on parameter `return.type`, a
+[MSnbase::MChromatograms](https://lgatto.github.io/MSnbase/reference/MChromatograms-class.html),
+[XChromatograms](https://sneumann.github.io/xcms/reference/XChromatogram.md)
+or
+[`Chromatograms::Chromatograms()`](https://rdrr.io/pkg/Chromatograms/man/Chromatograms.html)
+object. See function description above for details.
 
 ## Note
 
-The EIC data of a feature is extracted from every sample using the same
-m/z - rt area. The EIC in a sample does thus not exactly represent the
-signal of the actually identified chromatographic peak in that sample.
-The
-[`chromPeakChromatograms()`](https://sneumann.github.io/xcms/reference/chromPeakChromatograms.md)
-function would allow to extract the actual EIC of the chromatographic
-peak in a specific sample. See also examples below.
+Some of the functionality available for `XChromatograms` objects is not
+yet available for `Chromatograms`. Thus, while the newer
+`Chromatograms`-based infrastructure is more efficient and powerful, for
+some operations it is suggested to still use the legacy objects (such as
+simulating a correspondence analysis through
+[`plotChromPeakDensity()`](https://sneumann.github.io/xcms/reference/plotChromPeakDensity.md)).
+
+By default the EIC data of a feature is extracted from every sample
+using the same m/z - rt area. Unless `featureArea = FALSE` is used, the
+EIC in a sample does thus not exactly represent the signal of the
+actually identified chromatographic peak in that sample.
 
 Parameters `include`, `filled`, `n` and `value` are only supported for
 `object` being an `XCMSnExp`.
+
+Parameter `featureArea` is only supported for
+`return.type = "Chromatograms"`.
 
 When extracting EICs from only the top `n` samples it can happen that
 one or more of the features specified with `features` are dropped
@@ -283,15 +327,86 @@ featureDefinitions(xdata)
 #> FT20        1
 #> FT21        1
 
+#############################################################################
+## Extracting the feature's EICs as an `Chromatograms` object
+
+## Define the IDs for selected features from which to extract the data
+fids <- rownames(featureDefinitions(xdata))[1:3]
+chrs <- featureChromatograms(xdata, features = fids,
+    return.type = "Chromatograms")
+chrs
+#> Chromatographic data (Chromatograms) with 9 chromatograms in a ChromBackendSpectra backend:
+#>   chromIndex msLevel mz
+#> 1         NA       1 NA
+#> 2         NA       1 NA
+#> 3         NA       1 NA
+#> 4         NA       1 NA
+#> 5         NA       1 NA
+#> 6         NA       1 NA
+#> ... 14 more  chromatogram variables/columns
+#> ... 2 peaksData variables
+#> 
+#> The Spectra object contains 1313 spectra
+
+## The data is organized by feature and sample: first all EICs for the first
+## feature in all samples, then those from the second etc
+chrs$feature_id
+#> [1] "FT01" "FT01" "FT01" "FT02" "FT02" "FT02" "FT03" "FT03" "FT03"
+
+## The sample information is stored in the object's `$dataOrigin`
+basename(chrs$dataOrigin)
+#> [1] "ko15.CDF" "ko16.CDF" "ko18.CDF" "ko15.CDF" "ko16.CDF" "ko18.CDF" "ko15.CDF"
+#> [8] "ko16.CDF" "ko18.CDF"
+
+## Plot the data for the first feature
+library(Chromatograms)
+
+## Separately
+plotChromatograms(chrs[chrs$feature_id == fids[1]])
+
+
+## In a single plot
+plotChromatogramsOverlay(chrs[chrs$feature_id == fids[1]])
+
+## Extract the EICs for the individual chromatographic peaks associated to
+## each feature:
+chrs <- featureChromatograms(xdata, features = fids,
+    return.type = "Chromatograms", featureArea = FALSE)
+chrs
+#> Chromatographic data (Chromatograms) with 10 chromatograms in a ChromBackendSpectra backend:
+#>       chromIndex msLevel mz
+#> CP035         NA       1 NA
+#> CP125         NA       1 NA
+#> CP210         NA       1 NA
+#> CP212         NA       1 NA
+#> CP010         NA       1 NA
+#> CP097         NA       1 NA
+#> ... 15 more  chromatogram variables/columns
+#> ... 2 peaksData variables
+#> 
+#> The Spectra object contains 1313 spectra
+
+## In contrast to `featureArea = TRUE`, where one (and only one) EIC per
+## sample is guaranteed, for `featureArea = FALSE` there can be more than
+## one chromatogram per sample (or no chromatogram per sample), representing
+## exactly the association between identified chromatographic peaks and
+## features
+chrs$feature_id
+#>  [1] "FT01" "FT01" "FT01" "FT01" "FT02" "FT02" "FT02" "FT03" "FT03" "FT03"
+chrs$chrom_peak_id
+#>  [1] "CP035" "CP125" "CP210" "CP212" "CP010" "CP097" "CP198" "CP037" "CP128"
+#> [10] "CP213"
+
+#############################################################################
+## Using the legacy `MChromatogtrams`/`XChromatograms`
+
 ## Extract ion chromatograms for the first 3 features. Parameter
 ## `features` can be either the feature IDs or feature indices.
-chrs <- featureChromatograms(xdata,
-    features = rownames(featureDefinitions)[1:3])
+chrs <- featureChromatograms(xdata, features = fids)
 #> Processing chromatographic peaks for features
 
 ## Plot the EIC for the first feature using different colors for each file.
 plot(chrs[1, ], col = c("red", "green", "blue"))
-
 
 ## The EICs for all 3 samples use the same m/z and retention time range,
 ## which was defined using the `featureArea` function:

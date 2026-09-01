@@ -41,7 +41,7 @@ library(MSnbase)
 library(faahKO)
 data("faahko")
 
-xset <- group(faahko)
+xset <- xcms::group(faahko)
 mat <- groupval(xset, value = "into")
 
 mat_imp <- imputeRowMin(mat)

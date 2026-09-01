@@ -2,6 +2,37 @@
 
 ## xcms 4.11
 
+### Changes in version 4.11.3
+
+- Workaround for errors reading subsets of data from HDF5 files with
+  `XcmsExperimentHdf5`: original issue reported in *rhdf5*:
+  <https://github.com/Huber-group-EMBL/rhdf5/issues/240> . Code can be
+  reverted once the problem is fixed upstream in *rhdf5*.
+
+### Changes in version 4.11.2
+
+- Add support to return chromatographic data as a `Chromatograms` object
+  with the
+  [`chromatogram()`](https://sneumann.github.io/xcms/reference/chromatogram-method.md)
+  method from `MsExperiment`, `XcmsExperiment` and `XcmsExperimentHdf5`
+  objects.
+- Add support for `Chromatograms` to the
+  [`chromPeakChromatograms()`](https://sneumann.github.io/xcms/reference/chromPeakChromatograms.md)
+  method for `XcmsExperiment` and `XcmsExperimentHdf5` objects.
+- Add support for `Chromatograms` to the
+  [`featureChromatograms()`](https://sneumann.github.io/xcms/reference/featureChromatograms.md)
+  method for `XcmsExperiment` and `XcmsExperimentHdf5` objects.
+- Add new methods
+  [`featureChromPeaks()`](https://sneumann.github.io/xcms/reference/featureChromPeaks.md)
+  and
+  [`featurePeakidx()`](https://sneumann.github.io/xcms/reference/featureChromPeaks.md)
+  to access the mapping between features and chromatographic peaks.
+- [`loadXcmsData()`](https://sneumann.github.io/xcms/reference/loadXcmsData.md)
+  updates parameter class definitions in the object’s *process history*.
+- Fix `chromPeakData<-` for `XcmsExperiment` not supporting a
+  `DataFrame` as input (issue
+  [\#839](https://github.com/sneumann/xcms/issues/839)).
+
 ### Changes in version 4.11.1
 
 - `refineChromPeaks,MergeNeighboringPeakParam`: drop row names of
@@ -1015,10 +1046,10 @@
   the unnecessary requirement for same-dimension profile matrices in
   adjustRtime,XCMSnExp,ObiwarpParam.
 - issue [\#194](https://github.com/sneumann/xcms/issues/194): fixes in
-  retcor.obiwarp: 1) subset raw data if scanrange != NULL.
-  2.  if the mz range of the two files to be aligned differ, expand them
-      correctly. Depending on the profStep and the mz values/ranges the
-      matrices were not expanded correctly.
+  retcor.obiwarp: 1) subset raw data if scanrange != NULL. 2) if the mz
+  range of the two files to be aligned differ, expand them correctly.
+  Depending on the profStep and the mz values/ranges the matrices were
+  not expanded correctly.
 - Potential problems in the plotChromPeakDensity function.
 
 ### Changes in version 2.99.5

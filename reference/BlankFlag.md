@@ -98,9 +98,9 @@ for `SummarizedExperiment` objects.
 ## See also
 
 Other Filter features in xcms:
-[`DratioFilter`](https://sneumann.github.io/xcms/reference/DratioFilter.md),
-[`PercentMissingFilter`](https://sneumann.github.io/xcms/reference/PercentMissingFilter.md),
-[`RsdFilter`](https://sneumann.github.io/xcms/reference/RsdFilter.md)
+[`DratioFilter()`](https://sneumann.github.io/xcms/reference/DratioFilter.md),
+[`PercentMissingFilter()`](https://sneumann.github.io/xcms/reference/PercentMissingFilter.md),
+[`RsdFilter()`](https://sneumann.github.io/xcms/reference/RsdFilter.md)
 
 ## Author
 

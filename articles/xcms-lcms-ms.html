@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.11.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.11.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (links[i].hostname != window.location.hostname)
       links[i].target = '_blank';
 });
-</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.23/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer, Michael Witting<br><strong>Modified</strong>: 2026-07-05 12:02:17.561418<br><strong>Compiled</strong>: Sun Jul 5 13:03:59 2026</p>
+</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.24/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer, Michael Witting<br><strong>Modified</strong>: 2026-09-01 07:29:04.203735<br><strong>Compiled</strong>: Tue Sep 1 08:33:04 2026</p>
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
@@ -110,7 +110,7 @@ once, defined windows (i.e. ranges of m/z values) are used and scanned.
 This reduces the overlap of fragment spectra while still keeping a high
 coverage.</p>
 <p>This document showcases the analysis of two small LC-MS/MS data sets
-using <em><a href="https://bioconductor.org/packages/3.23/xcms" class="external-link">xcms</a></em>. The
+using <em><a href="https://bioconductor.org/packages/3.24/xcms" class="external-link">xcms</a></em>. The
 data files used are reversed-phase LC-MS/MS runs from the Agilent
 Pesticide mix obtained from a Sciex 6600 Triple ToF operated in SWATH
 acquisition mode. For comparison a DDA file from the same sample is
@@ -148,14 +148,14 @@ spectra from the specified mzML file. The number of spectra for each MS
 level is listed below. Note that we subset the experiment to the first
 data file (using <code>[1]</code>) and then access directly the spectra
 within this sample with the <code><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">spectra()</a></code> function (which
-returns a <code>Spectra</code> object from the <em><a href="https://bioconductor.org/packages/3.23/Spectra" class="external-link">Spectra</a></em>
+returns a <code>Spectra</code> object from the <em><a href="https://bioconductor.org/packages/3.24/Spectra" class="external-link">Spectra</a></em>
 package). Note that we use the pipe operator <code>|&gt;</code> for
 better readability.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dda_data</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">|&gt;</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">spectra</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">msLevel</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/table.html" class="external-link">table</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">##    1    2 </span></span>
 <span><span class="co">## 1389 2214</span></span></code></pre>
@@ -182,7 +182,7 @@ possible to extract the intensity of the precursor ion.</p>
 <p>Some manufacturers (like Sciex) don’t define/export the precursor
 intensity and thus either <code>NA</code> or <code>0</code> is reported.
 We can however use the <code><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">estimatePrecursorIntensity()</a></code>
-function from the <em><a href="https://bioconductor.org/packages/3.23/Spectra" class="external-link">Spectra</a></em>
+function from the <em><a href="https://bioconductor.org/packages/3.24/Spectra" class="external-link">Spectra</a></em>
 package to determine the precursor intensity for a MS 2 spectrum based
 on the intensity of the respective ion in the previous MS1 scan (note
 that with <code>method = "interpolation"</code> the precursor intensity
@@ -243,11 +243,11 @@ chromatographic peak are returned.</p>
 <span><span class="co">##  ... 37 more variables/columns.</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## file(s):</span></span>
-<span><span class="co">## 3be760a7234d_7861</span></span>
+<span><span class="co">## 187c6b85f20b_7861</span></span>
 <span><span class="co">## Processing:</span></span>
-<span><span class="co">##  Filter: select retention time [230..610] on MS level(s)  [Sun Jul  5 13:04:16 2026]</span></span>
-<span><span class="co">##  Filter: select MS level(s) 2 [Sun Jul  5 13:04:25 2026]</span></span>
-<span><span class="co">##  Merge 1 Spectra into one [Sun Jul  5 13:04:25 2026]</span></span></code></pre>
+<span><span class="co">##  Filter: select retention time [230..610] on MS level(s)  [Tue Sep  1 08:33:21 2026]</span></span>
+<span><span class="co">##  Filter: select MS level(s) 2 [Tue Sep  1 08:33:30 2026]</span></span>
+<span><span class="co">##  Merge 1 Spectra into one [Tue Sep  1 08:33:30 2026]</span></span></code></pre>
 <p>By default <code><a href="../reference/chromPeakSpectra.html">chromPeakSpectra()</a></code> returns all spectra
 associated with a MS1 chromatographic peak, but parameter
 <code>method</code> allows to choose and return only one spectrum per
@@ -330,7 +330,7 @@ to annotate our ion. Below we extract all MS2 spectra that were
 associated with the candidate chromatographic peak using the ID of the
 peak in the present data set.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ex_id</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">dda_data</span>, mz <span class="op">=</span> <span class="va">ex_mz</span>, ppm <span class="op">=</span> <span class="fl">20</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">ex_id</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">dda_data</span>, mz <span class="op">=</span> <span class="va">ex_mz</span>, ppm <span class="op">=</span> <span class="fl">20</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">ex_spectra</span> <span class="op">&lt;-</span> <span class="va">dda_spectra</span><span class="op">[</span><span class="va">dda_spectra</span><span class="op">$</span><span class="va">chrom_peak_id</span> <span class="op">==</span> <span class="va">ex_id</span><span class="op">]</span></span>
 <span><span class="va">ex_spectra</span></span></code></pre></div>
 <pre><code><span><span class="co">## MSn data (Spectra) with 5 spectra in a MsBackendMzR backend:</span></span>
@@ -344,11 +344,11 @@ peak in the present data set.</p>
 <span><span class="co">##  ... 37 more variables/columns.</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## file(s):</span></span>
-<span><span class="co">## 3be760a7234d_7861</span></span>
+<span><span class="co">## 187c6b85f20b_7861</span></span>
 <span><span class="co">## Processing:</span></span>
-<span><span class="co">##  Filter: select retention time [230..610] on MS level(s)  [Sun Jul  5 13:04:16 2026]</span></span>
-<span><span class="co">##  Filter: select MS level(s) 2 [Sun Jul  5 13:04:25 2026]</span></span>
-<span><span class="co">##  Merge 1 Spectra into one [Sun Jul  5 13:04:25 2026]</span></span></code></pre>
+<span><span class="co">##  Filter: select retention time [230..610] on MS level(s)  [Tue Sep  1 08:33:21 2026]</span></span>
+<span><span class="co">##  Filter: select MS level(s) 2 [Tue Sep  1 08:33:30 2026]</span></span>
+<span><span class="co">##  Merge 1 Spectra into one [Tue Sep  1 08:33:30 2026]</span></span></code></pre>
 <p>There are 5 MS2 spectra representing fragmentation of the ion(s)
 measured in our candidate chromatographic peak. We next reduce this to a
 single MS2 spectrum using the <code><a href="https://rdrr.io/pkg/Spectra/man/combineSpectra.html" class="external-link">combineSpectra()</a></code> method
@@ -374,9 +374,9 @@ approach or suggested for all types of data.</p>
 <span><span class="co">## 1         2   418.926      3505</span></span>
 <span><span class="co">##  ... 37 more variables/columns.</span></span>
 <span><span class="co">## Processing:</span></span>
-<span><span class="co">##  Filter: select retention time [230..610] on MS level(s)  [Sun Jul  5 13:04:16 2026]</span></span>
-<span><span class="co">##  Filter: select MS level(s) 2 [Sun Jul  5 13:04:25 2026]</span></span>
-<span><span class="co">##  Merge 1 Spectra into one [Sun Jul  5 13:04:25 2026]</span></span>
+<span><span class="co">##  Filter: select retention time [230..610] on MS level(s)  [Tue Sep  1 08:33:21 2026]</span></span>
+<span><span class="co">##  Filter: select MS level(s) 2 [Tue Sep  1 08:33:30 2026]</span></span>
+<span><span class="co">##  Merge 1 Spectra into one [Tue Sep  1 08:33:30 2026]</span></span>
 <span><span class="co">##  ...1 more processings. Use 'processingLog' to list all.</span></span></code></pre>
 <p>Mass peaks from all input spectra with a difference in m/z smaller 20
 ppm (parameter <code>ppm</code>) were combined into one peak and the
@@ -399,7 +399,7 @@ spectra created with collision energies of 0V, 10V, 20V and 40V are
 available. Below we import the respective data and plot our candidate
 spectrum against the MS2 spectra of Flumanezil and Fenamiphos (from a
 collision energy of 20V). To import files in MGF format we have to load
-the <em><a href="https://bioconductor.org/packages/3.23/MsBackendMgf" class="external-link">MsBackendMgf</a></em>
+the <em><a href="https://bioconductor.org/packages/3.24/MsBackendMgf" class="external-link">MsBackendMgf</a></em>
 Bioconductor package which adds MGF file support to the <em>Spectra</em>
 package.</p>
 <p>Prior plotting we <em>scale</em> our experimental spectra to replace
@@ -492,7 +492,7 @@ present data set.</p>
 <div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">spectra</a></span><span class="op">(</span><span class="va">swath_data</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">msLevel</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/table.html" class="external-link">table</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">##    1    2 </span></span>
 <span><span class="co">##  422 3378</span></span></code></pre>
@@ -544,7 +544,7 @@ target m/z</em> to define the individual SWATH pockets. Below we list
 the number of spectra that are recorded in each pocket/isolation
 window.</p>
 <div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="../reference/isolationWindowTargetMz-OnDiskMSnExp-method.html">isolationWindowTargetMz</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">spectra</a></span><span class="op">(</span><span class="va">swath_data</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="../reference/isolationWindowTargetMz-OnDiskMSnExp-method.html">isolationWindowTargetMz</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">spectra</a></span><span class="op">(</span><span class="va">swath_data</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## 163.75 208.95 244.05 270.85  299.1  329.8 367.35 601.85 </span></span>
 <span><span class="co">##    422    422    422    422    423    423    422    422</span></span></code></pre>
@@ -677,7 +677,7 @@ the <code>"isolationWindow"</code> column in the object’s
 each isolation window (the number of chromatographic peaks identified in
 MS1 is 62).</p>
 <div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeakData</a></span><span class="op">(</span><span class="va">swath_data</span><span class="op">)</span><span class="op">$</span><span class="va">isolationWindow</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeakData</a></span><span class="op">(</span><span class="va">swath_data</span><span class="op">)</span><span class="op">$</span><span class="va">isolationWindow</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## 163.75 208.95 244.05 270.85  299.1  329.8 367.35 601.85 </span></span>
 <span><span class="co">##      2     38     32     14    105     23     62     32</span></span></code></pre>
@@ -750,7 +750,7 @@ the apex position of the MS1 chromatographic peak.</p>
 <span>    <span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">swath_data</span><span class="op">)</span><span class="op">[</span>, <span class="st">"rtmin"</span><span class="op">]</span> <span class="op">&lt;</span> <span class="va">fenamiphos_ms1_peak</span><span class="op">[</span>, <span class="st">"rt"</span><span class="op">]</span> <span class="op">&amp;</span></span>
 <span>    <span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">swath_data</span><span class="op">)</span><span class="op">[</span>, <span class="st">"rtmax"</span><span class="op">]</span> <span class="op">&gt;</span> <span class="va">fenamiphos_ms1_peak</span><span class="op">[</span>, <span class="st">"rt"</span><span class="op">]</span></span>
 <span></span>
-<span><span class="va">fenamiphos_ms2_peak</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">swath_data</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">keep</span><span class="op">)</span>, <span class="op">]</span></span></code></pre></div>
+<span><span class="va">fenamiphos_ms2_peak</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">swath_data</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">keep</span><span class="op">)</span>, <span class="op">]</span></span></code></pre></div>
 <p>In total 24 MS2 chromatographic peaks match all the above conditions.
 Next we extract the ion chromatogram of the MS1 peak and of all selected
 candidate MS2 signals. To ensure chromatograms are extracted from
@@ -777,7 +777,7 @@ the compound of interest.</p>
 <span><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">filterIsolationWindow</a></span><span class="op">(</span>mz <span class="op">=</span> <span class="va">fenamiphos_mz</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">spectra</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span><span class="fu"><a href="../reference/isolationWindowTargetMz-OnDiskMSnExp-method.html">isolationWindowTargetMz</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/table.html" class="external-link">table</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## 299.1 </span></span>
 <span><span class="co">##   423</span></span></code></pre>
@@ -787,7 +787,7 @@ call below to extract the data from the correct (MS2) spectra.</p>
 <div class="sourceCode" id="cb73"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fenamiphos_ms2_chr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/chromatogram-method.html">chromatogram</a></span><span class="op">(</span></span>
 <span>    <span class="va">swath_data</span>, rt <span class="op">=</span> <span class="va">rtr</span>, mz <span class="op">=</span> <span class="va">mzr</span>, msLevel <span class="op">=</span> <span class="fl">2L</span>,</span>
-<span>    isolationWindowTargetMz <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">299.1</span>, <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">rtr</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span>    isolationWindowTargetMz <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">299.1</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">rtr</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Extracting chromatographic data</span></span></code></pre>
 <pre><code><span><span class="co">## Processing chromatographic peaks</span></span></code></pre>
 <p>We can now plot the extracted ion chromatogram of the MS1 and the
@@ -798,7 +798,7 @@ extracted MS2 data.</p>
 <span>     xlab <span class="op">=</span> <span class="st">"retention time [s]"</span>, ylab <span class="op">=</span> <span class="st">"intensity"</span>, pch <span class="op">=</span> <span class="fl">16</span>,</span>
 <span>     ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">5000</span><span class="op">)</span>, col <span class="op">=</span> <span class="st">"blue"</span>, type <span class="op">=</span> <span class="st">"b"</span>, lwd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="co">#' Add data from all MS2 peaks</span></span>
-<span><span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">fenamiphos_ms2_chr</span><span class="op">@</span><span class="va">.Data</span>,</span>
+<span><span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">fenamiphos_ms2_chr</span><span class="op">@</span><span class="va">.Data</span>,</span>
 <span>              <span class="kw">function</span><span class="op">(</span><span class="va">z</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">rtime</a></span><span class="op">(</span><span class="va">z</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">intensity</a></span><span class="op">(</span><span class="va">z</span><span class="op">)</span>,</span>
 <span>                                 col <span class="op">=</span> <span class="st">"#00000080"</span>,</span>
 <span>                                 type <span class="op">=</span> <span class="st">"b"</span>, pch <span class="op">=</span> <span class="fl">16</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
@@ -854,7 +854,7 @@ chromatographic peak.</p>
 <span><span class="co">## CP62         2   574.942        NA</span></span>
 <span><span class="co">##  ... 20 more variables/columns.</span></span>
 <span><span class="co">## Processing:</span></span>
-<span><span class="co">##  Merge 1 Spectra into one [Sun Jul  5 13:04:33 2026]</span></span></code></pre>
+<span><span class="co">##  Merge 1 Spectra into one [Tue Sep  1 08:33:39 2026]</span></span></code></pre>
 <p>As a result we got a <code>Spectra</code> object of length equal to
 the number of MS1 peaks in our data. The length of a spectrum represents
 the number of peaks it contains. Thus, a length of 0 indicates that no
@@ -893,7 +893,7 @@ representing [M+H]+ ions of Fenamiphos using its chromatographic peak
 ID:</p>
 <div class="sourceCode" id="cb85"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fenamiphos_swath_spectrum</span> <span class="op">&lt;-</span> <span class="va">swath_spectra</span><span class="op">[</span></span>
-<span>    <span class="va">swath_spectra</span><span class="op">$</span><span class="va">peak_id</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">fenamiphos_ms1_peak</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
+<span>    <span class="va">swath_spectra</span><span class="op">$</span><span class="va">peak_id</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">fenamiphos_ms1_peak</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
 <p>We can now compare the reconstructed spectrum to the example
 consensus spectrum from the DDA experiment in the previous section
 (variable <code>ex_spectrum</code>) as well as to the MS2 spectrum for
@@ -947,11 +947,11 @@ window containing the fragment data from the compound of interest.</p>
 <span><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">filterIsolationWindow</a></span><span class="op">(</span>mz <span class="op">=</span> <span class="va">pmz</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">spectra</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span><span class="fu"><a href="../reference/isolationWindowTargetMz-OnDiskMSnExp-method.html">isolationWindowTargetMz</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">ms2_eics</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/chromatogram-method.html">chromatogram</a></span><span class="op">(</span></span>
 <span>    <span class="va">swath_data</span>, rt <span class="op">=</span> <span class="va">rt_range</span>, mz <span class="op">=</span> <span class="va">mz_range</span>, msLevel <span class="op">=</span> <span class="fl">2L</span>,</span>
-<span>    isolationWindowTargetMz <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">tmz</span>, <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">rt_range</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span>    isolationWindowTargetMz <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">tmz</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">rt_range</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Extracting chromatographic data</span></span></code></pre>
 <pre><code><span><span class="co">## Processing chromatographic peaks</span></span></code></pre>
 <p>Each row of this <code>ms2_eics</code> contains now the EIC of one of
@@ -981,7 +981,7 @@ the reconstructed MS2 spectrum for that peak.</p>
 <span><span class="co">## CP22 897.3923 278      1</span></span></code></pre>
 <div class="sourceCode" id="cb96"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">prochloraz_swath_spectrum</span> <span class="op">&lt;-</span> <span class="va">swath_spectra</span><span class="op">[</span></span>
-<span>    <span class="va">swath_spectra</span><span class="op">$</span><span class="va">peak_id</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">prochloraz_ms1_peak</span><span class="op">)</span><span class="op">]</span></span>
+<span>    <span class="va">swath_spectra</span><span class="op">$</span><span class="va">peak_id</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">prochloraz_ms1_peak</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/lengths.html" class="external-link">lengths</a></span><span class="op">(</span><span class="va">prochloraz_swath_spectrum</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 9</span></span></code></pre>
 <p>The MS2 spectrum for the (tentative) MS1 signal for prochloraz
@@ -1002,7 +1002,7 @@ SWATH data match almost perfectly. Next we get the MS2 spectra for this
 peak.</p>
 <div class="sourceCode" id="cb100"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">prochloraz_dda_spectra</span> <span class="op">&lt;-</span> <span class="va">dda_spectra</span><span class="op">[</span></span>
-<span>    <span class="va">dda_spectra</span><span class="op">$</span><span class="va">chrom_peak_id</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">prochloraz_dda_peak</span><span class="op">)</span><span class="op">]</span></span>
+<span>    <span class="va">dda_spectra</span><span class="op">$</span><span class="va">chrom_peak_id</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">prochloraz_dda_peak</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">prochloraz_dda_spectra</span></span></code></pre></div>
 <pre><code><span><span class="co">## MSn data (Spectra) with 5 spectra in a MsBackendMzR backend:</span></span>
 <span><span class="co">##     msLevel     rtime scanIndex</span></span>
@@ -1015,11 +1015,11 @@ peak.</p>
 <span><span class="co">##  ... 37 more variables/columns.</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## file(s):</span></span>
-<span><span class="co">## 3be760a7234d_7861</span></span>
+<span><span class="co">## 187c6b85f20b_7861</span></span>
 <span><span class="co">## Processing:</span></span>
-<span><span class="co">##  Filter: select retention time [230..610] on MS level(s)  [Sun Jul  5 13:04:16 2026]</span></span>
-<span><span class="co">##  Filter: select MS level(s) 2 [Sun Jul  5 13:04:25 2026]</span></span>
-<span><span class="co">##  Merge 1 Spectra into one [Sun Jul  5 13:04:25 2026]</span></span></code></pre>
+<span><span class="co">##  Filter: select retention time [230..610] on MS level(s)  [Tue Sep  1 08:33:21 2026]</span></span>
+<span><span class="co">##  Filter: select MS level(s) 2 [Tue Sep  1 08:33:30 2026]</span></span>
+<span><span class="co">##  Merge 1 Spectra into one [Tue Sep  1 08:33:30 2026]</span></span></code></pre>
 <p>In total 5 spectra were measured, some with a relatively high number
 of peaks. Next we combine them into a consensus spectrum.</p>
 <div class="sourceCode" id="cb102"><pre class="downlit sourceCode r">
@@ -1071,7 +1071,7 @@ SWATH-derived MS2 spectrum for prochloraz.
 <p>These could represent fragments from isotopes of the original
 compound. DIA MS2 data, since all ions at a given retention time are
 fragmented, can contain fragments from isotopes. We thus below use the
-<code><a href="https://rdrr.io/pkg/MetaboCoreUtils/man/isotopologues.html" class="external-link">isotopologues()</a></code> function from the <em><a href="https://bioconductor.org/packages/3.23/MetaboCoreUtils" class="external-link">MetaboCoreUtils</a></em>
+<code><a href="https://rdrr.io/pkg/MetaboCoreUtils/man/isotopologues.html" class="external-link">isotopologues()</a></code> function from the <em><a href="https://bioconductor.org/packages/3.24/MetaboCoreUtils" class="external-link">MetaboCoreUtils</a></em>
 package to check for presence of potential isotope peaks in the
 reconstructed MS2 spectrum for prochloraz.</p>
 <div class="sourceCode" id="cb109"><pre class="downlit sourceCode r">
@@ -1093,7 +1093,7 @@ isotope group in a spectrum.</p>
 <span><span class="co">## isotopologue peak groups.</span></span>
 <span><span class="va">rem_iso</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="va">idx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MetaboCoreUtils/man/isotopologues.html" class="external-link">isotopologues</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
-<span>    <span class="va">idx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">idx</span>, <span class="kw">function</span><span class="op">(</span><span class="va">z</span><span class="op">)</span> <span class="va">z</span><span class="op">[</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span>, use.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span>    <span class="va">idx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">idx</span>, <span class="kw">function</span><span class="op">(</span><span class="va">z</span><span class="op">)</span> <span class="va">z</span><span class="op">[</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span>, use.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span>    <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">idx</span><span class="op">)</span><span class="op">)</span></span>
 <span>        <span class="va">x</span><span class="op">[</span><span class="op">-</span><span class="va">idx</span>, , drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span></span>
 <span>    <span class="kw">else</span> <span class="va">x</span></span>
@@ -1157,7 +1157,7 @@ also correlation with intensity values across several samples.</p>
 </h2>
 <div class="sourceCode" id="cb117"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## R version 4.6.0 (2026-04-24)</span></span>
+<pre><code><span><span class="co">## R version 4.6.1 (2026-06-24)</span></span>
 <span><span class="co">## Platform: x86_64-pc-linux-gnu</span></span>
 <span><span class="co">## Running under: Ubuntu 24.04.4 LTS</span></span>
 <span><span class="co">## </span></span>
@@ -1181,75 +1181,76 @@ also correlation with intensity values across several samples.</p>
 <span><span class="co">## [8] base     </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## other attached packages:</span></span>
-<span><span class="co">##  [1] MetaboCoreUtils_1.20.1 MsBackendMgf_1.20.0    MsDataHub_1.12.0      </span></span>
-<span><span class="co">##  [4] MsExperiment_1.14.0    ProtGenerics_1.44.0    pander_0.6.6          </span></span>
-<span><span class="co">##  [7] Spectra_1.22.2         S4Vectors_0.50.1       BiocGenerics_0.58.1   </span></span>
-<span><span class="co">## [10] generics_0.1.4         xcms_4.11.1            BiocParallel_1.46.0   </span></span>
-<span><span class="co">## [13] BiocStyle_2.40.0      </span></span>
+<span><span class="co">##  [1] MetaboCoreUtils_1.21.1 MsBackendMgf_1.21.1    MsDataHub_1.13.1      </span></span>
+<span><span class="co">##  [4] MsExperiment_1.15.0    ProtGenerics_1.45.0    pander_0.6.6          </span></span>
+<span><span class="co">##  [7] Spectra_1.23.3         S4Vectors_0.51.9       BiocGenerics_0.59.12  </span></span>
+<span><span class="co">## [10] generics_0.1.4         xcms_4.11.3            BiocParallel_1.47.0   </span></span>
+<span><span class="co">## [13] BiocStyle_2.41.0      </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
 <span><span class="co">##   [1] RColorBrewer_1.1-3          jsonlite_2.0.0             </span></span>
-<span><span class="co">##   [3] MultiAssayExperiment_1.38.0 magrittr_2.0.5             </span></span>
+<span><span class="co">##   [3] MultiAssayExperiment_1.39.0 magrittr_2.0.5             </span></span>
 <span><span class="co">##   [5] farver_2.1.2                MALDIquant_1.22.3          </span></span>
 <span><span class="co">##   [7] rmarkdown_2.31              fs_2.1.0                   </span></span>
 <span><span class="co">##   [9] ragg_1.5.2                  vctrs_0.7.3                </span></span>
-<span><span class="co">##  [11] memoise_2.0.1               htmltools_0.5.9            </span></span>
-<span><span class="co">##  [13] S4Arrays_1.12.0             progress_1.2.3             </span></span>
-<span><span class="co">##  [15] AnnotationHub_4.2.2         curl_7.1.0                 </span></span>
-<span><span class="co">##  [17] SparseArray_1.12.2          mzID_1.50.0                </span></span>
-<span><span class="co">##  [19] sass_0.4.10                 bslib_0.11.0               </span></span>
-<span><span class="co">##  [21] htmlwidgets_1.6.4           desc_1.4.3                 </span></span>
-<span><span class="co">##  [23] plyr_1.8.9                  httr2_1.2.2                </span></span>
-<span><span class="co">##  [25] impute_1.86.0               cachem_1.1.0               </span></span>
-<span><span class="co">##  [27] igraph_2.3.2                lifecycle_1.0.5            </span></span>
-<span><span class="co">##  [29] iterators_1.0.14            pkgconfig_2.0.3            </span></span>
-<span><span class="co">##  [31] Matrix_1.7-5                R6_2.6.1                   </span></span>
-<span><span class="co">##  [33] fastmap_1.2.0               MatrixGenerics_1.24.0      </span></span>
-<span><span class="co">##  [35] clue_0.3-68                 digest_0.6.39              </span></span>
-<span><span class="co">##  [37] pcaMethods_2.4.0            AnnotationDbi_1.74.0       </span></span>
-<span><span class="co">##  [39] ExperimentHub_3.2.0         textshaping_1.0.5          </span></span>
-<span><span class="co">##  [41] GenomicRanges_1.64.0        RSQLite_3.53.2             </span></span>
-<span><span class="co">##  [43] filelock_1.0.3              httr_1.4.8                 </span></span>
-<span><span class="co">##  [45] abind_1.4-8                 compiler_4.6.0             </span></span>
-<span><span class="co">##  [47] withr_3.0.3                 bit64_4.8.2                </span></span>
-<span><span class="co">##  [49] doParallel_1.0.17           S7_0.2.2                   </span></span>
-<span><span class="co">##  [51] PTMods_1.0.0                DBI_1.3.0                  </span></span>
-<span><span class="co">##  [53] MASS_7.3-65                 rappdirs_0.3.4             </span></span>
-<span><span class="co">##  [55] DelayedArray_0.38.2         mzR_2.46.0                 </span></span>
-<span><span class="co">##  [57] tools_4.6.0                 PSMatch_1.16.0             </span></span>
-<span><span class="co">##  [59] otel_0.2.0                  glue_1.8.1                 </span></span>
-<span><span class="co">##  [61] QFeatures_1.22.0            grid_4.6.0                 </span></span>
-<span><span class="co">##  [63] cluster_2.1.8.2             reshape2_1.4.5             </span></span>
-<span><span class="co">##  [65] gtable_0.3.6                preprocessCore_1.74.0      </span></span>
-<span><span class="co">##  [67] tidyr_1.3.2                 data.table_1.18.4          </span></span>
-<span><span class="co">##  [69] hms_1.1.4                   XVector_0.52.0             </span></span>
-<span><span class="co">##  [71] BiocVersion_3.23.1          foreach_1.5.2              </span></span>
-<span><span class="co">##  [73] pillar_1.11.1               stringr_1.6.0              </span></span>
-<span><span class="co">##  [75] limma_3.68.4                dplyr_1.2.1                </span></span>
-<span><span class="co">##  [77] BiocFileCache_3.2.0         lattice_0.22-9             </span></span>
-<span><span class="co">##  [79] bit_4.6.0                   tidyselect_1.2.1           </span></span>
-<span><span class="co">##  [81] Biostrings_2.80.1           knitr_1.51                 </span></span>
-<span><span class="co">##  [83] bookdown_0.47               IRanges_2.46.0             </span></span>
-<span><span class="co">##  [85] Seqinfo_1.2.0               SummarizedExperiment_1.42.0</span></span>
-<span><span class="co">##  [87] xfun_0.59                   Biobase_2.72.0             </span></span>
-<span><span class="co">##  [89] statmod_1.5.2               MSnbase_2.37.0             </span></span>
-<span><span class="co">##  [91] matrixStats_1.5.0           stringi_1.8.7              </span></span>
-<span><span class="co">##  [93] lazyeval_0.2.3              yaml_2.3.12                </span></span>
-<span><span class="co">##  [95] evaluate_1.0.5              codetools_0.2-20           </span></span>
-<span><span class="co">##  [97] MsCoreUtils_1.24.0          tibble_3.3.1               </span></span>
-<span><span class="co">##  [99] BiocManager_1.30.27         cli_3.6.6                  </span></span>
-<span><span class="co">## [101] affyio_1.82.0               systemfonts_1.3.2          </span></span>
-<span><span class="co">## [103] jquerylib_0.1.4             Rcpp_1.1.1-1.1             </span></span>
-<span><span class="co">## [105] MassSpecWavelet_1.78.0      dbplyr_2.6.0               </span></span>
-<span><span class="co">## [107] png_0.1-9                   XML_3.99-0.23              </span></span>
-<span><span class="co">## [109] parallel_4.6.0              pkgdown_2.2.0.9000         </span></span>
-<span><span class="co">## [111] ggplot2_4.0.3               blob_1.3.0                 </span></span>
-<span><span class="co">## [113] prettyunits_1.2.0           AnnotationFilter_1.36.0    </span></span>
-<span><span class="co">## [115] MsFeatures_1.20.0           scales_1.4.0               </span></span>
-<span><span class="co">## [117] affy_1.90.0                 ncdf4_1.24                 </span></span>
-<span><span class="co">## [119] purrr_1.2.2                 crayon_1.5.3               </span></span>
-<span><span class="co">## [121] rlang_1.2.0                 vsn_3.80.0                 </span></span>
-<span><span class="co">## [123] KEGGREST_1.52.2</span></span></code></pre>
+<span><span class="co">##  [11] memoise_2.0.1               BiocBaseUtils_1.15.1       </span></span>
+<span><span class="co">##  [13] htmltools_0.5.9             S4Arrays_1.13.0            </span></span>
+<span><span class="co">##  [15] progress_1.2.3              AnnotationHub_4.3.2        </span></span>
+<span><span class="co">##  [17] curl_8.0.0                  SparseArray_1.13.2         </span></span>
+<span><span class="co">##  [19] mzID_1.51.0                 sass_0.4.10                </span></span>
+<span><span class="co">##  [21] bslib_0.12.0                htmlwidgets_1.6.4          </span></span>
+<span><span class="co">##  [23] desc_1.4.3                  plyr_1.8.9                 </span></span>
+<span><span class="co">##  [25] httr2_1.3.0                 impute_1.87.0              </span></span>
+<span><span class="co">##  [27] cachem_1.1.0                igraph_2.3.3               </span></span>
+<span><span class="co">##  [29] lifecycle_1.0.5             iterators_1.0.14           </span></span>
+<span><span class="co">##  [31] pkgconfig_2.0.3             Matrix_1.7-6               </span></span>
+<span><span class="co">##  [33] R6_2.6.1                    fastmap_1.2.0              </span></span>
+<span><span class="co">##  [35] MatrixGenerics_1.25.0       clue_0.3-68                </span></span>
+<span><span class="co">##  [37] digest_0.6.39               pcaMethods_2.5.0           </span></span>
+<span><span class="co">##  [39] AnnotationDbi_1.75.2        ExperimentHub_3.3.2        </span></span>
+<span><span class="co">##  [41] textshaping_1.0.5           GenomicRanges_1.65.1       </span></span>
+<span><span class="co">##  [43] RSQLite_3.53.3              filelock_1.0.3             </span></span>
+<span><span class="co">##  [45] httr_1.4.8                  abind_1.4-8                </span></span>
+<span><span class="co">##  [47] compiler_4.6.1              withr_3.0.3                </span></span>
+<span><span class="co">##  [49] bit64_4.8.4                 doParallel_1.0.17          </span></span>
+<span><span class="co">##  [51] S7_0.2.2                    PTMods_1.1.0               </span></span>
+<span><span class="co">##  [53] DBI_1.3.0                   Chromatograms_1.3.3        </span></span>
+<span><span class="co">##  [55] MASS_7.3-66                 rappdirs_0.3.4             </span></span>
+<span><span class="co">##  [57] DelayedArray_0.39.6         mzR_2.47.0                 </span></span>
+<span><span class="co">##  [59] tools_4.6.1                 PSMatch_1.17.0             </span></span>
+<span><span class="co">##  [61] otel_0.2.0                  glue_1.8.1                 </span></span>
+<span><span class="co">##  [63] QFeatures_1.23.1            grid_4.6.1                 </span></span>
+<span><span class="co">##  [65] cluster_2.1.8.3             reshape2_1.4.5             </span></span>
+<span><span class="co">##  [67] gtable_0.3.6                preprocessCore_1.75.0      </span></span>
+<span><span class="co">##  [69] tidyr_1.3.2                 data.table_1.18.6.1        </span></span>
+<span><span class="co">##  [71] hms_1.1.4                   XVector_0.53.0             </span></span>
+<span><span class="co">##  [73] BiocVersion_3.24.0          foreach_1.5.2              </span></span>
+<span><span class="co">##  [75] pillar_1.11.1               stringr_1.6.0              </span></span>
+<span><span class="co">##  [77] limma_3.69.4                dplyr_1.2.1                </span></span>
+<span><span class="co">##  [79] BiocFileCache_3.3.0         lattice_0.23-1             </span></span>
+<span><span class="co">##  [81] bit_4.6.0                   tidyselect_1.2.1           </span></span>
+<span><span class="co">##  [83] Biostrings_2.81.6           knitr_1.51                 </span></span>
+<span><span class="co">##  [85] bookdown_0.48               IRanges_2.47.5             </span></span>
+<span><span class="co">##  [87] Seqinfo_1.3.2               SummarizedExperiment_1.43.0</span></span>
+<span><span class="co">##  [89] xfun_0.60                   Biobase_2.73.2             </span></span>
+<span><span class="co">##  [91] statmod_1.5.2               MSnbase_2.39.5             </span></span>
+<span><span class="co">##  [93] matrixStats_1.5.0           stringi_1.8.9              </span></span>
+<span><span class="co">##  [95] lazyeval_0.2.3              yaml_2.3.12                </span></span>
+<span><span class="co">##  [97] evaluate_1.0.5              codetools_0.2-20           </span></span>
+<span><span class="co">##  [99] MsCoreUtils_1.25.4          tibble_3.3.1               </span></span>
+<span><span class="co">## [101] BiocManager_1.30.27         cli_3.6.6                  </span></span>
+<span><span class="co">## [103] affyio_1.83.0               systemfonts_1.3.2          </span></span>
+<span><span class="co">## [105] jquerylib_0.1.4             Rcpp_1.1.2                 </span></span>
+<span><span class="co">## [107] MassSpecWavelet_1.79.2      dbplyr_2.6.0               </span></span>
+<span><span class="co">## [109] png_0.1-9                   XML_3.99-0.24              </span></span>
+<span><span class="co">## [111] parallel_4.6.1              pkgdown_2.2.1.9000         </span></span>
+<span><span class="co">## [113] ggplot2_4.0.3               blob_1.3.0                 </span></span>
+<span><span class="co">## [115] prettyunits_1.2.0           AnnotationFilter_1.37.0    </span></span>
+<span><span class="co">## [117] MsFeatures_1.21.0           scales_1.4.0               </span></span>
+<span><span class="co">## [119] affy_1.91.0                 ncdf4_1.24                 </span></span>
+<span><span class="co">## [121] purrr_1.2.2                 crayon_1.5.3               </span></span>
+<span><span class="co">## [123] rlang_1.3.0                 KEGGREST_1.53.6            </span></span>
+<span><span class="co">## [125] vsn_3.81.0</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
@@ -1274,7 +1275,7 @@ systems biology</em> 2018, <strong>14</strong>:e8126.
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.9000.</p>
 </div>
 
     </footer>
