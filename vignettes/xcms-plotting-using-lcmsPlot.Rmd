@@ -1,0 +1,406 @@
+---
+title: "Plotting xcms results using lcmsPlot"
+package: xcms
+output:
+  BiocStyle::html_document:
+    toc_float: true
+    includes:
+      in_header: xcms-plotting-using-lcmsPlot.bioschemas.html
+vignette: >
+  %\VignetteIndexEntry{Plotting xcms results using lcmsPlot}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteDepends{xcms,lcmsPlot,faahKO,RColorBrewer,BiocStyle}
+  %\VignettePackage{xcms}
+  %\VignetteKeywords{mass spectrometry, metabolomics}
+bibliography: references.bib
+csl: biomed-central.csl
+---
+
+```{r biocstyle, echo = FALSE, results = "asis"}
+BiocStyle::markdown()
+```
+
+**Package**: `r Biocpkg("xcms")`<br />
+**Authors**: Ossama Edbali, Johannes Rainer<br />
+**Modified**: `r file.info("xcms-plotting-using-lcmsPlot.Rmd")$mtime`<br />
+**Compiled**: `r date()`
+
+```{r init, message = FALSE, warning = FALSE, echo = FALSE, results = "hide"}
+## Silently loading all packages
+library(BiocStyle)
+library(xcms)
+library(lcmsPlot)
+
+register(SerialParam())
+```
+
+# Introduction
+
+Visualization of mass spectrometry data is an important component of LC-MS data analysis, both for quality control and for interpretation and communication of results. Throughout a metabolomics or proteomics workflow, visualization can help identify problems with data acquisition and processing, such as retention-time shifts, signal drift, differences in signal intensity between samples, and incorrect or poorly defined chromatographic peaks. It also provides an essential means of inspecting detected features and communicating results.
+
+xcms provides a range of visualization functions for inspecting LC-MS data and the results of chromatographic peak detection, retention-time correction, and feature definition. These functions cover many common quality-control and diagnostic use cases and are closely integrated with the xcms data structures and processing workflow. For more complex visualizations, however, users may benefit from the flexibility of the ggplot2 grammar of graphics, particularly when combining multiple samples, annotations, experimental metadata, or several graphical layers into a single figure.
+
+[lcmsPlot](https://bioconductor.org/packages//release/bioc/html/lcmsPlot.html), a Bioconductor package, has been developed to facilitate the visualization of LC-MS raw and processed data in a consistent and flexible manner across different software tools and processing workflows. By providing a common ggplot2-based framework for LC-MS visualization, it enables users to apply a consistent graphical approach to data generated or processed by different packages and at different stages of an analysis workflow.
+
+This vignette illustrates how lcmsPlot can be used together with xcms to generate flexible, reproducible, and publication-ready visualizations of LC-MS data.
+
+For a more thorough description of the package, including its support for raw files and for the outputs of other LC-MS software, see the [lcmsPlot vignette](https://bioconductor.org/packages/release/bioc/vignettes/lcmsPlot/inst/doc/lcms_data_plotting.html).
+
+# Load the packages
+
+`lcmsPlot` is a Bioconductor package and can be installed with
+[BiocManager](https://cran.r-project.org/package=BiocManager):
+
+```{r install-lcmsPlot, eval = FALSE}
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install("lcmsPlot")
+```
+
+```{r load-packages, message = FALSE}
+library(xcms)
+library(lcmsPlot)
+```
+
+# Load the data
+
+Throughout this vignette we use the preprocessing result that is shipped with
+*xcms* and that is described in detail in the main
+[xcms vignette](https://bioconductor.org/packages/release/bioc/vignettes/xcms/inst/doc/xcms.html).
+It is derived from a subset of the data from [@Saghatelian04]; the raw files are provided by the `faahKO`
+package.
+
+Using `loadXcmsData()` we get the fully preprocessed object directly, so that
+chromatographic peak detection, alignment and correspondence do not have to be
+repeated here.
+
+```{r load-data, message = FALSE}
+xdata <- loadXcmsData("xdata")
+```
+
+The object contains eight samples assigned to the two sample groups `"KO"` and
+`"WT"`:
+
+```{r sample-data}
+Biobase::pData(xdata)
+```
+
+# Plot samples summaries
+
+Base peak chromatograms, total ion chromatograms, and total ion current plots are useful in LC-MS because they simplify complex datasets, highlight the most intense signals, and enable rapid detection and comparison of chromatographic features.
+
+In the examples below we plot the base peak and total ion chromatograms for the eight samples (faceted):
+
+```{r plot-bpc, fig.height=6, fig.width=10}
+lcmsPlot(xdata, sample_id_column = "sample_name") +
+    lp_chromatogram(aggregation_fun = "max") +
+    lp_facets(facets = "sample_name", ncol = 4)
+```
+
+```{r plot-tic, fig.height=6, fig.width=10}
+lcmsPlot(xdata, sample_id_column = "sample_name") +
+    lp_chromatogram(aggregation_fun = "sum") +
+    lp_facets(facets = "sample_name", ncol = 4)
+```
+
+We can also plot multiple chromatograms in the same plot, overlapped.
+In the example below, base peak chromatograms are computed for each sample,
+grouped by sample group, and displayed together in one panel.
+
+```{r bpc-overlapped}
+lcmsPlot(xdata, sample_id_column = "sample_name") +
+    lp_chromatogram(aggregation_fun = "max") +
+    lp_arrange(group_by = "sample_group") +
+    lp_labels(title = "Base peak chromatograms", legend = "Sample group") +
+    lp_legend(position = "bottom")
+```
+
+Below, we generate a total ion current plot for the eight samples under consideration:
+
+```{r total-ion-current}
+lcmsPlot(xdata, sample_id_column = "sample_name") +
+    lp_total_ion_current(type = "violin") +
+    lp_arrange(group_by = "sample_group") +
+    lp_labels(title = "Total ion current", legend = "Sample group")
+```
+
+These plots show the overall amount of ion signal entering
+the detector at any moment, widely used for quality control and method assessment.
+
+# Plot extracted ion chromatograms
+
+```{r plot-xics}
+lcmsPlot(xdata, sample_id_column = "sample_name") +
+    lp_chromatogram(features = rbind(c(
+        mzmin = 334.9,
+        mzmax = 335.1,
+        rtmin = 2700,
+        rtmax = 2900))) +
+    lp_arrange(group_by = "sample_group") +
+    lp_labels(legend = "Sample group")
+```
+
+The above plot can be gridded on metadata factors; in the plot below we
+arrange `feature_id` along the rows and `sample_id` along the columns with
+`lp_grid()`, and detected chromatographic peaks are highlighted using the
+`highlight_peaks` parameter:
+
+```{r plot-xic-faceted, fig.height=5, fig.width=14}
+lcmsPlot(xdata, sample_id_column = 'sample_name') +
+    lp_chromatogram(
+        features = rbind(
+            c(mzmin = 334.9, mzmax = 335.1, rtmin = 2700, rtmax = 2900),
+            c(mzmin = 278.99721, mzmax = 279.00279, rtmin = 2740, rtmax = 2840)
+        ),
+        highlight_peaks = TRUE,
+        highlight_peaks_color = '#f00') +
+    lp_grid(rows = 'feature_id', cols = 'sample_id', free_y = TRUE)
+```
+
+## The same plot with base R graphics
+
+The same figure can be produced with the plotting functions of *xcms* itself.
+The extracted ion chromatograms are first created with the `chromatogram()`
+function, which returns an `XChromatograms` object with one chromatogram per
+feature (row) and sample (column), and the detected chromatographic peaks
+attached to each of them.
+
+```{r plot-xic-base-r, fig.height=5, fig.width=12}
+mzr_xic <- rbind(c(334.9, 335.1), c(278.99721, 279.00279))
+rtr_xic <- rbind(c(2700, 2900), c(2740, 2840))
+
+chrs_xic <- chromatogram(xdata, mz = mzr_xic, rt = rtr_xic)
+
+## Define one color per sample group
+group_colors <- paste0(RColorBrewer::brewer.pal(3, "Set1")[1:2], "60")
+names(group_colors) <- c("KO", "WT")
+sample_colors <- group_colors[chrs_xic$sample_group]
+
+## Label the rows the same way lcmsPlot names its features
+feature_ids <- sprintf("M%dT%d", round(rowMeans(mzr_xic)),
+                       round(rowMeans(rtr_xic)))
+
+## One panel per feature (row) and sample (column)
+par(mfrow = c(nrow(chrs_xic), ncol(chrs_xic)),
+    mar = c(3, 3, 1.8, 0.4), mgp = c(1.9, 0.6, 0), cex = 0.7)
+for (i in seq_len(nrow(chrs_xic))) {
+    for (j in seq_len(ncol(chrs_xic))) {
+        plot(chrs_xic[i, j], col = sample_colors[j],
+             peakType = "rectangle", peakCol = sample_colors[j],
+             peakBg = NA,
+             main = paste(feature_ids[i], chrs_xic$sample_name[j]))
+    }
+}
+```
+
+The result is equivalent to the `lp_grid()` figure above, but the layout has to
+be set up explicitly: `par(mfrow = ...)` defines the grid, the two nested loops
+address the individual cells `chrs_xic[i, j]` of the `XChromatograms` object,
+and the panel titles and per-sample colors have to be assembled by hand. Each
+panel also keeps its own y axis, which corresponds to `free_y = TRUE` in
+`lp_grid()`.
+
+In lcmsPlot, you can also plot directly from an `XChromatograms` object.
+In the example below, two features are defined by their m/z ranges and the
+corresponding retention time windows.
+The resulting plot is arranged as a grid with features as rows and
+samples as columns.
+
+```{r plot-XChromatograms, message=FALSE, warning=FALSE, fig.height=4, fig.width=10}
+mzr <- matrix(c(344, 344, 360, 360), ncol = 2, byrow = TRUE)
+
+rtr <- matrix(c(2500, 2880, 2600, 2880), ncol = 2, byrow = TRUE)
+
+chrs <- chromatogram(xdata, mz = mzr, rt = rtr)
+
+lcmsPlot(chrs) +
+    lp_chromatogram(na.rm = TRUE) +
+    lp_grid(rows = "feature_id", cols = "sample_id")
+```
+
+# Quality control of peak detection
+
+`lp_peak_count_image()` bins the retention-time axis and shows how many
+chromatographic peaks each sample yielded in each bin, with samples on the y axis
+and one tile per sample and bin.
+It is the counterpart of `xcms::plotChromPeakImage()`.
+
+```{r peak-count-image, fig.height=4, fig.width=9}
+lcmsPlot(xdata, sample_id_column = "sample_name") +
+    lp_peak_count_image(bin_size = 30) +
+    lp_labels(title = "Chromatographic peaks per 30 s bin")
+```
+
+`lp_chrom_peak_rects()` draws one rectangle per detected peak, spanning its
+retention-time limits by its m/z limits, and shows where in the m/z /
+retention-time plane the peak detection actually placed its boundaries.
+
+```{r chrom-peak-rects-standalone, fig.height=5, fig.width=9}
+lcmsPlot(xdata, sample_id_column = "sample_name") +
+    lp_chrom_peak_rects(
+        sample_ids = c("ko15", "wt15"),
+        rt_range = c(3200, 3700),
+        mz_range = c(480, 540),
+        fill = "#c0392b60")
+```
+
+# Plot grouped peaks across samples (features)
+
+The correspondence analysis performed on this data set grouped the
+chromatographic peaks of the individual samples into *features*, i.e. groups of
+peaks that likely originate from the same ion. Each feature is identified by a
+name derived from its consensus m/z and retention time, and these names can be
+passed to the `features` parameter of `lp_chromatogram()` to extract and plot
+the corresponding chromatograms across all samples without having to specify
+m/z and retention time ranges manually. The `ppm` and `rt_tol` parameters
+define how far around the feature's consensus values the signal is extracted.
+
+```{r plot-features}
+lcmsPlot(xdata, sample_id_column = 'sample_name') +
+    lp_chromatogram(
+        features = c('M205T2790', 'M207T2719', 'M279T2788', 'M284T2720'),
+        ppm = 10,
+        rt_tol = 80,
+        highlight_peaks = TRUE,
+        highlight_peaks_factor = "sample_group") +
+    lp_arrange(group_by = 'sample_group') +
+    lp_facets(facets = 'feature_id', ncol = 2, free_x = TRUE, free_y = TRUE) +
+    lp_labels(title = "Four selected features", legend = "Sample") +
+    lp_legend(position = "bottom")
+```
+
+## Plot peak density alongside chromatograms
+
+Peak density plots show how the detected chromatographic peaks of an m/z window
+are distributed along the retention time axis. Each detected peak is drawn as a
+point at the y position of its sample and the kernel density estimate of the
+peak apex retention times is overlaid as a line. This is the diagnostic used by
+the peak density correspondence method and makes it easy to judge whether the
+peaks of the different samples are well aligned and whether a feature is
+tightly defined. It is the `lcmsPlot` counterpart of `xcms::plotChromPeakDensity()`.
+
+When `lp_peak_density()` follows `lp_chromatogram()`, the `features` argument
+is inherited from the chromatogram layer and does not have to be repeated. The
+`bw` parameter should match the bandwidth used during correspondence, and when
+`min_fraction` is given the grouping is simulated so that the retention time
+regions that would be defined as features are drawn as semi-transparent
+rectangles.
+
+```{r peak-density}
+lcmsPlot(xdata, sample_id_column = "sample_name") +
+    lp_chromatogram(
+        sample_ids = c("ko15", "ko16", "wt16", "wt21"),
+        features = rbind(c(mzmin = 334.9, mzmax = 335.1, rtmin = 2700, rtmax = 2900)),
+        highlight_peaks = TRUE
+    ) +
+    lp_peak_density(
+        bw = 30,
+        min_fraction = 0.5
+    ) +
+    lp_labels(legend = "Sample ID")
+```
+
+# Plot spectra
+
+Spectra are added to a plot with the `lp_spectra()` function. Its `mode`
+parameter determines which scan a spectrum is extracted from.
+
+## Select the closest scan to a specified retention time
+
+With `mode = "closest"` the spectrum is taken from the scan closest to the
+retention time given by the `rt` parameter. The retention time at which the
+spectrum was acquired is marked with a vertical dashed line on the
+chromatogram, so that the spectrum can be related to the chromatographic peak
+it belongs to.
+
+```{r plot-spectra-closest-rt, fig.height=5, fig.width=9}
+lcmsPlot(xdata, sample_id_column = "sample_name") +
+    lp_chromatogram(
+        features = "M301T2789",
+        sample_ids = "ko15",
+        ppm = 20,
+        rt_tol = 60,
+        highlight_peaks = TRUE) +
+    lp_spectra(rt = 2789, mode = "closest", ms_level = 1) +
+    lp_labels(title = "Feature M301T2789", legend = "Sample") +
+    lp_legend(position = "bottom")
+```
+
+## Select the scan closest to a detected peak apex
+
+With `mode = "closest_apex"` the retention time of the peak maximum is
+determined from the chromatographic peaks detected by *xcms* and the nearest
+scan is used, which removes the need to specify a retention time manually.
+
+In the example below, chromatograms are extracted for two features in one
+sample and the MS1 spectrum at the apex of each is displayed below its
+chromatogram. The `lp_layout()` function is used to give the spectra more
+vertical space than the chromatograms.
+
+```{r plot-spectra-closest-apex, fig.height=5, fig.width=10}
+lcmsPlot(xdata, sample_id_column = "sample_name") +
+    lp_chromatogram(
+        features = c("M480T3323", "M508T3532"),
+        sample_ids = "ko15",
+        ppm = 20,
+        rt_tol = 60,
+        highlight_peaks = TRUE) +
+    lp_spectra(mode = "closest_apex", ms_level = 1) +
+    lp_facets(facets = "feature_id", ncol = 2) +
+    lp_labels(legend = "Sample") +
+    lp_legend(position = "bottom") +
+    lp_layout(design = "C\nS\nS")
+```
+
+Each spectrum is dominated by the m/z of its own feature, accompanied by the
+corresponding isotope peaks.
+
+## Select multiple scans across a detected peak
+
+To follow how the spectral composition changes over the duration of a
+chromatographic peak, several scans can be extracted across it with
+`mode = "across_peak"`. The `interval` parameter defines the retention time
+spacing (in seconds) between the selected scans.
+
+```{r plot-spectra-across-peak, fig.height=10, fig.width=6}
+lcmsPlot(xdata, sample_id_column = "sample_name") +
+    lp_chromatogram(
+        features = "M343T2748",
+        sample_ids = "ko15",
+        ppm = 20,
+        rt_tol = 60,
+        highlight_peaks = TRUE) +
+    lp_spectra(mode = "across_peak", interval = 15, ms_level = 1) +
+    lp_labels(legend = "Sample") +
+    lp_legend(position = "bottom") +
+    lp_layout(design = "C\nS\nS")
+```
+
+This view makes co-elution visible: the ion of the feature dominates the
+spectrum at the beginning of the peak, while towards its end other ions become
+the most intense signals of the scan.
+
+## Plot standalone spectra
+
+Spectra can also be plotted on their own, without an accompanying
+chromatogram, which is useful for a detailed comparison of isotope patterns or
+relative ion intensities between samples. Standalone spectra are created by
+using `lp_spectra()` without `lp_chromatogram()`.
+
+```{r plot-standalone-spectra, fig.height=5, fig.width=9}
+lcmsPlot(xdata, sample_id_column = "sample_name") +
+    lp_spectra(
+        sample_ids = c("ko15", "wt15"),
+        rt = 3323,
+        mode = "closest",
+        ms_level = 1) +
+    lp_labels(title = "MS1 spectra at 3323 seconds") +
+    lp_legend(position = "bottom")
+```
+
+# Session information
+
+```{r sessionInfo}
+sessionInfo()
+```
