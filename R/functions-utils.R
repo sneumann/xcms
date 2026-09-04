@@ -595,14 +595,13 @@ rowRla <- function(x, group, log.transform = TRUE) {
             stop("length of 'pos' and 'val' have to match")
     }
     for (i in seq_along(pos)) {
-        if (pos[i] == 1) {
+        if (pos[i] == 1L)
             x <- cbind(val[[i]], x)
-        } else {
-            if (pos[i] == ncol(x))
-                x <- cbind(x, val[[i]])
-            else
-                x <- cbind(x[, 1:(pos[i]-1)], val[[i]], x[, pos[i]:ncol(x)])
-        }
+        else if (pos[i] > ncol(x))
+            x <- cbind(x, val[[i]])
+        else
+            x <- cbind(x[, 1:(pos[i] - 1), drop = FALSE], val[[i]],
+                       x[, pos[i]:ncol(x), drop = FALSE])
     }
     x
 }
