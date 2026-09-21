@@ -603,10 +603,6 @@
   res
 }
 
-
-
-
-
 #' Difference to the original code is that the weighted mean is also calculated
 #' if some of the peak intensities in the profile matrix are 0
 #'

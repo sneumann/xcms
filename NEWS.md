@@ -1,5 +1,12 @@
 # xcms 4.11
 
+## Changes in version 4.11.4
+
+- `findChromPeaks()` with `verboseBetaColumns = TRUE` calculates the peak
+  quality metrics considering also the retention times. Results will thus be
+  identical to those calculated with `chromPeakSummary()`. See issue
+  [#849](https://github.com/sneumann/xcms/issues/849)
+
 ## Changes in version 4.11.3
 
 - Workaround for errors reading subsets of data from HDF5 files with

@@ -445,8 +445,8 @@ setClass("XProcessHistory",
 #'     https://github.com/sneumann/xcms/issues/445 for more information.
 #'
 #' @param verboseBetaColumns Option to calculate two additional metrics of peak
-#'     quality via comparison to an idealized bell curve. Adds `beta_cor` and
-#'     `beta_snr` to the `chromPeaks` output, corresponding to a Pearson
+#'     quality via comparison to an idealized bell curve. Adds `"beta_cor"` and
+#'     `"beta_snr"` to the `chromPeaks()` output, corresponding to a Pearson
 #'     correlation coefficient to a bell curve with several degrees of skew
 #'     as well as an estimate of signal-to-noise using the residuals from the
 #'     best-fitting bell curve. See https://github.com/sneumann/xcms/pull/685
