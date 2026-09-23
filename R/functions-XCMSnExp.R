@@ -910,8 +910,9 @@ isCalibrated <- function(object) {
 #'
 #' @details
 #'
-#' Adjusted retention times are stored *in parallel* to the adjusted
-#' retention times in `XCMSnExp` or `XcmsExperiment` objects. The
+#' Adjusted retention times are stored in an `XCMSnExp` or `XcmsExperiment` 
+#' object besides the original, raw, retention times, allowing to switch 
+#' between raw and adjusted times.
 #' `applyAdjustedRtime` replaces the raw (original) retention times with the
 #' adjusted retention times.
 #'
