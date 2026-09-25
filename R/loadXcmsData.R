@@ -72,6 +72,7 @@ loadXcmsData <- function(x = c("xmse", "xdata", "faahko_sub", "faahko_sub2")) {
                if (anyNA(idx))
                    stop("Some of the original data files not found")
                obj@spectra$dataStorage <- fls[idx]
+               obj@spectra$dataOrigin <- fls[idx]
                obj@processHistory <- lapply(obj@processHistory, function(z) {
                    z@param <- updateObject(z@param)
                    z
@@ -96,6 +97,7 @@ loadXcmsData <- function(x = c("xmse", "xdata", "faahko_sub", "faahko_sub2")) {
                if (anyNA(idx))
                    stop("Some of the original data files not found")
                obj@spectra$dataStorage <- fls[idx]
+               obj@spectra$dataOrigin <- fls[idx]
                obj@processHistory <- lapply(obj@processHistory, function(z) {
                    z@param <- updateObject(z@param)
                    z

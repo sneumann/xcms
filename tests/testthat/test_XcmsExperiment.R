@@ -1711,6 +1711,15 @@ test_that("setAs,XcmsExperiment,xcmsSet works", {
     expect_equal(peaks(res), chromPeaks(xmseg))
 })
 
+test_that("verboseBetaColumns and chromPeakSummary give same results", {
+    p <- CentWaveParam(noise = 10000, snthresh = 40, prefilter = c(3, 10000),
+                       verboseBetaColumns = TRUE)
+    res <- findChromPeaks(mse, param = p)
+    ref <- chromPeakSummary(res, param = BetaDistributionParam())
+    expect_equal(ref[, "beta_cor"], chromPeaks(res)[, "beta_cor"])
+    expect_equal(ref[, "beta_snr"], chromPeaks(res)[, "beta_snr"])
+})
+
 test_that("fillChromPeaks,XcmsExperiment works with verboseBetaColumns", {
     p <- CentWaveParam(noise = 10000, snthresh = 40, prefilter = c(3, 10000),
                        verboseBetaColumns = TRUE)
