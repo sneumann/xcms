@@ -1,6 +1,6 @@
 # xcms 4.11
 
-## Changes in version 4.11.4
+## Changes in version 4.11.5
 
 - `findChromPeaks()` with `verboseBetaColumns = TRUE` calculates the peak
   quality metrics considering also the retention times. Results will thus be
@@ -9,6 +9,12 @@
 - `loadXcmsData()` updates also `$dataOrigin` to ensure functions such as
   `fileNames()` return the correct path/file names (issue
   [#851](https://github.com/sneumann/xcms/issues/851)).
+
+## Changes in version 4.11.4
+
+- Add new vignette *Plotting xcms results using lcmsPlot* describing how
+  the *lcmsPlot* package can be used to create ggplot2-based
+  visualizations of *xcms* preprocessing results (issue #844).
 
 ## Changes in version 4.11.3
 
