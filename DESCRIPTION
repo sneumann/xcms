@@ -91,8 +91,7 @@ Suggests:
     mgcv,
     rhdf5,
     MsDataHub (>= 1.11.2),
-    lcmsPlot,
-    RColorBrewer
+    lcmsPlot
 Enhances:
     Rgraphviz,
     rgl
