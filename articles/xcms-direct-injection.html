@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.11.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.11.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,6 +37,7 @@
 <li><a class="dropdown-item" href="../articles/LC-MS-feature-grouping.html">Compounding (grouping) of LC-MS features</a></li>
     <li><a class="dropdown-item" href="../articles/xcms-direct-injection.html">Grouping FTICR-MS data with xcms</a></li>
     <li><a class="dropdown-item" href="../articles/xcms-lcms-ms.html">LC-MS/MS data analysis with xcms</a></li>
+    <li><a class="dropdown-item" href="../articles/xcms-plotting-using-lcmsPlot.html">Plotting xcms results using lcmsPlot</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -235,7 +236,7 @@ with the <code>groupChromPeaks</code> method using default settings.</p>
 <span><span class="co">##  Number of spectra: 4 </span></span>
 <span><span class="co">##  MSn retention times: -1:59 - -1:59 minutes</span></span>
 <span><span class="co">## - - - Processing information - - -</span></span>
-<span><span class="co">## Data loaded [Tue Sep  1 08:32:55 2026] </span></span>
+<span><span class="co">## Data loaded [Tue Oct  6 08:28:12 2026] </span></span>
 <span><span class="co">##  MSnbase version: 2.39.5 </span></span>
 <span><span class="co">## - - - Meta data  - - -</span></span>
 <span><span class="co">## phenoData</span></span>
@@ -243,7 +244,7 @@ with the <code>groupChromPeaks</code> method using default settings.</p>
 <span><span class="co">##   varLabels: filename sample_group</span></span>
 <span><span class="co">##   varMetadata: labelDescription</span></span>
 <span><span class="co">## Loaded from:</span></span>
-<span><span class="co">##   [1] 187c3767766c_10386...  [4] 187c44b3d682_10392</span></span>
+<span><span class="co">##   [1] 1fff376d905a_10386...  [4] 1fff5a6272f9_10392</span></span>
 <span><span class="co">##   Use 'fileNames(.)' to see all files.</span></span>
 <span><span class="co">## protocolData: none</span></span>
 <span><span class="co">## featureData</span></span>
@@ -333,14 +334,14 @@ signal for each peak (one representative peak) per sample.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">feat_vals</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/XCMSnExp-peak-grouping-results.html">featureValues</a></span><span class="op">(</span><span class="va">ham_prep</span>, value <span class="op">=</span> <span class="st">"into"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">feat_vals</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##      187c3767766c_10386 187c6a5a17f9_10387 187c1e5daedb_10391</span></span>
+<pre><code><span><span class="co">##      1fff376d905a_10386 1fff586f3063_10387 1fff10970295_10391</span></span>
 <span><span class="co">## FT01                 NA                 NA            4095293</span></span>
 <span><span class="co">## FT02            4735258            6202418            4811391</span></span>
 <span><span class="co">## FT03                 NA                 NA            2982453</span></span>
 <span><span class="co">## FT04            4158404            5004546                 NA</span></span>
 <span><span class="co">## FT05                 NA                 NA            2872023</span></span>
 <span><span class="co">## FT06            6099006            4950642                 NA</span></span>
-<span><span class="co">##      187c44b3d682_10392</span></span>
+<span><span class="co">##      1fff5a6272f9_10392</span></span>
 <span><span class="co">## FT01            4804763</span></span>
 <span><span class="co">## FT02            2581183</span></span>
 <span><span class="co">## FT03            2268984</span></span>
@@ -358,14 +359,14 @@ signal at that location an <code>NA</code> is reported.</p>
 <code class="sourceCode R"><span><span class="va">ham_prep</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fillChromPeaks.html">fillChromPeaks</a></span><span class="op">(</span><span class="va">ham_prep</span>, param <span class="op">=</span> <span class="fu"><a href="../reference/fillChromPeaks.html">FillChromPeaksParam</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/XCMSnExp-peak-grouping-results.html">featureValues</a></span><span class="op">(</span><span class="va">ham_prep</span>, value <span class="op">=</span> <span class="st">"into"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##      187c3767766c_10386 187c6a5a17f9_10387 187c1e5daedb_10391</span></span>
+<pre><code><span><span class="co">##      1fff376d905a_10386 1fff586f3063_10387 1fff10970295_10391</span></span>
 <span><span class="co">## FT01           768754.0          1230140.4            4095293</span></span>
 <span><span class="co">## FT02          4735257.5          6202417.6            4811391</span></span>
 <span><span class="co">## FT03           652566.6           374109.9            2982453</span></span>
 <span><span class="co">## FT04          4158404.5          5004546.3            1221031</span></span>
 <span><span class="co">## FT05           652201.1           403448.4            2872023</span></span>
 <span><span class="co">## FT06          6099006.3          4950641.7            1573988</span></span>
-<span><span class="co">##      187c44b3d682_10392</span></span>
+<span><span class="co">##      1fff5a6272f9_10392</span></span>
 <span><span class="co">## FT01          4804762.5</span></span>
 <span><span class="co">## FT02          2581183.1</span></span>
 <span><span class="co">## FT03          2268984.5</span></span>
@@ -410,59 +411,59 @@ the feature matrix using functionality from other R packages, such as
 <span><span class="co">## [8] base     </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## other attached packages:</span></span>
-<span><span class="co">##  [1] MsDataHub_1.13.1       MassSpecWavelet_1.79.2 xcms_4.11.3           </span></span>
-<span><span class="co">##  [4] BiocParallel_1.47.0    MSnbase_2.39.5         S4Vectors_0.51.9      </span></span>
+<span><span class="co">##  [1] MsDataHub_1.13.3       MassSpecWavelet_1.79.2 xcms_4.11.4           </span></span>
+<span><span class="co">##  [4] BiocParallel_1.47.0    MSnbase_2.39.5         S4Vectors_0.51.10     </span></span>
 <span><span class="co">##  [7] Biobase_2.73.2         BiocGenerics_0.59.12   generics_0.1.4        </span></span>
-<span><span class="co">## [10] mzR_2.47.0             Rcpp_1.1.2             BiocStyle_2.41.0      </span></span>
+<span><span class="co">## [10] mzR_2.47.1             Rcpp_1.1.2             BiocStyle_2.41.0      </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
 <span><span class="co">##   [1] RColorBrewer_1.1-3          jsonlite_2.0.0             </span></span>
-<span><span class="co">##   [3] MultiAssayExperiment_1.39.0 magrittr_2.0.5             </span></span>
+<span><span class="co">##   [3] MultiAssayExperiment_1.39.1 magrittr_2.0.5             </span></span>
 <span><span class="co">##   [5] farver_2.1.2                MALDIquant_1.22.3          </span></span>
-<span><span class="co">##   [7] rmarkdown_2.31              fs_2.1.0                   </span></span>
+<span><span class="co">##   [7] rmarkdown_2.32              fs_2.1.0                   </span></span>
 <span><span class="co">##   [9] ragg_1.5.2                  vctrs_0.7.3                </span></span>
 <span><span class="co">##  [11] memoise_2.0.1               BiocBaseUtils_1.15.1       </span></span>
-<span><span class="co">##  [13] htmltools_0.5.9             S4Arrays_1.13.0            </span></span>
+<span><span class="co">##  [13] htmltools_0.5.9             S4Arrays_1.13.2            </span></span>
 <span><span class="co">##  [15] progress_1.2.3              AnnotationHub_4.3.2        </span></span>
 <span><span class="co">##  [17] curl_8.0.0                  signal_1.8-1               </span></span>
-<span><span class="co">##  [19] SparseArray_1.13.2          mzID_1.51.0                </span></span>
+<span><span class="co">##  [19] SparseArray_1.13.4          mzID_1.51.0                </span></span>
 <span><span class="co">##  [21] sass_0.4.10                 bslib_0.12.0               </span></span>
 <span><span class="co">##  [23] htmlwidgets_1.6.4           desc_1.4.3                 </span></span>
 <span><span class="co">##  [25] plyr_1.8.9                  httr2_1.3.0                </span></span>
 <span><span class="co">##  [27] impute_1.87.0               cachem_1.1.0               </span></span>
-<span><span class="co">##  [29] igraph_2.3.3                lifecycle_1.0.5            </span></span>
+<span><span class="co">##  [29] igraph_2.3.4                lifecycle_1.0.5            </span></span>
 <span><span class="co">##  [31] iterators_1.0.14            pkgconfig_2.0.3            </span></span>
 <span><span class="co">##  [33] Matrix_1.7-6                R6_2.6.1                   </span></span>
 <span><span class="co">##  [35] fastmap_1.2.0               MatrixGenerics_1.25.0      </span></span>
 <span><span class="co">##  [37] clue_0.3-68                 digest_0.6.39              </span></span>
 <span><span class="co">##  [39] pcaMethods_2.5.0            AnnotationDbi_1.75.2       </span></span>
 <span><span class="co">##  [41] ExperimentHub_3.3.2         textshaping_1.0.5          </span></span>
-<span><span class="co">##  [43] GenomicRanges_1.65.1        RSQLite_3.53.3             </span></span>
-<span><span class="co">##  [45] filelock_1.0.3              Spectra_1.23.3             </span></span>
-<span><span class="co">##  [47] httr_1.4.8                  abind_1.4-8                </span></span>
+<span><span class="co">##  [43] GenomicRanges_1.65.4        RSQLite_3.53.3             </span></span>
+<span><span class="co">##  [45] filelock_1.0.3              Spectra_1.23.5             </span></span>
+<span><span class="co">##  [47] httr_1.4.9                  abind_1.4-8                </span></span>
 <span><span class="co">##  [49] compiler_4.6.1              withr_3.0.3                </span></span>
-<span><span class="co">##  [51] bit64_4.8.4                 doParallel_1.0.17          </span></span>
+<span><span class="co">##  [51] bit64_4.8.6                 doParallel_1.0.17          </span></span>
 <span><span class="co">##  [53] S7_0.2.2                    PTMods_1.1.0               </span></span>
 <span><span class="co">##  [55] DBI_1.3.0                   Chromatograms_1.3.3        </span></span>
 <span><span class="co">##  [57] MASS_7.3-66                 MsExperiment_1.15.0        </span></span>
-<span><span class="co">##  [59] rappdirs_0.3.4              DelayedArray_0.39.6        </span></span>
+<span><span class="co">##  [59] rappdirs_0.3.4              DelayedArray_0.39.8        </span></span>
 <span><span class="co">##  [61] tools_4.6.1                 PSMatch_1.17.0             </span></span>
 <span><span class="co">##  [63] otel_0.2.0                  glue_1.8.1                 </span></span>
-<span><span class="co">##  [65] QFeatures_1.23.1            grid_4.6.1                 </span></span>
+<span><span class="co">##  [65] QFeatures_1.23.2            grid_4.6.1                 </span></span>
 <span><span class="co">##  [67] cluster_2.1.8.3             reshape2_1.4.5             </span></span>
-<span><span class="co">##  [69] gtable_0.3.6                preprocessCore_1.75.0      </span></span>
+<span><span class="co">##  [69] gtable_0.3.6                preprocessCore_1.75.1      </span></span>
 <span><span class="co">##  [71] tidyr_1.3.2                 data.table_1.18.6.1        </span></span>
 <span><span class="co">##  [73] hms_1.1.4                   MetaboCoreUtils_1.21.1     </span></span>
 <span><span class="co">##  [75] XVector_0.53.0              BiocVersion_3.24.0         </span></span>
 <span><span class="co">##  [77] foreach_1.5.2               pillar_1.11.1              </span></span>
-<span><span class="co">##  [79] stringr_1.6.0               limma_3.69.4               </span></span>
+<span><span class="co">##  [79] stringr_1.6.0               limma_3.99.0               </span></span>
 <span><span class="co">##  [81] dplyr_1.2.1                 BiocFileCache_3.3.0        </span></span>
 <span><span class="co">##  [83] lattice_0.23-1              bit_4.6.0                  </span></span>
-<span><span class="co">##  [85] tidyselect_1.2.1            Biostrings_2.81.6          </span></span>
-<span><span class="co">##  [87] knitr_1.51                  bookdown_0.48              </span></span>
+<span><span class="co">##  [85] tidyselect_1.2.1            Biostrings_2.81.9          </span></span>
+<span><span class="co">##  [87] knitr_1.52                  bookdown_0.48              </span></span>
 <span><span class="co">##  [89] IRanges_2.47.5              Seqinfo_1.3.2              </span></span>
 <span><span class="co">##  [91] ProtGenerics_1.45.0         SummarizedExperiment_1.43.0</span></span>
-<span><span class="co">##  [93] xfun_0.60                   statmod_1.5.2              </span></span>
+<span><span class="co">##  [93] xfun_0.61                   statmod_1.5.2              </span></span>
 <span><span class="co">##  [95] matrixStats_1.5.0           stringi_1.8.9              </span></span>
 <span><span class="co">##  [97] lazyeval_0.2.3              yaml_2.3.12                </span></span>
 <span><span class="co">##  [99] evaluate_1.0.5              codetools_0.2-20           </span></span>
@@ -470,7 +471,7 @@ the feature matrix using functionality from other R packages, such as
 <span><span class="co">## [103] BiocManager_1.30.27         cli_3.6.6                  </span></span>
 <span><span class="co">## [105] affyio_1.83.0               systemfonts_1.3.2          </span></span>
 <span><span class="co">## [107] jquerylib_0.1.4             dbplyr_2.6.0               </span></span>
-<span><span class="co">## [109] png_0.1-9                   XML_3.99-0.24              </span></span>
+<span><span class="co">## [109] png_0.1-9                   XML_3.99-0.25              </span></span>
 <span><span class="co">## [111] parallel_4.6.1              pkgdown_2.2.1.9000         </span></span>
 <span><span class="co">## [113] ggplot2_4.0.3               blob_1.3.0                 </span></span>
 <span><span class="co">## [115] prettyunits_1.2.0           AnnotationFilter_1.37.0    </span></span>
@@ -478,7 +479,7 @@ the feature matrix using functionality from other R packages, such as
 <span><span class="co">## [119] affy_1.91.0                 ncdf4_1.24                 </span></span>
 <span><span class="co">## [121] purrr_1.2.2                 crayon_1.5.3               </span></span>
 <span><span class="co">## [123] rlang_1.3.0                 KEGGREST_1.53.6            </span></span>
-<span><span class="co">## [125] vsn_3.81.0</span></span></code></pre>
+<span><span class="co">## [125] vsn_3.81.1</span></span></code></pre>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.11.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.11.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,6 +37,7 @@
 <li><a class="dropdown-item" href="../articles/LC-MS-feature-grouping.html">Compounding (grouping) of LC-MS features</a></li>
     <li><a class="dropdown-item" href="../articles/xcms-direct-injection.html">Grouping FTICR-MS data with xcms</a></li>
     <li><a class="dropdown-item" href="../articles/xcms-lcms-ms.html">LC-MS/MS data analysis with xcms</a></li>
+    <li><a class="dropdown-item" href="../articles/xcms-plotting-using-lcmsPlot.html">Plotting xcms results using lcmsPlot</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -78,7 +79,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (links[i].hostname != window.location.hostname)
       links[i].target = '_blank';
 });
-</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.24/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Philippine Louail, Johannes Rainer<br><strong>Modified</strong>: 2026-09-01 07:29:04.203735<br><strong>Compiled</strong>: Tue Sep 1 08:33:46 2026</p>
+</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.24/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Philippine Louail, Johannes Rainer<br><strong>Modified</strong>: 2026-10-06 07:39:14.62411<br><strong>Compiled</strong>: Tue Oct 6 08:29:48 2026</p>
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
@@ -1794,7 +1795,7 @@ available as <em>metadata</em> in the
 <pre><code><span><span class="co">## [[1]]</span></span>
 <span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Peak detection </span></span>
-<span><span class="co">##  date: Tue Sep  1 08:34:28 2026 </span></span>
+<span><span class="co">##  date: Tue Oct  6 08:30:19 2026 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: CentWaveParam </span></span>
@@ -1803,7 +1804,7 @@ available as <em>metadata</em> in the
 <span><span class="co">## [[2]]</span></span>
 <span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Peak refinement </span></span>
-<span><span class="co">##  date: Tue Sep  1 08:34:33 2026 </span></span>
+<span><span class="co">##  date: Tue Oct  6 08:30:22 2026 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: MergeNeighboringPeaksParam </span></span>
@@ -1812,7 +1813,7 @@ available as <em>metadata</em> in the
 <span><span class="co">## [[3]]</span></span>
 <span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Peak grouping </span></span>
-<span><span class="co">##  date: Tue Sep  1 08:34:47 2026 </span></span>
+<span><span class="co">##  date: Tue Oct  6 08:30:31 2026 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: PeakDensityParam </span></span>
@@ -1821,7 +1822,7 @@ available as <em>metadata</em> in the
 <span><span class="co">## [[4]]</span></span>
 <span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Retention time correction </span></span>
-<span><span class="co">##  date: Tue Sep  1 08:34:47 2026 </span></span>
+<span><span class="co">##  date: Tue Oct  6 08:30:31 2026 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: PeakGroupsParam </span></span>
@@ -1830,7 +1831,7 @@ available as <em>metadata</em> in the
 <span><span class="co">## [[5]]</span></span>
 <span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Peak grouping </span></span>
-<span><span class="co">##  date: Tue Sep  1 08:34:51 2026 </span></span>
+<span><span class="co">##  date: Tue Oct  6 08:30:35 2026 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: PeakDensityParam </span></span>
@@ -1839,7 +1840,7 @@ available as <em>metadata</em> in the
 <span><span class="co">## [[6]]</span></span>
 <span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Missing peak filling </span></span>
-<span><span class="co">##  date: Tue Sep  1 08:34:57 2026 </span></span>
+<span><span class="co">##  date: Tue Oct  6 08:30:37 2026 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: ChromPeakAreaParam </span></span>
@@ -1851,7 +1852,7 @@ extract the information for the first processing step.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/XCMSnExp-class.html">processHistory</a></span><span class="op">(</span><span class="va">faahko</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Peak detection </span></span>
-<span><span class="co">##  date: Tue Sep  1 08:34:28 2026 </span></span>
+<span><span class="co">##  date: Tue Oct  6 08:30:19 2026 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: CentWaveParam </span></span>
@@ -2319,14 +2320,14 @@ package and its functionality.</li>
 <span><span class="co">## </span></span>
 <span><span class="co">## other attached packages:</span></span>
 <span><span class="co">##  [1] SummarizedExperiment_1.43.0 Biobase_2.73.2             </span></span>
-<span><span class="co">##  [3] GenomicRanges_1.65.1        Seqinfo_1.3.2              </span></span>
-<span><span class="co">##  [5] IRanges_2.47.5              S4Vectors_0.51.9           </span></span>
+<span><span class="co">##  [3] GenomicRanges_1.65.4        Seqinfo_1.3.2              </span></span>
+<span><span class="co">##  [5] IRanges_2.47.5              S4Vectors_0.51.10          </span></span>
 <span><span class="co">##  [7] BiocGenerics_0.59.12        generics_0.1.4             </span></span>
 <span><span class="co">##  [9] MatrixGenerics_1.25.0       matrixStats_1.5.0          </span></span>
 <span><span class="co">## [11] Chromatograms_1.3.3         MsExperiment_1.15.0        </span></span>
 <span><span class="co">## [13] ProtGenerics_1.45.0         pheatmap_1.0.13            </span></span>
 <span><span class="co">## [15] RColorBrewer_1.1-3          pander_0.6.6               </span></span>
-<span><span class="co">## [17] faahKO_1.53.0               xcms_4.11.3                </span></span>
+<span><span class="co">## [17] faahKO_1.53.0               xcms_4.11.4                </span></span>
 <span><span class="co">## [19] BiocParallel_1.47.0         BiocStyle_2.41.0           </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
@@ -2338,25 +2339,25 @@ package and its functionality.</li>
 <span><span class="co">## [11] reshape2_1.4.5              stringr_1.6.0              </span></span>
 <span><span class="co">## [13] crayon_1.5.3                pkgconfig_2.0.3            </span></span>
 <span><span class="co">## [15] MetaboCoreUtils_1.21.1      fastmap_1.2.0              </span></span>
-<span><span class="co">## [17] XVector_0.53.0              rmarkdown_2.31             </span></span>
-<span><span class="co">## [19] preprocessCore_1.75.0       ragg_1.5.2                 </span></span>
-<span><span class="co">## [21] purrr_1.2.2                 xfun_0.60                  </span></span>
-<span><span class="co">## [23] MultiAssayExperiment_1.39.0 cachem_1.1.0               </span></span>
+<span><span class="co">## [17] XVector_0.53.0              rmarkdown_2.32             </span></span>
+<span><span class="co">## [19] preprocessCore_1.75.1       ragg_1.5.2                 </span></span>
+<span><span class="co">## [21] purrr_1.2.2                 xfun_0.61                  </span></span>
+<span><span class="co">## [23] MultiAssayExperiment_1.39.1 cachem_1.1.0               </span></span>
 <span><span class="co">## [25] jsonlite_2.0.0              progress_1.2.3             </span></span>
-<span><span class="co">## [27] DelayedArray_0.39.6         prettyunits_1.2.0          </span></span>
+<span><span class="co">## [27] DelayedArray_0.39.8         prettyunits_1.2.0          </span></span>
 <span><span class="co">## [29] parallel_4.6.1              cluster_2.1.8.3            </span></span>
 <span><span class="co">## [31] R6_2.6.1                    bslib_0.12.0               </span></span>
-<span><span class="co">## [33] stringi_1.8.9               limma_3.69.4               </span></span>
+<span><span class="co">## [33] stringi_1.8.9               limma_3.99.0               </span></span>
 <span><span class="co">## [35] jquerylib_0.1.4             iterators_1.0.14           </span></span>
 <span><span class="co">## [37] Rcpp_1.1.2                  bookdown_0.48              </span></span>
-<span><span class="co">## [39] knitr_1.51                  Matrix_1.7-6               </span></span>
-<span><span class="co">## [41] igraph_2.3.3                tidyselect_1.2.1           </span></span>
+<span><span class="co">## [39] knitr_1.52                  Matrix_1.7-6               </span></span>
+<span><span class="co">## [41] igraph_2.3.4                tidyselect_1.2.1           </span></span>
 <span><span class="co">## [43] abind_1.4-8                 yaml_2.3.12                </span></span>
 <span><span class="co">## [45] doParallel_1.0.17           codetools_0.2-20           </span></span>
 <span><span class="co">## [47] affy_1.91.0                 lattice_0.23-1             </span></span>
 <span><span class="co">## [49] tibble_3.3.1                plyr_1.8.9                 </span></span>
 <span><span class="co">## [51] S7_0.2.2                    evaluate_1.0.5             </span></span>
-<span><span class="co">## [53] desc_1.4.3                  Spectra_1.23.3             </span></span>
+<span><span class="co">## [53] desc_1.4.3                  Spectra_1.23.5             </span></span>
 <span><span class="co">## [55] pillar_1.11.1               affyio_1.83.0              </span></span>
 <span><span class="co">## [57] BiocManager_1.30.27         foreach_1.5.2              </span></span>
 <span><span class="co">## [59] MSnbase_2.39.5              MALDIquant_1.22.3          </span></span>
@@ -2365,16 +2366,16 @@ package and its functionality.</li>
 <span><span class="co">## [65] glue_1.8.1                  MsFeatures_1.21.0          </span></span>
 <span><span class="co">## [67] lazyeval_0.2.3              tools_4.6.1                </span></span>
 <span><span class="co">## [69] mzID_1.51.0                 data.table_1.18.6.1        </span></span>
-<span><span class="co">## [71] QFeatures_1.23.1            vsn_3.81.0                 </span></span>
-<span><span class="co">## [73] mzR_2.47.0                  fs_2.1.0                   </span></span>
-<span><span class="co">## [75] XML_3.99-0.24               grid_4.6.1                 </span></span>
+<span><span class="co">## [71] QFeatures_1.23.2            vsn_3.81.1                 </span></span>
+<span><span class="co">## [73] mzR_2.47.1                  fs_2.1.0                   </span></span>
+<span><span class="co">## [75] XML_3.99-0.25               grid_4.6.1                 </span></span>
 <span><span class="co">## [77] impute_1.87.0               tidyr_1.3.2                </span></span>
 <span><span class="co">## [79] MsCoreUtils_1.25.4          PSMatch_1.17.0             </span></span>
 <span><span class="co">## [81] cli_3.6.6                   textshaping_1.0.5          </span></span>
-<span><span class="co">## [83] S4Arrays_1.13.0             dplyr_1.2.1                </span></span>
+<span><span class="co">## [83] S4Arrays_1.13.2             dplyr_1.2.1                </span></span>
 <span><span class="co">## [85] AnnotationFilter_1.37.0     pcaMethods_2.5.0           </span></span>
 <span><span class="co">## [87] gtable_0.3.6                sass_0.4.10                </span></span>
-<span><span class="co">## [89] digest_0.6.39               SparseArray_1.13.2         </span></span>
+<span><span class="co">## [89] digest_0.6.39               SparseArray_1.13.4         </span></span>
 <span><span class="co">## [91] htmlwidgets_1.6.4           farver_2.1.2               </span></span>
 <span><span class="co">## [93] htmltools_0.5.9             pkgdown_2.2.1.9000         </span></span>
 <span><span class="co">## [95] lifecycle_1.0.5             statmod_1.5.2              </span></span>

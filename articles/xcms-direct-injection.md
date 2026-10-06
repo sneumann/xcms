@@ -19,7 +19,12 @@ functionality from the *MassSpecWavelet* package to identify such peaks.
 Below we load the required packages. For information on the parallel
 processing setup please see the *BiocParallel* vignette.
 
-[`library`](https://rdrr.io/r/base/library.html)`(`[`MSnbase`](https://lgatto.github.io/MSnbase)`)`` `[`library`](https://rdrr.io/r/base/library.html)`(`[`xcms`](https://github.com/sneumann/xcms)`)`` `[`library`](https://rdrr.io/r/base/library.html)`(`[`MassSpecWavelet`](https://github.com/zeehio/MassSpecWavelet)`)`` `[`library`](https://rdrr.io/r/base/library.html)`(`[`MsDataHub`](https://rformassspectrometry.github.io/MsDataHub)`)`` `[`register`](https://rdrr.io/pkg/BiocParallel/man/register.html)`(`[`SerialParam`](https://rdrr.io/pkg/BiocParallel/man/SerialParam-class.html)`(``)``)`
+\
+[`library`](https://rdrr.io/r/base/library.html)`(`[`MSnbase`](https://lgatto.github.io/MSnbase)`)`\
+[`library`](https://rdrr.io/r/base/library.html)`(`[`xcms`](https://github.com/sneumann/xcms)`)`\
+[`library`](https://rdrr.io/r/base/library.html)`(`[`MassSpecWavelet`](https://github.com/zeehio/MassSpecWavelet)`)`\
+[`library`](https://rdrr.io/r/base/library.html)`(`[`MsDataHub`](https://rformassspectrometry.github.io/MsDataHub)`)`\
+[`register`](https://rdrr.io/pkg/BiocParallel/man/register.html)`(`[`SerialParam`](https://rdrr.io/pkg/BiocParallel/man/SerialParam-class.html)`(``)``)`
 
 In this documentation we use an example data set from the
 `r Biocpkg("MsDataHub")` package. Assuming that
@@ -29,7 +34,24 @@ installed, it will obtain the files from
 create also a `data.frame` describing the experimental setup based on
 the file names.
 
-`## We're using 2 samples per condition`` ``## from https://doi.org/10.5281/zenodo.18494293`` ``mzML_files`` ``<-`` `[`c`](https://rdrr.io/r/base/c.html)`(`` `` `[`HAM004_641fE_14.11.07..Exp1.extracted.mzML`](https://rformassspectrometry.github.io/MsDataHub/reference/FTICR.html)`(``)``,`` `` `[`HAM004_641fE_14.11.07..Exp2.extracted.mzML`](https://rformassspectrometry.github.io/MsDataHub/reference/FTICR.html)`(``)``,`` `` `[`HAM005_641fE_14.11.07..Exp1.extracted.mzML`](https://rformassspectrometry.github.io/MsDataHub/reference/FTICR.html)`(``)``,`` `` `[`HAM005_641fE_14.11.07..Exp2.extracted.mzML`](https://rformassspectrometry.github.io/MsDataHub/reference/FTICR.html)`(``)`` ``)`` `` ``## Create a data.frame assigning samples to sample groups, i.e. ham4 and ham5.`` ``grp`` ``<-`` `[`c`](https://rdrr.io/r/base/c.html)`(``"ham4"``, ``"ham4"``, ``"ham5"``, ``"ham5"``)`` ``pd`` ``<-`` `[`data.frame`](https://rdrr.io/r/base/data.frame.html)`(``filename ``=`` `[`basename`](https://rdrr.io/r/base/basename.html)`(``mzML_files``)``, sample_group ``=`` ``grp``)`` `` ``## Load the data.`` ``ham_raw`` ``<-`` `[`readMSData`](https://lgatto.github.io/MSnbase/reference/readMSData.html)`(``files ``=`` ``mzML_files``,`` `` pdata ``=`` `[`AnnotatedDataFrame`](https://rdrr.io/pkg/Biobase/man/class.AnnotatedDataFrame.html)`(``pd``)``,`` `` mode ``=`` ``"onDisk"``)`
+\
+`## We're using 2 samples per condition`\
+`## from https://doi.org/10.5281/zenodo.18494293`\
+`mzML_files`` ``<-`` `[`c`](https://rdrr.io/r/base/c.html)`(`\
+`  `[`HAM004_641fE_14.11.07..Exp1.extracted.mzML`](https://rformassspectrometry.github.io/MsDataHub/reference/FTICR.html)`(``)``,`\
+`  `[`HAM004_641fE_14.11.07..Exp2.extracted.mzML`](https://rformassspectrometry.github.io/MsDataHub/reference/FTICR.html)`(``)``,`\
+`  `[`HAM005_641fE_14.11.07..Exp1.extracted.mzML`](https://rformassspectrometry.github.io/MsDataHub/reference/FTICR.html)`(``)``,`\
+`  `[`HAM005_641fE_14.11.07..Exp2.extracted.mzML`](https://rformassspectrometry.github.io/MsDataHub/reference/FTICR.html)`(``)`\
+`)`\
+\
+`## Create a data.frame assigning samples to sample groups, i.e. ham4 and ham5.`\
+`grp`` ``<-`` `[`c`](https://rdrr.io/r/base/c.html)`(``"ham4"``, ``"ham4"``, ``"ham5"``, ``"ham5"``)`\
+`pd`` ``<-`` `[`data.frame`](https://rdrr.io/r/base/data.frame.html)`(``filename ``=`` `[`basename`](https://rdrr.io/r/base/basename.html)`(``mzML_files``)``, sample_group ``=`` ``grp``)`\
+\
+`## Load the data.`\
+`ham_raw`` ``<-`` `[`readMSData`](https://lgatto.github.io/MSnbase/reference/readMSData.html)`(``files ``=`` ``mzML_files``,`\
+`                      pdata ``=`` `[`AnnotatedDataFrame`](https://rdrr.io/pkg/Biobase/man/class.AnnotatedDataFrame.html)`(``pd``)``,`\
+`                      mode ``=`` ``"onDisk"``)`
 
     ## Warning in .testReadMSDataInput(environment()): Reading different file formats in.
     ## This is untested and you are welcome to try it out.
@@ -39,7 +61,10 @@ The data files are from *direct injection* mass spectrometry
 experiments, i.e. we have only a single spectrum available for each
 sample and no retention times.
 
-`## Only a single spectrum with an *artificial* retention time is available`` ``## for each sample`` `[`rtime`](https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html)`(``ham_raw``)`
+\
+`## Only a single spectrum with an *artificial* retention time is available`\
+`## for each sample`\
+[`rtime`](https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html)`(``ham_raw``)`
 
     ## F1.S1 F2.S1 F3.S1 F4.S1 
     ##    -1    -1    -1    -1
@@ -47,7 +72,14 @@ sample and no retention times.
 Peaks are identified within each spectrum using the *mass spec wavelet*
 method.
 
-`## Define the parameters for the peak detection`` ``msw`` ``<-`` `[`MSWParam`](https://sneumann.github.io/xcms/reference/findPeaks-MSW.md)`(``scales ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``1``, ``4``, ``9``)``, nearbyPeak ``=`` ``TRUE``, winSize.noise ``=`` ``500``,`` `` SNR.method ``=`` ``"data.mean"``, snthresh ``=`` ``10``)`` `` ``ham_prep`` ``<-`` `[`findChromPeaks`](https://sneumann.github.io/xcms/reference/findChromPeaks.md)`(``ham_raw``, param ``=`` ``msw``)`` `` `[`head`](https://rdrr.io/r/utils/head.html)`(`[`chromPeaks`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``ham_prep``)``)`
+\
+`## Define the parameters for the peak detection`\
+`msw`` ``<-`` `[`MSWParam`](https://sneumann.github.io/xcms/reference/findPeaks-MSW.md)`(``scales ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``1``, ``4``, ``9``)``, nearbyPeak ``=`` ``TRUE``, winSize.noise ``=`` ``500``,`\
+`                SNR.method ``=`` ``"data.mean"``, snthresh ``=`` ``10``)`\
+\
+`ham_prep`` ``<-`` `[`findChromPeaks`](https://sneumann.github.io/xcms/reference/findChromPeaks.md)`(``ham_raw``, param ``=`` ``msw``)`\
+\
+[`head`](https://rdrr.io/r/utils/head.html)`(`[`chromPeaks`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``ham_prep``)``)`
 
     ##            mz    mzmin    mzmax rt rtmin rtmax    into     maxo       sn intf
     ## CP01 403.2367 403.2279 403.2447 -1    -1    -1 4735258 372259.4 22.97534   NA
@@ -80,7 +112,13 @@ with artificially defined calibration m/z values. We first subset the
 data set to the first data file, extract the m/z values of 3 peaks and
 modify the values slightly.
 
-`## Subset to the first file.`` ``first_file`` ``<-`` `[`filterFile`](https://lgatto.github.io/MSnbase/reference/MSnExp-class.html)`(``ham_prep``, file ``=`` ``1``)`` `` ``## Extract 3 m/z values`` ``calib_mz`` ``<-`` `[`chromPeaks`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``first_file``)``[`[`c`](https://rdrr.io/r/base/c.html)`(``1``, ``4``, ``7``)``, ``"mz"``]`` ``calib_mz`` ``<-`` ``calib_mz`` ``+`` ``0.00001`` ``*`` `[`runif`](https://rdrr.io/r/stats/Uniform.html)`(``1``, ``0``, ``0.4``)`` ``*`` ``calib_mz`` ``+`` ``0.0001`
+\
+`## Subset to the first file.`\
+`first_file`` ``<-`` `[`filterFile`](https://lgatto.github.io/MSnbase/reference/MSnExp-class.html)`(``ham_prep``, file ``=`` ``1``)`\
+\
+`## Extract 3 m/z values`\
+`calib_mz`` ``<-`` `[`chromPeaks`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``first_file``)``[`[`c`](https://rdrr.io/r/base/c.html)`(``1``, ``4``, ``7``)``, ``"mz"``]`\
+`calib_mz`` ``<-`` ``calib_mz`` ``+`` ``0.00001`` ``*`` `[`runif`](https://rdrr.io/r/stats/Uniform.html)`(``1``, ``0``, ``0.4``)`` ``*`` ``calib_mz`` ``+`` ``0.0001`
 
 Next we calibrate the data set using the previously defined *artificial*
 calibrants. We are using the `"edgeshift"` method for calibration that
@@ -91,12 +129,21 @@ lowest respectively largest calibrant m/z with the closest peak’s m/z).
 Note that in a *real* use case, the m/z values would obviously represent
 known m/z of calibrants and would not be defined on the actual data.
 
-`## Set-up the parameter class for the calibration`` ``prm`` ``<-`` `[`CalibrantMassParam`](https://sneumann.github.io/xcms/reference/calibrate-calibrant-mass.md)`(``mz ``=`` ``calib_mz``, method ``=`` ``"edgeshift"``,`` `` mzabs ``=`` ``0.0001``, mzppm ``=`` ``5``)`` ``first_file_calibrated`` ``<-`` `[`calibrate`](https://sneumann.github.io/xcms/reference/calibrate.md)`(``first_file``, param ``=`` ``prm``)`
+\
+`## Set-up the parameter class for the calibration`\
+`prm`` ``<-`` `[`CalibrantMassParam`](https://sneumann.github.io/xcms/reference/calibrate-calibrant-mass.md)`(``mz ``=`` ``calib_mz``, method ``=`` ``"edgeshift"``,`\
+`                          mzabs ``=`` ``0.0001``, mzppm ``=`` ``5``)`\
+`first_file_calibrated`` ``<-`` `[`calibrate`](https://sneumann.github.io/xcms/reference/calibrate.md)`(``first_file``, param ``=`` ``prm``)`
 
 To evaluate the calibration we plot below the difference between the
 adjusted and raw m/z values (y-axis) against the raw m/z values.
 
-`diffs`` ``<-`` `[`chromPeaks`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``first_file_calibrated``)``[``, ``"mz"``]`` ``-`` `` `[`chromPeaks`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``first_file``)``[``, ``"mz"``]`` `` `[`plot`](https://rdrr.io/r/base/plot.html)`(``x ``=`` `[`chromPeaks`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``first_file``)``[``, ``"mz"``]``, xlab ``=`` `[`expression`](https://rdrr.io/r/base/expression.html)`(``m``/``z``[``raw``]``)``,`` `` y ``=`` ``diffs``, ylab ``=`` `[`expression`](https://rdrr.io/r/base/expression.html)`(``m``/``z``[``calibrated``]`` ``-`` ``m``/``z``[``raw``]``)``)`
+\
+`diffs`` ``<-`` `[`chromPeaks`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``first_file_calibrated``)``[``, ``"mz"``]`` ``-`\
+`    `[`chromPeaks`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``first_file``)``[``, ``"mz"``]`\
+\
+[`plot`](https://rdrr.io/r/base/plot.html)`(``x ``=`` `[`chromPeaks`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``first_file``)``[``, ``"mz"``]``, xlab ``=`` `[`expression`](https://rdrr.io/r/base/expression.html)`(``m``/``z``[``raw``]``)``,`\
+`     y ``=`` ``diffs``, ylab ``=`` `[`expression`](https://rdrr.io/r/base/expression.html)`(``m``/``z``[``calibrated``]`` ``-`` ``m``/``z``[``raw``]``)``)`
 
 ![](xcms-direct-injection_files/figure-html/calibrationresult-1.png)
 
@@ -108,10 +155,14 @@ direct injection MS experiments can be grouped with the *MZclust*
 method. Below we perform the correspondence analysis with the
 `groupChromPeaks` method using default settings.
 
-`## Using default settings but define sample group assignment`` ``mzc_prm`` ``<-`` `[`MzClustParam`](https://sneumann.github.io/xcms/reference/groupChromPeaks.md)`(``sampleGroups ``=`` ``ham_prep``$``sample_group``)`` ``ham_prep`` ``<-`` `[`groupChromPeaks`](https://sneumann.github.io/xcms/reference/groupChromPeaks.md)`(``ham_prep``, param ``=`` ``mzc_prm``)`
+\
+`## Using default settings but define sample group assignment`\
+`mzc_prm`` ``<-`` `[`MzClustParam`](https://sneumann.github.io/xcms/reference/groupChromPeaks.md)`(``sampleGroups ``=`` ``ham_prep``$``sample_group``)`\
+`ham_prep`` ``<-`` `[`groupChromPeaks`](https://sneumann.github.io/xcms/reference/groupChromPeaks.md)`(``ham_prep``, param ``=`` ``mzc_prm``)`
 
 Getting an overview of the performed processings:
 
+\
 `ham_prep`
 
     ## MSn experiment data ("XCMSnExp")
@@ -121,7 +172,7 @@ Getting an overview of the performed processings:
     ##  Number of spectra: 4 
     ##  MSn retention times: -1:59 - -1:59 minutes
     ## - - - Processing information - - -
-    ## Data loaded [Tue Sep  1 08:32:55 2026] 
+    ## Data loaded [Tue Oct  6 08:28:12 2026] 
     ##  MSnbase version: 2.39.5 
     ## - - - Meta data  - - -
     ## phenoData
@@ -129,7 +180,7 @@ Getting an overview of the performed processings:
     ##   varLabels: filename sample_group
     ##   varMetadata: labelDescription
     ## Loaded from:
-    ##   [1] 187c3767766c_10386...  [4] 187c44b3d682_10392
+    ##   [1] 1fff376d905a_10386...  [4] 1fff5a6272f9_10392
     ##   Use 'fileNames(.)' to see all files.
     ## protocolData: none
     ## featureData
@@ -151,6 +202,7 @@ Getting an overview of the performed processings:
 The peak group information, i.e. the *feature* definitions can be
 accessed with the `featureDefinitions` method.
 
+\
 [`featureDefinitions`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``ham_prep``)`
 
     ## DataFrame with 20 rows and 10 columns
@@ -191,7 +243,29 @@ function to sub-set the full data set to the signal associated with the
 feature’s peaks. On that object we can then call the `mz` and
 `intensity` functions to extract the data.
 
-`## Get the peaks belonging to the first feature`` ``pks`` ``<-`` `[`chromPeaks`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``ham_prep``)``[`[`featureDefinitions`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``ham_prep``)``$``peakidx``[[``1``]``]``, ``]`` `` ``## Define the m/z range`` ``mzr`` ``<-`` `[`c`](https://rdrr.io/r/base/c.html)`(`[`min`](https://rdrr.io/r/base/Extremes.html)`(``pks``[``, ``"mzmin"``]``)`` ``-`` ``0.001``, `[`max`](https://rdrr.io/r/base/Extremes.html)`(``pks``[``, ``"mzmax"``]``)`` ``+`` ``0.001``)`` `` ``## Subset the object to the m/z range`` ``ham_prep_sub`` ``<-`` `[`filterMz`](https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html)`(``ham_prep``, mz ``=`` ``mzr``)`` `` ``## Extract the mz and intensity values`` ``mzs`` ``<-`` `[`mz`](https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html)`(``ham_prep_sub``, bySample ``=`` ``TRUE``)`` ``ints`` ``<-`` `[`intensity`](https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html)`(``ham_prep_sub``, bySample ``=`` ``TRUE``)`` `` ``## Plot the data`` `[`plot`](https://rdrr.io/r/base/plot.html)`(``3``, ``3``, pch ``=`` ``NA``, xlim ``=`` `[`range`](https://rdrr.io/r/base/range.html)`(``mzs``)``, ylim ``=`` `[`range`](https://rdrr.io/r/base/range.html)`(``ints``)``, main ``=`` ``"FT01"``,`` `` xlab ``=`` ``"m/z"``, ylab ``=`` ``"intensity"``)`` ``## Define colors`` ``cols`` ``<-`` `[`rep`](https://rdrr.io/r/base/rep.html)`(``"#ff000080"``, `[`length`](https://rdrr.io/r/base/length.html)`(``mzs``)``)`` ``cols``[``ham_prep_sub``$``sample_group`` ``==`` ``"ham5"``]`` ``<-`` ``"#0000ff80"`` ``tmp`` ``<-`` `[`mapply`](https://rdrr.io/r/base/mapply.html)`(``mzs``, ``ints``, ``cols``, FUN ``=`` ``function``(``x``, ``y``, ``col``)`` ``{`` `` `[`points`](https://rdrr.io/r/graphics/points.html)`(``x``, ``y``, col ``=`` ``col``, type ``=`` ``"l"``)`` ``}``)`
+\
+`## Get the peaks belonging to the first feature`\
+`pks`` ``<-`` `[`chromPeaks`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``ham_prep``)``[`[`featureDefinitions`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)`(``ham_prep``)``$``peakidx``[[``1``]``]``, ``]`\
+\
+`## Define the m/z range`\
+`mzr`` ``<-`` `[`c`](https://rdrr.io/r/base/c.html)`(`[`min`](https://rdrr.io/r/base/Extremes.html)`(``pks``[``, ``"mzmin"``]``)`` ``-`` ``0.001``, `[`max`](https://rdrr.io/r/base/Extremes.html)`(``pks``[``, ``"mzmax"``]``)`` ``+`` ``0.001``)`\
+\
+`## Subset the object to the m/z range`\
+`ham_prep_sub`` ``<-`` `[`filterMz`](https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html)`(``ham_prep``, mz ``=`` ``mzr``)`\
+\
+`## Extract the mz and intensity values`\
+`mzs`` ``<-`` `[`mz`](https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html)`(``ham_prep_sub``, bySample ``=`` ``TRUE``)`\
+`ints`` ``<-`` `[`intensity`](https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html)`(``ham_prep_sub``, bySample ``=`` ``TRUE``)`\
+\
+`## Plot the data`\
+[`plot`](https://rdrr.io/r/base/plot.html)`(``3``, ``3``, pch ``=`` ``NA``, xlim ``=`` `[`range`](https://rdrr.io/r/base/range.html)`(``mzs``)``, ylim ``=`` `[`range`](https://rdrr.io/r/base/range.html)`(``ints``)``, main ``=`` ``"FT01"``,`\
+`     xlab ``=`` ``"m/z"``, ylab ``=`` ``"intensity"``)`\
+`## Define colors`\
+`cols`` ``<-`` `[`rep`](https://rdrr.io/r/base/rep.html)`(``"#ff000080"``, `[`length`](https://rdrr.io/r/base/length.html)`(``mzs``)``)`\
+`cols``[``ham_prep_sub``$``sample_group`` ``==`` ``"ham5"``]`` ``<-`` ``"#0000ff80"`\
+`tmp`` ``<-`` `[`mapply`](https://rdrr.io/r/base/mapply.html)`(``mzs``, ``ints``, ``cols``, FUN ``=`` ``function``(``x``, ``y``, ``col``)`` ``{`\
+`    `[`points`](https://rdrr.io/r/graphics/points.html)`(``x``, ``y``, col ``=`` ``col``, type ``=`` ``"l"``)`\
+`}``)`
 
 ![](xcms-direct-injection_files/figure-html/feature1-1.png)
 
@@ -200,16 +274,18 @@ To access the actual intensity values of each feature in each sample the
 the function to return the integrated signal for each peak (one
 representative peak) per sample.
 
-`feat_vals`` ``<-`` `[`featureValues`](https://sneumann.github.io/xcms/reference/XCMSnExp-peak-grouping-results.md)`(``ham_prep``, value ``=`` ``"into"``)`` `[`head`](https://rdrr.io/r/utils/head.html)`(``feat_vals``)`
+\
+`feat_vals`` ``<-`` `[`featureValues`](https://sneumann.github.io/xcms/reference/XCMSnExp-peak-grouping-results.md)`(``ham_prep``, value ``=`` ``"into"``)`\
+[`head`](https://rdrr.io/r/utils/head.html)`(``feat_vals``)`
 
-    ##      187c3767766c_10386 187c6a5a17f9_10387 187c1e5daedb_10391
+    ##      1fff376d905a_10386 1fff586f3063_10387 1fff10970295_10391
     ## FT01                 NA                 NA            4095293
     ## FT02            4735258            6202418            4811391
     ## FT03                 NA                 NA            2982453
     ## FT04            4158404            5004546                 NA
     ## FT05                 NA                 NA            2872023
     ## FT06            6099006            4950642                 NA
-    ##      187c44b3d682_10392
+    ##      1fff5a6272f9_10392
     ## FT01            4804763
     ## FT02            2581183
     ## FT03            2268984
@@ -225,16 +301,19 @@ be recovered using the `fillChromPeaks` method that integrates all raw
 signal at the feature’s location. If there is no signal at that location
 an `NA` is reported.
 
-`ham_prep`` ``<-`` `[`fillChromPeaks`](https://sneumann.github.io/xcms/reference/fillChromPeaks.md)`(``ham_prep``, param ``=`` `[`FillChromPeaksParam`](https://sneumann.github.io/xcms/reference/fillChromPeaks.md)`(``)``)`` `` `[`head`](https://rdrr.io/r/utils/head.html)`(`[`featureValues`](https://sneumann.github.io/xcms/reference/XCMSnExp-peak-grouping-results.md)`(``ham_prep``, value ``=`` ``"into"``)``)`
+\
+`ham_prep`` ``<-`` `[`fillChromPeaks`](https://sneumann.github.io/xcms/reference/fillChromPeaks.md)`(``ham_prep``, param ``=`` `[`FillChromPeaksParam`](https://sneumann.github.io/xcms/reference/fillChromPeaks.md)`(``)``)`\
+\
+[`head`](https://rdrr.io/r/utils/head.html)`(`[`featureValues`](https://sneumann.github.io/xcms/reference/XCMSnExp-peak-grouping-results.md)`(``ham_prep``, value ``=`` ``"into"``)``)`
 
-    ##      187c3767766c_10386 187c6a5a17f9_10387 187c1e5daedb_10391
+    ##      1fff376d905a_10386 1fff586f3063_10387 1fff10970295_10391
     ## FT01           768754.0          1230140.4            4095293
     ## FT02          4735257.5          6202417.6            4811391
     ## FT03           652566.6           374109.9            2982453
     ## FT04          4158404.5          5004546.3            1221031
     ## FT05           652201.1           403448.4            2872023
     ## FT06          6099006.3          4950641.7            1573988
-    ##      187c44b3d682_10392
+    ##      1fff5a6272f9_10392
     ## FT01          4804762.5
     ## FT02          2581183.1
     ## FT03          2268984.5
@@ -251,6 +330,7 @@ the feature matrix using functionality from other R packages, such as
 
 ## Session information
 
+\
 [`sessionInfo`](https://rdrr.io/r/utils/sessionInfo.html)`(``)`
 
     ## R version 4.6.1 (2026-06-24)
@@ -277,59 +357,59 @@ the feature matrix using functionality from other R packages, such as
     ## [8] base     
     ## 
     ## other attached packages:
-    ##  [1] MsDataHub_1.13.1       MassSpecWavelet_1.79.2 xcms_4.11.3           
-    ##  [4] BiocParallel_1.47.0    MSnbase_2.39.5         S4Vectors_0.51.9      
+    ##  [1] MsDataHub_1.13.3       MassSpecWavelet_1.79.2 xcms_4.11.4           
+    ##  [4] BiocParallel_1.47.0    MSnbase_2.39.5         S4Vectors_0.51.10     
     ##  [7] Biobase_2.73.2         BiocGenerics_0.59.12   generics_0.1.4        
-    ## [10] mzR_2.47.0             Rcpp_1.1.2             BiocStyle_2.41.0      
+    ## [10] mzR_2.47.1             Rcpp_1.1.2             BiocStyle_2.41.0      
     ## 
     ## loaded via a namespace (and not attached):
     ##   [1] RColorBrewer_1.1-3          jsonlite_2.0.0             
-    ##   [3] MultiAssayExperiment_1.39.0 magrittr_2.0.5             
+    ##   [3] MultiAssayExperiment_1.39.1 magrittr_2.0.5             
     ##   [5] farver_2.1.2                MALDIquant_1.22.3          
-    ##   [7] rmarkdown_2.31              fs_2.1.0                   
+    ##   [7] rmarkdown_2.32              fs_2.1.0                   
     ##   [9] ragg_1.5.2                  vctrs_0.7.3                
     ##  [11] memoise_2.0.1               BiocBaseUtils_1.15.1       
-    ##  [13] htmltools_0.5.9             S4Arrays_1.13.0            
+    ##  [13] htmltools_0.5.9             S4Arrays_1.13.2            
     ##  [15] progress_1.2.3              AnnotationHub_4.3.2        
     ##  [17] curl_8.0.0                  signal_1.8-1               
-    ##  [19] SparseArray_1.13.2          mzID_1.51.0                
+    ##  [19] SparseArray_1.13.4          mzID_1.51.0                
     ##  [21] sass_0.4.10                 bslib_0.12.0               
     ##  [23] htmlwidgets_1.6.4           desc_1.4.3                 
     ##  [25] plyr_1.8.9                  httr2_1.3.0                
     ##  [27] impute_1.87.0               cachem_1.1.0               
-    ##  [29] igraph_2.3.3                lifecycle_1.0.5            
+    ##  [29] igraph_2.3.4                lifecycle_1.0.5            
     ##  [31] iterators_1.0.14            pkgconfig_2.0.3            
     ##  [33] Matrix_1.7-6                R6_2.6.1                   
     ##  [35] fastmap_1.2.0               MatrixGenerics_1.25.0      
     ##  [37] clue_0.3-68                 digest_0.6.39              
     ##  [39] pcaMethods_2.5.0            AnnotationDbi_1.75.2       
     ##  [41] ExperimentHub_3.3.2         textshaping_1.0.5          
-    ##  [43] GenomicRanges_1.65.1        RSQLite_3.53.3             
-    ##  [45] filelock_1.0.3              Spectra_1.23.3             
-    ##  [47] httr_1.4.8                  abind_1.4-8                
+    ##  [43] GenomicRanges_1.65.4        RSQLite_3.53.3             
+    ##  [45] filelock_1.0.3              Spectra_1.23.5             
+    ##  [47] httr_1.4.9                  abind_1.4-8                
     ##  [49] compiler_4.6.1              withr_3.0.3                
-    ##  [51] bit64_4.8.4                 doParallel_1.0.17          
+    ##  [51] bit64_4.8.6                 doParallel_1.0.17          
     ##  [53] S7_0.2.2                    PTMods_1.1.0               
     ##  [55] DBI_1.3.0                   Chromatograms_1.3.3        
     ##  [57] MASS_7.3-66                 MsExperiment_1.15.0        
-    ##  [59] rappdirs_0.3.4              DelayedArray_0.39.6        
+    ##  [59] rappdirs_0.3.4              DelayedArray_0.39.8        
     ##  [61] tools_4.6.1                 PSMatch_1.17.0             
     ##  [63] otel_0.2.0                  glue_1.8.1                 
-    ##  [65] QFeatures_1.23.1            grid_4.6.1                 
+    ##  [65] QFeatures_1.23.2            grid_4.6.1                 
     ##  [67] cluster_2.1.8.3             reshape2_1.4.5             
-    ##  [69] gtable_0.3.6                preprocessCore_1.75.0      
+    ##  [69] gtable_0.3.6                preprocessCore_1.75.1      
     ##  [71] tidyr_1.3.2                 data.table_1.18.6.1        
     ##  [73] hms_1.1.4                   MetaboCoreUtils_1.21.1     
     ##  [75] XVector_0.53.0              BiocVersion_3.24.0         
     ##  [77] foreach_1.5.2               pillar_1.11.1              
-    ##  [79] stringr_1.6.0               limma_3.69.4               
+    ##  [79] stringr_1.6.0               limma_3.99.0               
     ##  [81] dplyr_1.2.1                 BiocFileCache_3.3.0        
     ##  [83] lattice_0.23-1              bit_4.6.0                  
-    ##  [85] tidyselect_1.2.1            Biostrings_2.81.6          
-    ##  [87] knitr_1.51                  bookdown_0.48              
+    ##  [85] tidyselect_1.2.1            Biostrings_2.81.9          
+    ##  [87] knitr_1.52                  bookdown_0.48              
     ##  [89] IRanges_2.47.5              Seqinfo_1.3.2              
     ##  [91] ProtGenerics_1.45.0         SummarizedExperiment_1.43.0
-    ##  [93] xfun_0.60                   statmod_1.5.2              
+    ##  [93] xfun_0.61                   statmod_1.5.2              
     ##  [95] matrixStats_1.5.0           stringi_1.8.9              
     ##  [97] lazyeval_0.2.3              yaml_2.3.12                
     ##  [99] evaluate_1.0.5              codetools_0.2-20           
@@ -337,7 +417,7 @@ the feature matrix using functionality from other R packages, such as
     ## [103] BiocManager_1.30.27         cli_3.6.6                  
     ## [105] affyio_1.83.0               systemfonts_1.3.2          
     ## [107] jquerylib_0.1.4             dbplyr_2.6.0               
-    ## [109] png_0.1-9                   XML_3.99-0.24              
+    ## [109] png_0.1-9                   XML_3.99-0.25              
     ## [111] parallel_4.6.1              pkgdown_2.2.1.9000         
     ## [113] ggplot2_4.0.3               blob_1.3.0                 
     ## [115] prettyunits_1.2.0           AnnotationFilter_1.37.0    
@@ -345,4 +425,4 @@ the feature matrix using functionality from other R packages, such as
     ## [119] affy_1.91.0                 ncdf4_1.24                 
     ## [121] purrr_1.2.2                 crayon_1.5.3               
     ## [123] rlang_1.3.0                 KEGGREST_1.53.6            
-    ## [125] vsn_3.81.0
+    ## [125] vsn_3.81.1

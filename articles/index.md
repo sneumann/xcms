@@ -8,5 +8,7 @@
   xcms](https://sneumann.github.io/xcms/articles/xcms-direct-injection.md):
 - [LC-MS/MS data analysis with
   xcms](https://sneumann.github.io/xcms/articles/xcms-lcms-ms.md):
+- [Plotting xcms results using
+  lcmsPlot](https://sneumann.github.io/xcms/articles/xcms-plotting-using-lcmsPlot.md):
 - [LC-MS data preprocessing and analysis with
   xcms](https://sneumann.github.io/xcms/articles/xcms.md):

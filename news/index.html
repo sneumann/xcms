@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.11.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.11.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -22,6 +22,7 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/LC-MS-feature-grouping.html">Compounding (grouping) of LC-MS features</a></li>
     <li><a class="dropdown-item" href="../articles/xcms-direct-injection.html">Grouping FTICR-MS data with xcms</a></li>
     <li><a class="dropdown-item" href="../articles/xcms-lcms-ms.html">LC-MS/MS data analysis with xcms</a></li>
+    <li><a class="dropdown-item" href="../articles/xcms-plotting-using-lcmsPlot.html">Plotting xcms results using lcmsPlot</a></li>
   </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -41,11 +42,15 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="4.11" id="xcms-411">xcms 4.11<a class="anchor" aria-label="anchor" href="#xcms-411"></a></h2>
 <div class="section level3">
-<h3 id="changes-in-version-4-11">Changes in version 4.11.3<a class="anchor" aria-label="anchor" href="#changes-in-version-4-11"></a></h3>
+<h3 id="changes-in-version-4-11">Changes in version 4.11.4<a class="anchor" aria-label="anchor" href="#changes-in-version-4-11"></a></h3>
+<ul><li>Add new vignette <em>Plotting xcms results using lcmsPlot</em> describing how the <em>lcmsPlot</em> package can be used to create ggplot2-based visualizations of <em>xcms</em> preprocessing results (issue <a href="https://github.com/sneumann/xcms/issues/844" class="external-link">#844</a>).</li>
+</ul></div>
+<div class="section level3">
+<h3 id="changes-in-version-4-11-1">Changes in version 4.11.3<a class="anchor" aria-label="anchor" href="#changes-in-version-4-11-1"></a></h3>
 <ul><li>Workaround for errors reading subsets of data from HDF5 files with <code>XcmsExperimentHdf5</code>: original issue reported in <em>rhdf5</em>: <a href="https://github.com/Huber-group-EMBL/rhdf5/issues/240" class="external-link uri">https://github.com/Huber-group-EMBL/rhdf5/issues/240</a> . Code can be reverted once the problem is fixed upstream in <em>rhdf5</em>.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="changes-in-version-4-11-1">Changes in version 4.11.2<a class="anchor" aria-label="anchor" href="#changes-in-version-4-11-1"></a></h3>
+<h3 id="changes-in-version-4-11-2">Changes in version 4.11.2<a class="anchor" aria-label="anchor" href="#changes-in-version-4-11-2"></a></h3>
 <ul><li>Add support to return chromatographic data as a <code>Chromatograms</code> object with the <code><a href="../reference/chromatogram-method.html">chromatogram()</a></code> method from <code>MsExperiment</code>, <code>XcmsExperiment</code> and <code>XcmsExperimentHdf5</code> objects.</li>
 <li>Add support for <code>Chromatograms</code> to the <code><a href="../reference/chromPeakChromatograms.html">chromPeakChromatograms()</a></code> method for <code>XcmsExperiment</code> and <code>XcmsExperimentHdf5</code> objects.</li>
 <li>Add support for <code>Chromatograms</code> to the <code><a href="../reference/featureChromatograms.html">featureChromatograms()</a></code> method for <code>XcmsExperiment</code> and <code>XcmsExperimentHdf5</code> objects.</li>
@@ -55,7 +60,7 @@
 <li>Fix <code>chromPeakData&lt;-</code> for <code>XcmsExperiment</code> not supporting a <code>DataFrame</code> as input (issue <a href="https://github.com/sneumann/xcms/issues/839" class="external-link">#839</a>).</li>
 </ul></div>
 <div class="section level3">
-<h3 id="changes-in-version-4-11-2">Changes in version 4.11.1<a class="anchor" aria-label="anchor" href="#changes-in-version-4-11-2"></a></h3>
+<h3 id="changes-in-version-4-11-3">Changes in version 4.11.1<a class="anchor" aria-label="anchor" href="#changes-in-version-4-11-3"></a></h3>
 <ul><li>
 <code>refineChromPeaks,MergeNeighboringPeakParam</code>: drop row names of intermediate objects to avoid potentially misleading warning message.</li>
 </ul></div>

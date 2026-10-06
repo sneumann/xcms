@@ -26,6 +26,7 @@ latest **stable** version of *xcms* and ensures all required packages
 from the **same** Bioconductor release are installed and available as
 well:
 
+\
 [`install.packages`](https://rdrr.io/r/utils/install.packages.html)`(``)`
 
 ## Version 4
@@ -1018,5 +1019,7 @@ for more information.
   xcms](https://sneumann.github.io/xcms/articles/xcms-direct-injection.md):
 - [LC-MS/MS data analysis with
   xcms](https://sneumann.github.io/xcms/articles/xcms-lcms-ms.md):
+- [Plotting xcms results using
+  lcmsPlot](https://sneumann.github.io/xcms/articles/xcms-plotting-using-lcmsPlot.md):
 - [LC-MS data preprocessing and analysis with
   xcms](https://sneumann.github.io/xcms/articles/xcms.md):

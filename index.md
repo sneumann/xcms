@@ -26,6 +26,7 @@ latest **stable** version of *xcms* and ensures all required packages
 from the **same** Bioconductor release are installed and available as
 well:
 
+\
 [`install.packages`](https://rdrr.io/r/utils/install.packages.html)`(``)`
 
 ## Version 4

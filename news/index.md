@@ -2,6 +2,13 @@
 
 ## xcms 4.11
 
+### Changes in version 4.11.4
+
+- Add new vignette *Plotting xcms results using lcmsPlot* describing how
+  the *lcmsPlot* package can be used to create ggplot2-based
+  visualizations of *xcms* preprocessing results (issue
+  [\#844](https://github.com/sneumann/xcms/issues/844)).
+
 ### Changes in version 4.11.3
 
 - Workaround for errors reading subsets of data from HDF5 files with

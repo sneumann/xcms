@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.11.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.11.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,6 +37,7 @@
 <li><a class="dropdown-item" href="../articles/LC-MS-feature-grouping.html">Compounding (grouping) of LC-MS features</a></li>
     <li><a class="dropdown-item" href="../articles/xcms-direct-injection.html">Grouping FTICR-MS data with xcms</a></li>
     <li><a class="dropdown-item" href="../articles/xcms-lcms-ms.html">LC-MS/MS data analysis with xcms</a></li>
+    <li><a class="dropdown-item" href="../articles/xcms-plotting-using-lcmsPlot.html">Plotting xcms results using lcmsPlot</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -78,7 +79,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (links[i].hostname != window.location.hostname)
       links[i].target = '_blank';
 });
-</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.24/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer, Michael Witting<br><strong>Modified</strong>: 2026-09-01 07:29:04.203735<br><strong>Compiled</strong>: Tue Sep 1 08:33:04 2026</p>
+</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.24/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer, Michael Witting<br><strong>Modified</strong>: 2026-10-06 07:39:14.624017<br><strong>Compiled</strong>: Tue Oct 6 08:28:19 2026</p>
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
@@ -243,11 +244,11 @@ chromatographic peak are returned.</p>
 <span><span class="co">##  ... 37 more variables/columns.</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## file(s):</span></span>
-<span><span class="co">## 187c6b85f20b_7861</span></span>
+<span><span class="co">## 1fffabcedca_7861</span></span>
 <span><span class="co">## Processing:</span></span>
-<span><span class="co">##  Filter: select retention time [230..610] on MS level(s)  [Tue Sep  1 08:33:21 2026]</span></span>
-<span><span class="co">##  Filter: select MS level(s) 2 [Tue Sep  1 08:33:30 2026]</span></span>
-<span><span class="co">##  Merge 1 Spectra into one [Tue Sep  1 08:33:30 2026]</span></span></code></pre>
+<span><span class="co">##  Filter: select retention time [230..610] on MS level(s)  [Tue Oct  6 08:28:32 2026]</span></span>
+<span><span class="co">##  Filter: select MS level(s) 2 [Tue Oct  6 08:28:38 2026]</span></span>
+<span><span class="co">##  Merge 1 Spectra into one [Tue Oct  6 08:28:38 2026]</span></span></code></pre>
 <p>By default <code><a href="../reference/chromPeakSpectra.html">chromPeakSpectra()</a></code> returns all spectra
 associated with a MS1 chromatographic peak, but parameter
 <code>method</code> allows to choose and return only one spectrum per
@@ -344,11 +345,11 @@ peak in the present data set.</p>
 <span><span class="co">##  ... 37 more variables/columns.</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## file(s):</span></span>
-<span><span class="co">## 187c6b85f20b_7861</span></span>
+<span><span class="co">## 1fffabcedca_7861</span></span>
 <span><span class="co">## Processing:</span></span>
-<span><span class="co">##  Filter: select retention time [230..610] on MS level(s)  [Tue Sep  1 08:33:21 2026]</span></span>
-<span><span class="co">##  Filter: select MS level(s) 2 [Tue Sep  1 08:33:30 2026]</span></span>
-<span><span class="co">##  Merge 1 Spectra into one [Tue Sep  1 08:33:30 2026]</span></span></code></pre>
+<span><span class="co">##  Filter: select retention time [230..610] on MS level(s)  [Tue Oct  6 08:28:32 2026]</span></span>
+<span><span class="co">##  Filter: select MS level(s) 2 [Tue Oct  6 08:28:38 2026]</span></span>
+<span><span class="co">##  Merge 1 Spectra into one [Tue Oct  6 08:28:38 2026]</span></span></code></pre>
 <p>There are 5 MS2 spectra representing fragmentation of the ion(s)
 measured in our candidate chromatographic peak. We next reduce this to a
 single MS2 spectrum using the <code><a href="https://rdrr.io/pkg/Spectra/man/combineSpectra.html" class="external-link">combineSpectra()</a></code> method
@@ -374,9 +375,9 @@ approach or suggested for all types of data.</p>
 <span><span class="co">## 1         2   418.926      3505</span></span>
 <span><span class="co">##  ... 37 more variables/columns.</span></span>
 <span><span class="co">## Processing:</span></span>
-<span><span class="co">##  Filter: select retention time [230..610] on MS level(s)  [Tue Sep  1 08:33:21 2026]</span></span>
-<span><span class="co">##  Filter: select MS level(s) 2 [Tue Sep  1 08:33:30 2026]</span></span>
-<span><span class="co">##  Merge 1 Spectra into one [Tue Sep  1 08:33:30 2026]</span></span>
+<span><span class="co">##  Filter: select retention time [230..610] on MS level(s)  [Tue Oct  6 08:28:32 2026]</span></span>
+<span><span class="co">##  Filter: select MS level(s) 2 [Tue Oct  6 08:28:38 2026]</span></span>
+<span><span class="co">##  Merge 1 Spectra into one [Tue Oct  6 08:28:38 2026]</span></span>
 <span><span class="co">##  ...1 more processings. Use 'processingLog' to list all.</span></span></code></pre>
 <p>Mass peaks from all input spectra with a difference in m/z smaller 20
 ppm (parameter <code>ppm</code>) were combined into one peak and the
@@ -854,7 +855,7 @@ chromatographic peak.</p>
 <span><span class="co">## CP62         2   574.942        NA</span></span>
 <span><span class="co">##  ... 20 more variables/columns.</span></span>
 <span><span class="co">## Processing:</span></span>
-<span><span class="co">##  Merge 1 Spectra into one [Tue Sep  1 08:33:39 2026]</span></span></code></pre>
+<span><span class="co">##  Merge 1 Spectra into one [Tue Oct  6 08:28:45 2026]</span></span></code></pre>
 <p>As a result we got a <code>Spectra</code> object of length equal to
 the number of MS1 peaks in our data. The length of a spectrum represents
 the number of peaks it contains. Thus, a length of 0 indicates that no
@@ -1015,11 +1016,11 @@ peak.</p>
 <span><span class="co">##  ... 37 more variables/columns.</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## file(s):</span></span>
-<span><span class="co">## 187c6b85f20b_7861</span></span>
+<span><span class="co">## 1fffabcedca_7861</span></span>
 <span><span class="co">## Processing:</span></span>
-<span><span class="co">##  Filter: select retention time [230..610] on MS level(s)  [Tue Sep  1 08:33:21 2026]</span></span>
-<span><span class="co">##  Filter: select MS level(s) 2 [Tue Sep  1 08:33:30 2026]</span></span>
-<span><span class="co">##  Merge 1 Spectra into one [Tue Sep  1 08:33:30 2026]</span></span></code></pre>
+<span><span class="co">##  Filter: select retention time [230..610] on MS level(s)  [Tue Oct  6 08:28:32 2026]</span></span>
+<span><span class="co">##  Filter: select MS level(s) 2 [Tue Oct  6 08:28:38 2026]</span></span>
+<span><span class="co">##  Merge 1 Spectra into one [Tue Oct  6 08:28:38 2026]</span></span></code></pre>
 <p>In total 5 spectra were measured, some with a relatively high number
 of peaks. Next we combine them into a consensus spectrum.</p>
 <div class="sourceCode" id="cb102"><pre class="downlit sourceCode r">
@@ -1181,58 +1182,58 @@ also correlation with intensity values across several samples.</p>
 <span><span class="co">## [8] base     </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## other attached packages:</span></span>
-<span><span class="co">##  [1] MetaboCoreUtils_1.21.1 MsBackendMgf_1.21.1    MsDataHub_1.13.1      </span></span>
+<span><span class="co">##  [1] MetaboCoreUtils_1.21.1 MsBackendMgf_1.21.1    MsDataHub_1.13.3      </span></span>
 <span><span class="co">##  [4] MsExperiment_1.15.0    ProtGenerics_1.45.0    pander_0.6.6          </span></span>
-<span><span class="co">##  [7] Spectra_1.23.3         S4Vectors_0.51.9       BiocGenerics_0.59.12  </span></span>
-<span><span class="co">## [10] generics_0.1.4         xcms_4.11.3            BiocParallel_1.47.0   </span></span>
+<span><span class="co">##  [7] Spectra_1.23.5         S4Vectors_0.51.10      BiocGenerics_0.59.12  </span></span>
+<span><span class="co">## [10] generics_0.1.4         xcms_4.11.4            BiocParallel_1.47.0   </span></span>
 <span><span class="co">## [13] BiocStyle_2.41.0      </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
 <span><span class="co">##   [1] RColorBrewer_1.1-3          jsonlite_2.0.0             </span></span>
-<span><span class="co">##   [3] MultiAssayExperiment_1.39.0 magrittr_2.0.5             </span></span>
+<span><span class="co">##   [3] MultiAssayExperiment_1.39.1 magrittr_2.0.5             </span></span>
 <span><span class="co">##   [5] farver_2.1.2                MALDIquant_1.22.3          </span></span>
-<span><span class="co">##   [7] rmarkdown_2.31              fs_2.1.0                   </span></span>
+<span><span class="co">##   [7] rmarkdown_2.32              fs_2.1.0                   </span></span>
 <span><span class="co">##   [9] ragg_1.5.2                  vctrs_0.7.3                </span></span>
 <span><span class="co">##  [11] memoise_2.0.1               BiocBaseUtils_1.15.1       </span></span>
-<span><span class="co">##  [13] htmltools_0.5.9             S4Arrays_1.13.0            </span></span>
+<span><span class="co">##  [13] htmltools_0.5.9             S4Arrays_1.13.2            </span></span>
 <span><span class="co">##  [15] progress_1.2.3              AnnotationHub_4.3.2        </span></span>
-<span><span class="co">##  [17] curl_8.0.0                  SparseArray_1.13.2         </span></span>
+<span><span class="co">##  [17] curl_8.0.0                  SparseArray_1.13.4         </span></span>
 <span><span class="co">##  [19] mzID_1.51.0                 sass_0.4.10                </span></span>
 <span><span class="co">##  [21] bslib_0.12.0                htmlwidgets_1.6.4          </span></span>
 <span><span class="co">##  [23] desc_1.4.3                  plyr_1.8.9                 </span></span>
 <span><span class="co">##  [25] httr2_1.3.0                 impute_1.87.0              </span></span>
-<span><span class="co">##  [27] cachem_1.1.0                igraph_2.3.3               </span></span>
+<span><span class="co">##  [27] cachem_1.1.0                igraph_2.3.4               </span></span>
 <span><span class="co">##  [29] lifecycle_1.0.5             iterators_1.0.14           </span></span>
 <span><span class="co">##  [31] pkgconfig_2.0.3             Matrix_1.7-6               </span></span>
 <span><span class="co">##  [33] R6_2.6.1                    fastmap_1.2.0              </span></span>
 <span><span class="co">##  [35] MatrixGenerics_1.25.0       clue_0.3-68                </span></span>
 <span><span class="co">##  [37] digest_0.6.39               pcaMethods_2.5.0           </span></span>
 <span><span class="co">##  [39] AnnotationDbi_1.75.2        ExperimentHub_3.3.2        </span></span>
-<span><span class="co">##  [41] textshaping_1.0.5           GenomicRanges_1.65.1       </span></span>
+<span><span class="co">##  [41] textshaping_1.0.5           GenomicRanges_1.65.4       </span></span>
 <span><span class="co">##  [43] RSQLite_3.53.3              filelock_1.0.3             </span></span>
-<span><span class="co">##  [45] httr_1.4.8                  abind_1.4-8                </span></span>
+<span><span class="co">##  [45] httr_1.4.9                  abind_1.4-8                </span></span>
 <span><span class="co">##  [47] compiler_4.6.1              withr_3.0.3                </span></span>
-<span><span class="co">##  [49] bit64_4.8.4                 doParallel_1.0.17          </span></span>
+<span><span class="co">##  [49] bit64_4.8.6                 doParallel_1.0.17          </span></span>
 <span><span class="co">##  [51] S7_0.2.2                    PTMods_1.1.0               </span></span>
 <span><span class="co">##  [53] DBI_1.3.0                   Chromatograms_1.3.3        </span></span>
 <span><span class="co">##  [55] MASS_7.3-66                 rappdirs_0.3.4             </span></span>
-<span><span class="co">##  [57] DelayedArray_0.39.6         mzR_2.47.0                 </span></span>
+<span><span class="co">##  [57] DelayedArray_0.39.8         mzR_2.47.1                 </span></span>
 <span><span class="co">##  [59] tools_4.6.1                 PSMatch_1.17.0             </span></span>
 <span><span class="co">##  [61] otel_0.2.0                  glue_1.8.1                 </span></span>
-<span><span class="co">##  [63] QFeatures_1.23.1            grid_4.6.1                 </span></span>
+<span><span class="co">##  [63] QFeatures_1.23.2            grid_4.6.1                 </span></span>
 <span><span class="co">##  [65] cluster_2.1.8.3             reshape2_1.4.5             </span></span>
-<span><span class="co">##  [67] gtable_0.3.6                preprocessCore_1.75.0      </span></span>
+<span><span class="co">##  [67] gtable_0.3.6                preprocessCore_1.75.1      </span></span>
 <span><span class="co">##  [69] tidyr_1.3.2                 data.table_1.18.6.1        </span></span>
 <span><span class="co">##  [71] hms_1.1.4                   XVector_0.53.0             </span></span>
 <span><span class="co">##  [73] BiocVersion_3.24.0          foreach_1.5.2              </span></span>
 <span><span class="co">##  [75] pillar_1.11.1               stringr_1.6.0              </span></span>
-<span><span class="co">##  [77] limma_3.69.4                dplyr_1.2.1                </span></span>
+<span><span class="co">##  [77] limma_3.99.0                dplyr_1.2.1                </span></span>
 <span><span class="co">##  [79] BiocFileCache_3.3.0         lattice_0.23-1             </span></span>
 <span><span class="co">##  [81] bit_4.6.0                   tidyselect_1.2.1           </span></span>
-<span><span class="co">##  [83] Biostrings_2.81.6           knitr_1.51                 </span></span>
+<span><span class="co">##  [83] Biostrings_2.81.9           knitr_1.52                 </span></span>
 <span><span class="co">##  [85] bookdown_0.48               IRanges_2.47.5             </span></span>
 <span><span class="co">##  [87] Seqinfo_1.3.2               SummarizedExperiment_1.43.0</span></span>
-<span><span class="co">##  [89] xfun_0.60                   Biobase_2.73.2             </span></span>
+<span><span class="co">##  [89] xfun_0.61                   Biobase_2.73.2             </span></span>
 <span><span class="co">##  [91] statmod_1.5.2               MSnbase_2.39.5             </span></span>
 <span><span class="co">##  [93] matrixStats_1.5.0           stringi_1.8.9              </span></span>
 <span><span class="co">##  [95] lazyeval_0.2.3              yaml_2.3.12                </span></span>
@@ -1242,7 +1243,7 @@ also correlation with intensity values across several samples.</p>
 <span><span class="co">## [103] affyio_1.83.0               systemfonts_1.3.2          </span></span>
 <span><span class="co">## [105] jquerylib_0.1.4             Rcpp_1.1.2                 </span></span>
 <span><span class="co">## [107] MassSpecWavelet_1.79.2      dbplyr_2.6.0               </span></span>
-<span><span class="co">## [109] png_0.1-9                   XML_3.99-0.24              </span></span>
+<span><span class="co">## [109] png_0.1-9                   XML_3.99-0.25              </span></span>
 <span><span class="co">## [111] parallel_4.6.1              pkgdown_2.2.1.9000         </span></span>
 <span><span class="co">## [113] ggplot2_4.0.3               blob_1.3.0                 </span></span>
 <span><span class="co">## [115] prettyunits_1.2.0           AnnotationFilter_1.37.0    </span></span>
@@ -1250,7 +1251,7 @@ also correlation with intensity values across several samples.</p>
 <span><span class="co">## [119] affy_1.91.0                 ncdf4_1.24                 </span></span>
 <span><span class="co">## [121] purrr_1.2.2                 crayon_1.5.3               </span></span>
 <span><span class="co">## [123] rlang_1.3.0                 KEGGREST_1.53.6            </span></span>
-<span><span class="co">## [125] vsn_3.81.0</span></span></code></pre>
+<span><span class="co">## [125] vsn_3.81.1</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
