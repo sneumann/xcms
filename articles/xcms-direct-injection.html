@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.11.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.11.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -236,7 +236,7 @@ with the <code>groupChromPeaks</code> method using default settings.</p>
 <span><span class="co">##  Number of spectra: 4 </span></span>
 <span><span class="co">##  MSn retention times: -1:59 - -1:59 minutes</span></span>
 <span><span class="co">## - - - Processing information - - -</span></span>
-<span><span class="co">## Data loaded [Tue Oct  6 08:28:12 2026] </span></span>
+<span><span class="co">## Data loaded [Thu Oct  8 08:54:56 2026] </span></span>
 <span><span class="co">##  MSnbase version: 2.39.5 </span></span>
 <span><span class="co">## - - - Meta data  - - -</span></span>
 <span><span class="co">## phenoData</span></span>
@@ -244,7 +244,7 @@ with the <code>groupChromPeaks</code> method using default settings.</p>
 <span><span class="co">##   varLabels: filename sample_group</span></span>
 <span><span class="co">##   varMetadata: labelDescription</span></span>
 <span><span class="co">## Loaded from:</span></span>
-<span><span class="co">##   [1] 1fff376d905a_10386...  [4] 1fff5a6272f9_10392</span></span>
+<span><span class="co">##   [1] b74468cf690_10386...  [4] b741c295592_10392</span></span>
 <span><span class="co">##   Use 'fileNames(.)' to see all files.</span></span>
 <span><span class="co">## protocolData: none</span></span>
 <span><span class="co">## featureData</span></span>
@@ -334,20 +334,13 @@ signal for each peak (one representative peak) per sample.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">feat_vals</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/XCMSnExp-peak-grouping-results.html">featureValues</a></span><span class="op">(</span><span class="va">ham_prep</span>, value <span class="op">=</span> <span class="st">"into"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">feat_vals</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##      1fff376d905a_10386 1fff586f3063_10387 1fff10970295_10391</span></span>
-<span><span class="co">## FT01                 NA                 NA            4095293</span></span>
-<span><span class="co">## FT02            4735258            6202418            4811391</span></span>
-<span><span class="co">## FT03                 NA                 NA            2982453</span></span>
-<span><span class="co">## FT04            4158404            5004546                 NA</span></span>
-<span><span class="co">## FT05                 NA                 NA            2872023</span></span>
-<span><span class="co">## FT06            6099006            4950642                 NA</span></span>
-<span><span class="co">##      1fff5a6272f9_10392</span></span>
-<span><span class="co">## FT01            4804763</span></span>
-<span><span class="co">## FT02            2581183</span></span>
-<span><span class="co">## FT03            2268984</span></span>
-<span><span class="co">## FT04                 NA</span></span>
-<span><span class="co">## FT05            2133219</span></span>
-<span><span class="co">## FT06                 NA</span></span></code></pre>
+<pre><code><span><span class="co">##      b74468cf690_10386 b7440456090_10387 b74171d368f_10391 b741c295592_10392</span></span>
+<span><span class="co">## FT01                NA                NA           4095293           4804763</span></span>
+<span><span class="co">## FT02           4735258           6202418           4811391           2581183</span></span>
+<span><span class="co">## FT03                NA                NA           2982453           2268984</span></span>
+<span><span class="co">## FT04           4158404           5004546                NA                NA</span></span>
+<span><span class="co">## FT05                NA                NA           2872023           2133219</span></span>
+<span><span class="co">## FT06           6099006           4950642                NA                NA</span></span></code></pre>
 <p><code>NA</code> is reported for features in samples for which no peak
 was identified at the feature’s m/z value. In some instances there might
 still be a signal at the feature’s position in the raw data files, but
@@ -359,20 +352,13 @@ signal at that location an <code>NA</code> is reported.</p>
 <code class="sourceCode R"><span><span class="va">ham_prep</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fillChromPeaks.html">fillChromPeaks</a></span><span class="op">(</span><span class="va">ham_prep</span>, param <span class="op">=</span> <span class="fu"><a href="../reference/fillChromPeaks.html">FillChromPeaksParam</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/XCMSnExp-peak-grouping-results.html">featureValues</a></span><span class="op">(</span><span class="va">ham_prep</span>, value <span class="op">=</span> <span class="st">"into"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##      1fff376d905a_10386 1fff586f3063_10387 1fff10970295_10391</span></span>
-<span><span class="co">## FT01           768754.0          1230140.4            4095293</span></span>
-<span><span class="co">## FT02          4735257.5          6202417.6            4811391</span></span>
-<span><span class="co">## FT03           652566.6           374109.9            2982453</span></span>
-<span><span class="co">## FT04          4158404.5          5004546.3            1221031</span></span>
-<span><span class="co">## FT05           652201.1           403448.4            2872023</span></span>
-<span><span class="co">## FT06          6099006.3          4950641.7            1573988</span></span>
-<span><span class="co">##      1fff5a6272f9_10392</span></span>
-<span><span class="co">## FT01          4804762.5</span></span>
-<span><span class="co">## FT02          2581183.1</span></span>
-<span><span class="co">## FT03          2268984.5</span></span>
-<span><span class="co">## FT04          1241294.4</span></span>
-<span><span class="co">## FT05          2133219.4</span></span>
-<span><span class="co">## FT06           977694.5</span></span></code></pre>
+<pre><code><span><span class="co">##      b74468cf690_10386 b7440456090_10387 b74171d368f_10391 b741c295592_10392</span></span>
+<span><span class="co">## FT01          768754.0         1230140.4           4095293         4804762.5</span></span>
+<span><span class="co">## FT02         4735257.5         6202417.6           4811391         2581183.1</span></span>
+<span><span class="co">## FT03          652566.6          374109.9           2982453         2268984.5</span></span>
+<span><span class="co">## FT04         4158404.5         5004546.3           1221031         1241294.4</span></span>
+<span><span class="co">## FT05          652201.1          403448.4           2872023         2133219.4</span></span>
+<span><span class="co">## FT06         6099006.3         4950641.7           1573988          977694.5</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="further-analysis">Further analysis<a class="anchor" aria-label="anchor" href="#further-analysis"></a>
@@ -411,7 +397,7 @@ the feature matrix using functionality from other R packages, such as
 <span><span class="co">## [8] base     </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## other attached packages:</span></span>
-<span><span class="co">##  [1] MsDataHub_1.13.3       MassSpecWavelet_1.79.2 xcms_4.11.4           </span></span>
+<span><span class="co">##  [1] MsDataHub_1.13.3       MassSpecWavelet_1.79.2 xcms_4.11.5           </span></span>
 <span><span class="co">##  [4] BiocParallel_1.47.0    MSnbase_2.39.5         S4Vectors_0.51.10     </span></span>
 <span><span class="co">##  [7] Biobase_2.73.2         BiocGenerics_0.59.12   generics_0.1.4        </span></span>
 <span><span class="co">## [10] mzR_2.47.1             Rcpp_1.1.2             BiocStyle_2.41.0      </span></span>
@@ -444,7 +430,7 @@ the feature matrix using functionality from other R packages, such as
 <span><span class="co">##  [49] compiler_4.6.1              withr_3.0.3                </span></span>
 <span><span class="co">##  [51] bit64_4.8.6                 doParallel_1.0.17          </span></span>
 <span><span class="co">##  [53] S7_0.2.2                    PTMods_1.1.0               </span></span>
-<span><span class="co">##  [55] DBI_1.3.0                   Chromatograms_1.3.3        </span></span>
+<span><span class="co">##  [55] DBI_1.3.0                   Chromatograms_1.3.4        </span></span>
 <span><span class="co">##  [57] MASS_7.3-66                 MsExperiment_1.15.0        </span></span>
 <span><span class="co">##  [59] rappdirs_0.3.4              DelayedArray_0.39.8        </span></span>
 <span><span class="co">##  [61] tools_4.6.1                 PSMatch_1.17.0             </span></span>

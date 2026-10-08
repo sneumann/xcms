@@ -2,6 +2,20 @@
 
 ## xcms 4.11
 
+### Changes in version 4.11.5
+
+- [`findChromPeaks()`](https://sneumann.github.io/xcms/reference/findChromPeaks.md)
+  with `verboseBetaColumns = TRUE` calculates the peak quality metrics
+  considering also the retention times. Results will thus be identical
+  to those calculated with
+  [`chromPeakSummary()`](https://sneumann.github.io/xcms/reference/chromPeakSummary.md).
+  See issue [\#849](https://github.com/sneumann/xcms/issues/849)
+- [`loadXcmsData()`](https://sneumann.github.io/xcms/reference/loadXcmsData.md)
+  updates also `$dataOrigin` to ensure functions such as
+  [`fileNames()`](https://lgatto.github.io/MSnbase/reference/pSet-class.html)
+  return the correct path/file names (issue
+  [\#851](https://github.com/sneumann/xcms/issues/851)).
+
 ### Changes in version 4.11.4
 
 - Add new vignette *Plotting xcms results using lcmsPlot* describing how

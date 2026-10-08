@@ -172,7 +172,7 @@ Getting an overview of the performed processings:
     ##  Number of spectra: 4 
     ##  MSn retention times: -1:59 - -1:59 minutes
     ## - - - Processing information - - -
-    ## Data loaded [Tue Oct  6 08:28:12 2026] 
+    ## Data loaded [Thu Oct  8 08:54:56 2026] 
     ##  MSnbase version: 2.39.5 
     ## - - - Meta data  - - -
     ## phenoData
@@ -180,7 +180,7 @@ Getting an overview of the performed processings:
     ##   varLabels: filename sample_group
     ##   varMetadata: labelDescription
     ## Loaded from:
-    ##   [1] 1fff376d905a_10386...  [4] 1fff5a6272f9_10392
+    ##   [1] b74468cf690_10386...  [4] b741c295592_10392
     ##   Use 'fileNames(.)' to see all files.
     ## protocolData: none
     ## featureData
@@ -278,20 +278,13 @@ representative peak) per sample.
 `feat_vals`` ``<-`` `[`featureValues`](https://sneumann.github.io/xcms/reference/XCMSnExp-peak-grouping-results.md)`(``ham_prep``, value ``=`` ``"into"``)`\
 [`head`](https://rdrr.io/r/utils/head.html)`(``feat_vals``)`
 
-    ##      1fff376d905a_10386 1fff586f3063_10387 1fff10970295_10391
-    ## FT01                 NA                 NA            4095293
-    ## FT02            4735258            6202418            4811391
-    ## FT03                 NA                 NA            2982453
-    ## FT04            4158404            5004546                 NA
-    ## FT05                 NA                 NA            2872023
-    ## FT06            6099006            4950642                 NA
-    ##      1fff5a6272f9_10392
-    ## FT01            4804763
-    ## FT02            2581183
-    ## FT03            2268984
-    ## FT04                 NA
-    ## FT05            2133219
-    ## FT06                 NA
+    ##      b74468cf690_10386 b7440456090_10387 b74171d368f_10391 b741c295592_10392
+    ## FT01                NA                NA           4095293           4804763
+    ## FT02           4735258           6202418           4811391           2581183
+    ## FT03                NA                NA           2982453           2268984
+    ## FT04           4158404           5004546                NA                NA
+    ## FT05                NA                NA           2872023           2133219
+    ## FT06           6099006           4950642                NA                NA
 
 `NA` is reported for features in samples for which no peak was
 identified at the feature’s m/z value. In some instances there might
@@ -306,20 +299,13 @@ an `NA` is reported.
 \
 [`head`](https://rdrr.io/r/utils/head.html)`(`[`featureValues`](https://sneumann.github.io/xcms/reference/XCMSnExp-peak-grouping-results.md)`(``ham_prep``, value ``=`` ``"into"``)``)`
 
-    ##      1fff376d905a_10386 1fff586f3063_10387 1fff10970295_10391
-    ## FT01           768754.0          1230140.4            4095293
-    ## FT02          4735257.5          6202417.6            4811391
-    ## FT03           652566.6           374109.9            2982453
-    ## FT04          4158404.5          5004546.3            1221031
-    ## FT05           652201.1           403448.4            2872023
-    ## FT06          6099006.3          4950641.7            1573988
-    ##      1fff5a6272f9_10392
-    ## FT01          4804762.5
-    ## FT02          2581183.1
-    ## FT03          2268984.5
-    ## FT04          1241294.4
-    ## FT05          2133219.4
-    ## FT06           977694.5
+    ##      b74468cf690_10386 b7440456090_10387 b74171d368f_10391 b741c295592_10392
+    ## FT01          768754.0         1230140.4           4095293         4804762.5
+    ## FT02         4735257.5         6202417.6           4811391         2581183.1
+    ## FT03          652566.6          374109.9           2982453         2268984.5
+    ## FT04         4158404.5         5004546.3           1221031         1241294.4
+    ## FT05          652201.1          403448.4           2872023         2133219.4
+    ## FT06         6099006.3         4950641.7           1573988          977694.5
 
 ## Further analysis
 
@@ -357,7 +343,7 @@ the feature matrix using functionality from other R packages, such as
     ## [8] base     
     ## 
     ## other attached packages:
-    ##  [1] MsDataHub_1.13.3       MassSpecWavelet_1.79.2 xcms_4.11.4           
+    ##  [1] MsDataHub_1.13.3       MassSpecWavelet_1.79.2 xcms_4.11.5           
     ##  [4] BiocParallel_1.47.0    MSnbase_2.39.5         S4Vectors_0.51.10     
     ##  [7] Biobase_2.73.2         BiocGenerics_0.59.12   generics_0.1.4        
     ## [10] mzR_2.47.1             Rcpp_1.1.2             BiocStyle_2.41.0      
@@ -390,7 +376,7 @@ the feature matrix using functionality from other R packages, such as
     ##  [49] compiler_4.6.1              withr_3.0.3                
     ##  [51] bit64_4.8.6                 doParallel_1.0.17          
     ##  [53] S7_0.2.2                    PTMods_1.1.0               
-    ##  [55] DBI_1.3.0                   Chromatograms_1.3.3        
+    ##  [55] DBI_1.3.0                   Chromatograms_1.3.4        
     ##  [57] MASS_7.3-66                 MsExperiment_1.15.0        
     ##  [59] rappdirs_0.3.4              DelayedArray_0.39.8        
     ##  [61] tools_4.6.1                 PSMatch_1.17.0             

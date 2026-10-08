@@ -150,11 +150,13 @@ findChromPeaks(
 - verboseBetaColumns:
 
   Option to calculate two additional metrics of peak quality via
-  comparison to an idealized bell curve. Adds `beta_cor` and `beta_snr`
-  to the `chromPeaks` output, corresponding to a Pearson correlation
-  coefficient to a bell curve with several degrees of skew as well as an
-  estimate of signal-to-noise using the residuals from the best-fitting
-  bell curve. See https://github.com/sneumann/xcms/pull/685 and
+  comparison to an idealized bell curve. Adds `"beta_cor"` and
+  `"beta_snr"` to the
+  [`chromPeaks()`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)
+  output, corresponding to a Pearson correlation coefficient to a bell
+  curve with several degrees of skew as well as an estimate of
+  signal-to-noise using the residuals from the best-fitting bell curve.
+  See https://github.com/sneumann/xcms/pull/685 and
   https://doi.org/10.1186/s12859-023-05533-4 for more information.
 
 - snthreshIsoROIs:

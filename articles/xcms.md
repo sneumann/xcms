@@ -2,8 +2,8 @@
 
 **Package**: *[xcms](https://bioconductor.org/packages/3.24/xcms)*\
 **Authors**: Philippine Louail, Johannes Rainer\
-**Modified**: 2026-10-06 07:39:14.62411\
-**Compiled**: Tue Oct 6 08:29:48 2026
+**Modified**: 2026-10-08 08:08:16.78629\
+**Compiled**: Thu Oct 8 08:56:47 2026
 
 ## Introduction
 
@@ -1896,7 +1896,7 @@ Finally, a history of the full processing with *xcms* is available as
     ## [[1]]
     ## Object of class "XProcessHistory"
     ##  type: Peak detection 
-    ##  date: Tue Oct  6 08:30:19 2026 
+    ##  date: Thu Oct  8 08:57:22 2026 
     ##  info:  
     ##  fileIndex: 1,2,3,4,5,6,7,8 
     ##  Parameter class: CentWaveParam 
@@ -1905,7 +1905,7 @@ Finally, a history of the full processing with *xcms* is available as
     ## [[2]]
     ## Object of class "XProcessHistory"
     ##  type: Peak refinement 
-    ##  date: Tue Oct  6 08:30:22 2026 
+    ##  date: Thu Oct  8 08:57:27 2026 
     ##  info:  
     ##  fileIndex: 1,2,3,4,5,6,7,8 
     ##  Parameter class: MergeNeighboringPeaksParam 
@@ -1914,7 +1914,7 @@ Finally, a history of the full processing with *xcms* is available as
     ## [[3]]
     ## Object of class "XProcessHistory"
     ##  type: Peak grouping 
-    ##  date: Tue Oct  6 08:30:31 2026 
+    ##  date: Thu Oct  8 08:57:38 2026 
     ##  info:  
     ##  fileIndex: 1,2,3,4,5,6,7,8 
     ##  Parameter class: PeakDensityParam 
@@ -1923,7 +1923,7 @@ Finally, a history of the full processing with *xcms* is available as
     ## [[4]]
     ## Object of class "XProcessHistory"
     ##  type: Retention time correction 
-    ##  date: Tue Oct  6 08:30:31 2026 
+    ##  date: Thu Oct  8 08:57:38 2026 
     ##  info:  
     ##  fileIndex: 1,2,3,4,5,6,7,8 
     ##  Parameter class: PeakGroupsParam 
@@ -1932,7 +1932,7 @@ Finally, a history of the full processing with *xcms* is available as
     ## [[5]]
     ## Object of class "XProcessHistory"
     ##  type: Peak grouping 
-    ##  date: Tue Oct  6 08:30:35 2026 
+    ##  date: Thu Oct  8 08:57:41 2026 
     ##  info:  
     ##  fileIndex: 1,2,3,4,5,6,7,8 
     ##  Parameter class: PeakDensityParam 
@@ -1941,7 +1941,7 @@ Finally, a history of the full processing with *xcms* is available as
     ## [[6]]
     ## Object of class "XProcessHistory"
     ##  type: Missing peak filling 
-    ##  date: Tue Oct  6 08:30:37 2026 
+    ##  date: Thu Oct  8 08:57:45 2026 
     ##  info:  
     ##  fileIndex: 1,2,3,4,5,6,7,8 
     ##  Parameter class: ChromPeakAreaParam 
@@ -1958,7 +1958,7 @@ step.
 
     ## Object of class "XProcessHistory"
     ##  type: Peak detection 
-    ##  date: Tue Oct  6 08:30:19 2026 
+    ##  date: Thu Oct  8 08:57:22 2026 
     ##  info:  
     ##  fileIndex: 1,2,3,4,5,6,7,8 
     ##  Parameter class: CentWaveParam 
@@ -2477,10 +2477,10 @@ R packages used for this document are listed below.
     ##  [5] IRanges_2.47.5              S4Vectors_0.51.10          
     ##  [7] BiocGenerics_0.59.12        generics_0.1.4             
     ##  [9] MatrixGenerics_1.25.0       matrixStats_1.5.0          
-    ## [11] Chromatograms_1.3.3         MsExperiment_1.15.0        
+    ## [11] Chromatograms_1.3.4         MsExperiment_1.15.0        
     ## [13] ProtGenerics_1.45.0         pheatmap_1.0.13            
     ## [15] RColorBrewer_1.1-3          pander_0.6.6               
-    ## [17] faahKO_1.53.0               xcms_4.11.4                
+    ## [17] faahKO_1.53.0               xcms_4.11.5                
     ## [19] BiocParallel_1.47.0         BiocStyle_2.41.0           
     ## 
     ## loaded via a namespace (and not attached):

@@ -2,8 +2,8 @@
 
 **Package**: *[xcms](https://bioconductor.org/packages/3.24/xcms)*\
 **Authors**: Johannes Rainer, Michael Witting\
-**Modified**: 2026-10-06 07:39:14.624017\
-**Compiled**: Tue Oct 6 08:28:19 2026
+**Modified**: 2026-10-08 08:08:16.78629\
+**Compiled**: Thu Oct 8 08:55:03 2026
 
 ## Introduction
 
@@ -200,11 +200,11 @@ the rt and m/z range of the chromatographic peak are returned.
     ##  ... 37 more variables/columns.
     ## 
     ## file(s):
-    ## 1fffabcedca_7861
+    ## b746f6c2095_7861
     ## Processing:
-    ##  Filter: select retention time [230..610] on MS level(s)  [Tue Oct  6 08:28:32 2026]
-    ##  Filter: select MS level(s) 2 [Tue Oct  6 08:28:38 2026]
-    ##  Merge 1 Spectra into one [Tue Oct  6 08:28:38 2026]
+    ##  Filter: select retention time [230..610] on MS level(s)  [Thu Oct  8 08:55:19 2026]
+    ##  Filter: select MS level(s) 2 [Thu Oct  8 08:55:27 2026]
+    ##  Merge 1 Spectra into one [Thu Oct  8 08:55:27 2026]
 
 By default
 [`chromPeakSpectra()`](https://sneumann.github.io/xcms/reference/chromPeakSpectra.md)
@@ -315,11 +315,11 @@ present data set.
     ##  ... 37 more variables/columns.
     ## 
     ## file(s):
-    ## 1fffabcedca_7861
+    ## b746f6c2095_7861
     ## Processing:
-    ##  Filter: select retention time [230..610] on MS level(s)  [Tue Oct  6 08:28:32 2026]
-    ##  Filter: select MS level(s) 2 [Tue Oct  6 08:28:38 2026]
-    ##  Merge 1 Spectra into one [Tue Oct  6 08:28:38 2026]
+    ##  Filter: select retention time [230..610] on MS level(s)  [Thu Oct  8 08:55:19 2026]
+    ##  Filter: select MS level(s) 2 [Thu Oct  8 08:55:27 2026]
+    ##  Merge 1 Spectra into one [Thu Oct  8 08:55:27 2026]
 
 There are 5 MS2 spectra representing fragmentation of the ion(s)
 measured in our candidate chromatographic peak. We next reduce this to a
@@ -353,9 +353,9 @@ generally the best approach or suggested for all types of data.
     ## 1         2   418.926      3505
     ##  ... 37 more variables/columns.
     ## Processing:
-    ##  Filter: select retention time [230..610] on MS level(s)  [Tue Oct  6 08:28:32 2026]
-    ##  Filter: select MS level(s) 2 [Tue Oct  6 08:28:38 2026]
-    ##  Merge 1 Spectra into one [Tue Oct  6 08:28:38 2026]
+    ##  Filter: select retention time [230..610] on MS level(s)  [Thu Oct  8 08:55:19 2026]
+    ##  Filter: select MS level(s) 2 [Thu Oct  8 08:55:27 2026]
+    ##  Merge 1 Spectra into one [Thu Oct  8 08:55:27 2026]
     ##  ...1 more processings. Use 'processingLog' to list all.
 
 Mass peaks from all input spectra with a difference in m/z smaller 20
@@ -930,7 +930,7 @@ MS1 chromatographic peak.
     ## CP62         2   574.942        NA
     ##  ... 20 more variables/columns.
     ## Processing:
-    ##  Merge 1 Spectra into one [Tue Oct  6 08:28:45 2026]
+    ##  Merge 1 Spectra into one [Thu Oct  8 08:55:34 2026]
 
 As a result we got a `Spectra` object of length equal to the number of
 MS1 peaks in our data. The length of a spectrum represents the number of
@@ -1127,11 +1127,11 @@ data match almost perfectly. Next we get the MS2 spectra for this peak.
     ##  ... 37 more variables/columns.
     ## 
     ## file(s):
-    ## 1fffabcedca_7861
+    ## b746f6c2095_7861
     ## Processing:
-    ##  Filter: select retention time [230..610] on MS level(s)  [Tue Oct  6 08:28:32 2026]
-    ##  Filter: select MS level(s) 2 [Tue Oct  6 08:28:38 2026]
-    ##  Merge 1 Spectra into one [Tue Oct  6 08:28:38 2026]
+    ##  Filter: select retention time [230..610] on MS level(s)  [Thu Oct  8 08:55:19 2026]
+    ##  Filter: select MS level(s) 2 [Thu Oct  8 08:55:27 2026]
+    ##  Merge 1 Spectra into one [Thu Oct  8 08:55:27 2026]
 
 In total 5 spectra were measured, some with a relatively high number of
 peaks. Next we combine them into a consensus spectrum.
@@ -1315,7 +1315,7 @@ correlation with intensity values across several samples.
     ##  [1] MetaboCoreUtils_1.21.1 MsBackendMgf_1.21.1    MsDataHub_1.13.3      
     ##  [4] MsExperiment_1.15.0    ProtGenerics_1.45.0    pander_0.6.6          
     ##  [7] Spectra_1.23.5         S4Vectors_0.51.10      BiocGenerics_0.59.12  
-    ## [10] generics_0.1.4         xcms_4.11.4            BiocParallel_1.47.0   
+    ## [10] generics_0.1.4         xcms_4.11.5            BiocParallel_1.47.0   
     ## [13] BiocStyle_2.41.0      
     ## 
     ## loaded via a namespace (and not attached):
@@ -1345,7 +1345,7 @@ correlation with intensity values across several samples.
     ##  [47] compiler_4.6.1              withr_3.0.3                
     ##  [49] bit64_4.8.6                 doParallel_1.0.17          
     ##  [51] S7_0.2.2                    PTMods_1.1.0               
-    ##  [53] DBI_1.3.0                   Chromatograms_1.3.3        
+    ##  [53] DBI_1.3.0                   Chromatograms_1.3.4        
     ##  [55] MASS_7.3-66                 rappdirs_0.3.4             
     ##  [57] DelayedArray_0.39.8         mzR_2.47.1                 
     ##  [59] tools_4.6.1                 PSMatch_1.17.0             

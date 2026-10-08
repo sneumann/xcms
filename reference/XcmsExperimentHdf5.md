@@ -335,7 +335,7 @@ xmse
 #>  xcms results:
 #>   - chromatographic peaks in MS level(s): 1 
 #>  results storage file:
-#>    /tmp/RtmpibO6Kq/file2dd149952f01
+#>    /tmp/Rtmp9lMKxC/file194610d62f88
 
 ## Extract selected columnds from the chromatographic peak detection
 ## results
@@ -363,6 +363,12 @@ res[[2]] |> head()
 
 ## Convert the result object to the in-memory representation:
 xmse_mem <- toXcmsExperiment(xmse)
+#> Warning: The 'callGeneric' argument is deprecated and will be removed in the next version. Please wrap h5read() in your own function, or provide your own downstream steps to handle class-specific post-processing. As far as we know, this feature has never been used. Please get in touch as soon as possible if you rely on this feature.
+#> Warning: The 'callGeneric' argument is deprecated and will be removed in the next version. Please wrap h5read() in your own function, or provide your own downstream steps to handle class-specific post-processing. As far as we know, this feature has never been used. Please get in touch as soon as possible if you rely on this feature.
+#> Warning: The 'callGeneric' argument is deprecated and will be removed in the next version. Please wrap h5read() in your own function, or provide your own downstream steps to handle class-specific post-processing. As far as we know, this feature has never been used. Please get in touch as soon as possible if you rely on this feature.
+#> Warning: The 'callGeneric' argument is deprecated and will be removed in the next version. Please wrap h5read() in your own function, or provide your own downstream steps to handle class-specific post-processing. As far as we know, this feature has never been used. Please get in touch as soon as possible if you rely on this feature.
+#> Warning: The 'callGeneric' argument is deprecated and will be removed in the next version. Please wrap h5read() in your own function, or provide your own downstream steps to handle class-specific post-processing. As far as we know, this feature has never been used. Please get in touch as soon as possible if you rely on this feature.
+#> Warning: The 'callGeneric' argument is deprecated and will be removed in the next version. Please wrap h5read() in your own function, or provide your own downstream steps to handle class-specific post-processing. As far as we know, this feature has never been used. Please get in touch as soon as possible if you rely on this feature.
 xmse_mem
 #> Object of class XcmsExperiment 
 #>  Spectra: MS1 (3834) 

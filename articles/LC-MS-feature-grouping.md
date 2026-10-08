@@ -2,8 +2,8 @@
 
 **Package**: *[xcms](https://bioconductor.org/packages/3.24/xcms)*\
 **Authors**: Johannes Rainer\
-**Modified**: 2026-10-06 07:39:14.623109\
-**Compiled**: Tue Oct 6 08:27:23 2026
+**Modified**: 2026-10-08 08:08:16.78629\
+**Compiled**: Thu Oct 8 08:54:00 2026
 
 ## Introduction
 
@@ -797,7 +797,7 @@ will be ignored.
     ##  [1] pheatmap_1.0.13      faahKO_1.53.0        MSnbase_2.39.5      
     ##  [4] S4Vectors_0.51.10    Biobase_2.73.2       BiocGenerics_0.59.12
     ##  [7] generics_0.1.4       mzR_2.47.1           Rcpp_1.1.2          
-    ## [10] MsFeatures_1.21.0    xcms_4.11.4          BiocParallel_1.47.0 
+    ## [10] MsFeatures_1.21.0    xcms_4.11.5          BiocParallel_1.47.0 
     ## [13] BiocStyle_2.41.0    
     ## 
     ## loaded via a namespace (and not attached):
@@ -845,7 +845,7 @@ will be ignored.
     ##  [83] tidyr_1.3.2                 MsCoreUtils_1.25.4         
     ##  [85] PSMatch_1.17.0              cli_3.6.6                  
     ##  [87] textshaping_1.0.5           S4Arrays_1.13.2            
-    ##  [89] Chromatograms_1.3.3         dplyr_1.2.1                
+    ##  [89] Chromatograms_1.3.4         dplyr_1.2.1                
     ##  [91] AnnotationFilter_1.37.0     pcaMethods_2.5.0           
     ##  [93] gtable_0.3.6                sass_0.4.10                
     ##  [95] digest_0.6.39               SparseArray_1.13.4         
