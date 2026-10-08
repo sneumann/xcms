@@ -600,14 +600,6 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                 lm_seq <- lm[1]:lm[2]
                 pd <- d[lm_seq]
 
-                # Implement a fit of a skewed gaussian (beta distribution)
-                # for peak shape and within-peak signal-to-noise ratio
-                # See https://doi.org/10.1186/s12859-023-05533-4 and
-                # https://github.com/sneumann/xcms/pull/685
-                if(verboseBetaColumns){
-                  peaks[p, c("beta_cor", "beta_snr")] <- .get_beta_values(pd)
-                }
-
                 peakrange <- td[lm]
                 peaks[p, "rtmin"] <- scantime[peakrange[1]]
                 peaks[p, "rtmax"] <- scantime[peakrange[2]]
@@ -621,6 +613,16 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                 peaks[p, "intb"] <- pwid * sum(db[db > 0])
                 peaks[p, "lmin"] <- lm[1]
                 peaks[p, "lmax"] <- lm[2]
+
+                ## Implement a fit of a skewed gaussian (beta distribution)
+                ## for peak shape and within-peak signal-to-noise ratio
+                ## See https://doi.org/10.1186/s12859-023-05533-4 and
+                ## https://github.com/sneumann/xcms/pull/685
+                ## Update: use retention times instead of scan index:
+                ## https://github.com/sneumann/xcms/issues/849
+                if (verboseBetaColumns)
+                    peaks[p, c("beta_cor", "beta_snr")] <- .get_beta_values(
+                        pd, scantime[peakrange[1L]:peakrange[2L]])
 
                 if (fitgauss) {
                     ## perform gaussian fits, use wavelets for inital parameters
