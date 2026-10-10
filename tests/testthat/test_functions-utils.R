@@ -205,6 +205,23 @@ test_that(".insertColumn works", {
     expect_true(ncol(res) == ncol(mat) + 2)
     expect_equal(res[, 2], 101:120)
     expect_equal(res[, 4], 101:120)
+
+    ## Boundary cases (previously broken):
+    ## insert AT the last column -> value goes to that position, old cols shift
+    res <- .insertColumn(mat, ncol(mat), 5)
+    expect_true(all(res[, ncol(mat)] == 5))
+    expect_equal(ncol(res), ncol(mat) + 1)
+    expect_equal(res[, -ncol(mat)], mat)
+    ## insert past the end (e.g. trailing empty spectrum) -> append, no error
+    res <- .insertColumn(mat, ncol(mat) + 1L, 5)
+    expect_equal(ncol(res), ncol(mat) + 1)
+    expect_true(all(res[, ncol(res)] == 5))
+    expect_equal(res[, -ncol(res)], mat)
+    ## multiple inserts including a trailing one must not error
+    expect_silent(.insertColumn(mat, c(2, ncol(mat) + 1L), 0))
+    ## single-row input with a trailing insert
+    m1 <- matrix(c(11, 12), nrow = 1)
+    expect_equal(unname(.insertColumn(m1, 3, 0)[1, ]), c(11, 12, 0))
 })
 
 test_that(".ppm_range works", {
