@@ -283,19 +283,20 @@ dropGenericProcessHistory <- function(x, fun) {
         if (length(mtx)) {
             ## mtx: time, mz, intensity
             if (any(!is.na(mtx[, 3]))) {
-                ## How to calculate the area: (1)sum of all intensities / (2)by
-                ## the number of data points (REAL ones, considering also NAs)
-                ## and multiplied with the (3)rt width.
-                ## (1) sum(mtx[, 3], na.rm = TRUE)
-                ## (2) sum(rtim >= rtr[1] & rtim <= rtr[2]) - 1 ; if we used
-                ## nrow(mtx) here, which would correspond to the non-NA
-                ## intensities within the rt range we don't get the same results
-                ## as e.g. centWave. Using max(1, ... to avoid getting Inf in
-                ## case the signal is based on a single data point.
-                ## (3) rtr[2] - rtr[1]
+                ## Area = sum(intensities) * rt_width, where rt_width is the mean
+                ## scan spacing = (actual rt span of the scans in the window) /
+                ## (number of those scans - 1). Using the actual span of the
+                ## scans in the window (rather than the requested window
+                ## rtr[2] - rtr[1]) keeps the filled 'into' consistent with
+                ## centWave detection, which derives pwid from the peak's actual
+                ## scan times, and avoids inflating 'into' when the feature
+                ## window overhangs the sample's local scan coverage. Numerator
+                ## and denominator use the same scan set (all scans in the
+                ## window); max(1, ...) guards the single-scan case.
+                sel <- which(between(rtim, rtr))
                 res[i, "into"] <- sum(mtx[, 3L], na.rm = TRUE) *
-                    ((rtr[2] - rtr[1]) /
-                     max(1, (sum(rtim >= rtr[1] & rtim <= rtr[2]) - 1)))
+                    ((rtim[sel[length(sel)]] - rtim[sel[1L]]) /
+                     max(1, (length(sel) - 1)))
                 maxi <- which.max(mtx[, 3L])
                 res[i, c("rt", "maxo")] <- mtx[maxi[1], c(1, 3)]
                 res[i, c("rtmin", "rtmax")] <- rtr
